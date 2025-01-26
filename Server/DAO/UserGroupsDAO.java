@@ -1,0 +1,93 @@
+package work.DAO;
+
+import work.Entities.UserGroups;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class UserGroupsDAO {
+    private final Connection connection;
+
+    public UserGroupsDAO(Connection connection) {
+        this.connection = connection;
+    }
+
+
+    public boolean addUserToGroup(int userId, int groupId) throws SQLException {
+        String query = "INSERT INTO user_groups (user_id, group_id) VALUES (?, ?)";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, groupId);
+            return preparedStatement.executeUpdate() > 0;
+        }
+    }
+
+
+    public List<UserGroups> getGroupsByUserId(int userId) throws SQLException {
+        String query = "SELECT * FROM user_groups WHERE user_id = ?";
+        List<UserGroups> userGroupsList = new ArrayList<>();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, userId);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    userGroupsList.add(new UserGroups(
+                            resultSet.getInt("user_id"),
+                            resultSet.getInt("group_id")
+                    ));
+                }
+            }
+        }
+        return userGroupsList;
+    }
+
+
+    public List<UserGroups> getUsersByGroupId(int groupId) throws SQLException {
+        String query = "SELECT * FROM user_groups WHERE group_id = ?";
+        List<UserGroups> userGroupsList = new ArrayList<>();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, groupId);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    userGroupsList.add(new UserGroups(
+                            resultSet.getInt("user_id"),
+                            resultSet.getInt("group_id")
+                    ));
+                }
+            }
+        }
+        return userGroupsList;
+    }
+
+
+    public boolean removeUserFromGroup(int userId, int groupId) throws SQLException {
+        String query = "DELETE FROM user_groups WHERE user_id = ? AND group_id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, groupId);
+            return preparedStatement.executeUpdate() > 0;
+        }
+    }
+
+
+    public boolean removeAllUsersFromGroup(int groupId) throws SQLException {
+        String query = "DELETE FROM user_groups WHERE group_id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, groupId);
+            return preparedStatement.executeUpdate() > 0;
+        }
+    }
+
+
+    public boolean isUserInGroup(int userId, int groupId) throws SQLException {
+        String query = "SELECT 1 FROM user_groups WHERE user_id = ? AND group_id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, userId);
+            preparedStatement.setInt(2, groupId);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                return resultSet.next();
+            }
+        }
+    }
+}
+
