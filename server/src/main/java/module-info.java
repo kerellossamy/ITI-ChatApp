@@ -7,4 +7,5 @@ module gov.iti.jets.server {
 
     opens gov.iti.jets.server to javafx.fxml;
     exports gov.iti.jets.server;
+    exports shared.interfaces;
 }

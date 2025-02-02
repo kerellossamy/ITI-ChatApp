@@ -1,15 +1,34 @@
 package gov.iti.jets.client.controller;
 
+import gov.iti.jets.client.model.ClientImpl;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import shared.interfaces.AdminInt;
+import shared.interfaces.UserInt;
+
+import java.net.URL;
+import java.util.ResourceBundle;
 
 public class AdminLoginController {
+
+    private  UserInt userInt;
+    private  AdminInt adminInt;
+    ClientImpl c;
+
+    public void setUserInt(UserInt userInt) {
+        this.userInt = userInt;
+    }
+
+    public  void setAdminInt(AdminInt adminInt) {
+        this.adminInt = adminInt;
+    }
 
     @FXML
     private TextField username; // Username field
@@ -28,6 +47,8 @@ public class AdminLoginController {
 
         loginAsUserButton.setOnAction(event -> navigateToUserLogin());
         loginButton.setOnAction(event -> navigateToServerPage());
+        c= ClientImpl.getInstance();
+        c.setAdminLoginController(this);
     }
 
 
@@ -37,6 +58,7 @@ public class AdminLoginController {
             // Load the UserLoginPage.fxml
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/UserLoginPage.fxml"));
             Parent userLoginRoot = loader.load();
+
 
             // Get the current stage
             Stage stage = (Stage) loginAsUserButton.getScene().getWindow();
@@ -81,7 +103,14 @@ public class AdminLoginController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+
+
     }
 
-
+//    @Override
+//    public void initialize(URL url, ResourceBundle resourceBundle) {
+//        c= ClientImpl.getInstance();
+//        c.setAdminLoginController(this);
+//    }
 }

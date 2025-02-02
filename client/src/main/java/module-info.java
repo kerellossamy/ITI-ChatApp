@@ -12,5 +12,6 @@ module gov.iti.jets.client {
     exports gov.iti.jets.client;
     exports gov.iti.jets.client.model;
     opens gov.iti.jets.client.model to javafx.fxml;
+
     //exports shared.utils;
 }

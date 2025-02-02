@@ -14,7 +14,7 @@ public class ServerMain {
             UserInt userInt=new UserImpl();
             AdminInt adminInt=new AdminImpl();
             Registry registry= LocateRegistry.createRegistry(8554);
-            registry.rebind("UserServices",adminInt);
+            registry.rebind("UserServices",userInt);
             registry.rebind("AdminServices",adminInt);
             System.out.println("server is running .....");
         }
@@ -25,7 +25,7 @@ public class ServerMain {
     }
 
     public static void main(String[] args) {
-        //new ServerMain();
-        System.out.println("Hello from the server");
+        new ServerMain();
+
     }
 }

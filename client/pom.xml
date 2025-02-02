@@ -18,8 +18,16 @@
         <javafx.version>21.0.1</javafx.version>
         <!--        <env.JAVAFX_HOME>C:\Users\Kerellos Samy\Downloads\Compressed\openjfx-21.0.1_windows-x64_bin-sdk\javafx-sdk-21.0.1</env.JAVAFX_HOME>-->
     </properties>
+    <dependencies>
+        <dependency>
+            <groupId>gov.iti.jets</groupId>
+            <artifactId>server</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
 
-<!--    <dependencies>-->
+    <!--    <dependencies>-->
 
         <!--        <dependency>-->
         <!--            <groupId>gov.iti.jets</groupId>-->

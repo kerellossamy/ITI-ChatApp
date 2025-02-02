@@ -4,6 +4,8 @@
  */
 package gov.iti.jets.client.controller;
 
+import gov.iti.jets.client.ClientMain;
+import gov.iti.jets.client.model.ClientImpl;
 import javafx.event.*;
 import javafx.scene.*;
 import javafx.scene.layout.*;
@@ -29,6 +31,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.scene.web.HTMLEditor;
+import shared.interfaces.AdminInt;
+import shared.interfaces.UserInt;
 
 /**
  * FXML Controller class
@@ -36,6 +40,18 @@ import javafx.scene.web.HTMLEditor;
  * @author Nadam_2kg0od8
  */
 public class HomeScreenController implements Initializable {
+
+    private UserInt userInt;
+    private AdminInt adminInt;
+    ClientImpl c;
+
+    public void setUserInt(UserInt userInt) {
+        this.userInt = userInt;
+    }
+
+    public  void setAdminInt(AdminInt adminInt) {
+        this.adminInt = adminInt;
+    }
 
     @FXML
     private Button notificationbtn;
@@ -91,6 +107,11 @@ public class HomeScreenController implements Initializable {
 
         fullListView(ContactList);
         populateCard(ContactList);
+
+
+        c= ClientImpl.getInstance();
+        c.setHomeScreenController(this);
+
     }
 
     void populateCard(ListView<HBox> chatList)
@@ -122,8 +143,11 @@ public class HomeScreenController implements Initializable {
                         {
                             try {
                                 FXMLLoader Cardloader = new FXMLLoader(getClass().getResource("fxml/Card.fxml"));
+
                                 Node n = Cardloader.load();
                                 CardController card = Cardloader.getController();
+                                card.setAdminInt(ClientMain.adminInt);
+                                card.setUserInt(ClientMain.userInt);
                                 card.setCard(item);
                                 System.out.println("name :" + card.getName());
                                 System.out.println("Message :" + card.getMessage());
@@ -159,6 +183,9 @@ public class HomeScreenController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AddContactWindow.fxml"));
 
             Parent root = loader.load();
+            AddContactWindowController addContactWindowController= loader.getController();
+            addContactWindowController.setAdminInt(ClientMain.adminInt);
+            addContactWindowController.setUserInt(ClientMain.userInt);
 
             Stage addContactStage = new Stage();
             addContactStage.setTitle("Add Contact");
@@ -189,6 +216,9 @@ public class HomeScreenController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/CreateGroupWindow.fxml"));
 
             Parent root = loader.load();
+            CreateGroupController createGroupController=loader.getController();
+            createGroupController.setAdminInt(ClientMain.adminInt);
+            createGroupController.setUserInt(ClientMain.userInt);
 
             Stage createGroupStage = new Stage();
             createGroupStage.setTitle("Add Contact");
@@ -222,6 +252,7 @@ public class HomeScreenController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/UserLoginPage.fxml"));
             Parent userLoginRoot = loader.load();
 
+
             // Get the current stage
             Stage stage = (Stage) logOutbtn.getScene().getWindow();
 
@@ -251,6 +282,12 @@ public class HomeScreenController implements Initializable {
         {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/InvitationWindow.fxml"));
             Parent root = loader.load();
+            if(root==null){
+                System.out.println("nullllllllllllllllllllllllllllllllllllll");
+            }
+            InvitationListWindowController invitationListWindowController=loader.getController();
+            invitationListWindowController.setAdminInt(ClientMain.adminInt);
+            invitationListWindowController.setUserInt(ClientMain.userInt);
 
             Stage addContactStage = new Stage();
             addContactStage.setTitle("Invitaion List");
@@ -284,6 +321,9 @@ public class HomeScreenController implements Initializable {
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/EditWindow.fxml"));
             Parent root = loader.load();
+            EditWindowController editWindowController=loader.getController();
+            editWindowController.setAdminInt(ClientMain.adminInt);
+            editWindowController.setUserInt(ClientMain.userInt);
 
             Stage editStage = new Stage();
             editStage.setTitle("Edit Info");

@@ -1,6 +1,8 @@
 package gov.iti.jets.client.controller;
 
+import gov.iti.jets.client.model.ClientImpl;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 import javafx.scene.shape.Circle;
@@ -11,8 +13,12 @@ import javafx.scene.paint.*;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import java.io.File;
+import shared.interfaces.AdminInt;
+import shared.interfaces.UserInt;
 
+import java.io.File;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 
 //io
@@ -20,7 +26,17 @@ import java.io.File;
 //stage
 
 
-public class CreateGroupController {
+public class CreateGroupController{
+    private UserInt userInt;
+    private AdminInt adminInt;
+    ClientImpl c;
+    public void setUserInt(UserInt userInt) {
+        this.userInt = userInt;
+    }
+
+    public  void setAdminInt(AdminInt adminInt) {
+        this.adminInt = adminInt;
+    }
 
     // FXML components
     @FXML
@@ -34,7 +50,8 @@ public class CreateGroupController {
     // Initialize method, called after the FXML elements have been injected
     @FXML
     public void initialize() {
-        
+        c= ClientImpl.getInstance();
+        c.setCreateGroupController(this);
     }
 
     // Event handler for changing photo
@@ -79,4 +96,12 @@ public class CreateGroupController {
 
         
     }
+
+//    @Override
+//    public void initialize(URL url, ResourceBundle resourceBundle) {
+//        c= ClientImpl.getInstance();
+//        c.setCreateGroupController(this);
+//    }
+
+
 }

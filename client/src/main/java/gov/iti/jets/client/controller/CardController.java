@@ -5,11 +5,15 @@
 package gov.iti.jets.client.controller;
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import gov.iti.jets.client.model.ClientImpl;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import shared.interfaces.AdminInt;
+import shared.interfaces.UserInt;
 
 /**
  * FXML Controller class
@@ -17,6 +21,17 @@ import javafx.scene.text.Text;
  * @author Nadam_2kg0od8
  */
 public class CardController implements Initializable {
+    private UserInt userInt;
+    private AdminInt adminInt;
+    ClientImpl c;
+
+    public void setUserInt(UserInt userInt) {
+        this.userInt = userInt;
+    }
+
+    public  void setAdminInt(AdminInt adminInt) {
+        this.adminInt = adminInt;
+    }
 
     @FXML
     private Text friendName;
@@ -67,8 +82,9 @@ public class CardController implements Initializable {
 
     }
     @Override
-    public void initialize(URL url, ResourceBundle rb) {
-
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        c= ClientImpl.getInstance();
+        c.setCardController(this);
     }
 
 }

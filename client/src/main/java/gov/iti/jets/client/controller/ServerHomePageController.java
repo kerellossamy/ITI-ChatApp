@@ -1,5 +1,7 @@
 package gov.iti.jets.client.controller;
 
+import gov.iti.jets.client.ClientMain;
+import gov.iti.jets.client.model.ClientImpl;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 
@@ -7,14 +9,29 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.Parent;
+import shared.interfaces.AdminInt;
+import shared.interfaces.UserInt;
 
 
-public class ServerHomePageController {
+public class ServerHomePageController implements Initializable {
+
+    private UserInt userInt;
+    private AdminInt adminInt;
+    ClientImpl c;
+
+    public void setUserInt(UserInt userInt) {
+        this.userInt = userInt;
+    }
+
+    public  void setAdminInt(AdminInt adminInt) {
+        this.adminInt = adminInt;
+    }
 
 
     @FXML
@@ -50,7 +67,12 @@ public class ServerHomePageController {
         registerAdminButton.setStyle("-fx-background-color: #67BCFEF5;");
         BorderPane borderPane=null;
         try {
-            borderPane=FXMLLoader.load(getClass().getResource("/fxml/hello-view -Announcement.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/hello-view -Announcement.fxml"));
+             borderPane = loader.load();
+            AnnouncementController announcementController = loader.getController();
+            announcementController.setAdminInt(ClientMain.adminInt);
+            announcementController.setUserInt(ClientMain.userInt);
+
         } catch (IOException e) {
             System.out.println("failed to load it");
         }
@@ -148,12 +170,18 @@ public class ServerHomePageController {
         mainBorderpane.setCenter(borderPane);
     }
 
-    @FXML
-    void initialize() {
-        assert statbut != null : "fx:id=\"statbut\" was not injected: check your FXML file 'hello-view.fxml'.";
-        assert serverstatbut != null : "fx:id=\"serverstatbut\" was not injected: check your FXML file 'hello-view.fxml'.";
-        assert announcebut != null : "fx:id=\"announcebut\" was not injected: check your FXML file 'hello-view.fxml'.";
-        assert outbut != null : "fx:id=\"outbut\" was not injected: check your FXML file 'hello-view.fxml'.";
+//    @FXML
+//    void initialize() {
+//        assert statbut != null : "fx:id=\"statbut\" was not injected: check your FXML file 'hello-view.fxml'.";
+//        assert serverstatbut != null : "fx:id=\"serverstatbut\" was not injected: check your FXML file 'hello-view.fxml'.";
+//        assert announcebut != null : "fx:id=\"announcebut\" was not injected: check your FXML file 'hello-view.fxml'.";
+//        assert outbut != null : "fx:id=\"outbut\" was not injected: check your FXML file 'hello-view.fxml'.";
+//
+//    }
 
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        c= ClientImpl.getInstance();
+        c.setServerHomePageController(this);
     }
 }

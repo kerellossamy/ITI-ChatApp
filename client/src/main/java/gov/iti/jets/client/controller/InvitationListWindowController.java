@@ -1,6 +1,8 @@
 package gov.iti.jets.client.controller;
 
+import gov.iti.jets.client.model.ClientImpl;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
@@ -13,7 +15,11 @@ import javafx.scene.layout.*;
 
 import javafx.scene.image.Image;
 import javafx.geometry.Insets;
+import shared.interfaces.AdminInt;
+import shared.interfaces.UserInt;
 
+import java.net.URL;
+import java.util.ResourceBundle;
 
 
 //io
@@ -23,6 +29,18 @@ import javafx.geometry.Insets;
 
 public class InvitationListWindowController
 {
+
+    private UserInt userInt;
+    private AdminInt adminInt;
+    ClientImpl c;
+
+    public void setUserInt(UserInt userInt) {
+        this.userInt = userInt;
+    }
+
+    public  void setAdminInt(AdminInt adminInt) {
+        this.adminInt = adminInt;
+    }
 
     @FXML
     public ScrollPane pane;
@@ -58,7 +76,7 @@ public class InvitationListWindowController
         HBox.setMargin(acceptIcon, new Insets(20.0, 0, 0, 5));
 
 
-        ImageView deleteIcon = new ImageView(new Image(getClass().getResourceAsStream("img/delete.png")));
+        ImageView deleteIcon = new ImageView(new Image(getClass().getResourceAsStream("/img/delete.png")));
         deleteIcon.setFitHeight(20.0);
         deleteIcon.setFitWidth(20.0);
         deleteIcon.setPickOnBounds(true);
@@ -79,19 +97,25 @@ public class InvitationListWindowController
     @FXML
     public void initialize()
     {
+        c= ClientImpl.getInstance();
+        c.setInvitationListWindowController(this);
         // Initialize any necessary data or settings here
         System.out.println("invitationListWindowController initialized!");
-        pane.getStylesheets().add(getClass().getResource("cssStyles/InvitationList.css").toExternalForm());
+       pane.getStylesheets().add(getClass().getResource("/cssStyles/InvitationList.css").toExternalForm());
 
         vBox.setSpacing(2);
 
-        vBox.getChildren().add(createHBox(new Image(getClass().getResourceAsStream("img/spnog.jpg")), "leena almekkawy"));
-        vBox.getChildren().add(createHBox(new Image(getClass().getResourceAsStream("img/elsa.jpeg")), "nada mohamed"));
-
-
+//        vBox.getChildren().add(createHBox(new Image(getClass().getResourceAsStream("img/spnog.jpg")), "leena almekkawy"));
+//        vBox.getChildren().add(createHBox(new Image(getClass().getResourceAsStream("img/elsa.jpeg")), "nada mohamed"));
 
 
     }
+
+//    @Override
+//    public void initialize(URL url, ResourceBundle resourceBundle) {
+//        c= ClientImpl.getInstance();
+//        c.setInvitationListWindowController(this);
+//    }
 
 
 }

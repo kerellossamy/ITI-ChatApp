@@ -15,7 +15,6 @@ public class UserGroupsDAOImpl implements UserGroupsDAOInt {
         this.connection = connection;
     }
 
-
     public boolean addUserToGroup(int userId, int groupId) throws SQLException {
         String query = "INSERT INTO user_groups (user_id, group_id) VALUES (?, ?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {

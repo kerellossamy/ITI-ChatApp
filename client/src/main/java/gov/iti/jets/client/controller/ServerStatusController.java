@@ -1,16 +1,31 @@
 package gov.iti.jets.client.controller;
 
+import gov.iti.jets.client.model.ClientImpl;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
+import shared.interfaces.AdminInt;
+import shared.interfaces.UserInt;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
 
 public class ServerStatusController implements Initializable {
+
+    private UserInt userInt;
+    private AdminInt adminInt;
+    ClientImpl c;
+
+    public void setUserInt(UserInt userInt) {
+        this.userInt = userInt;
+    }
+
+    public  void setAdminInt(AdminInt adminInt) {
+        this.adminInt = adminInt;
+    }
 
     private boolean onPressed;
     private boolean offPressed;
@@ -45,16 +60,20 @@ public class ServerStatusController implements Initializable {
 //        App.isOffPressed=false;
     }
 
-    @FXML
-    void initialize() {
-        assert childBorderpanethree != null : "fx:id=\"childBorderpanethree\" was not injected: check your FXML file 'hello-view -serverstatus.fxml'.";
-        assert offbutton != null : "fx:id=\"offbutton\" was not injected: check your FXML file 'hello-view -serverstatus.fxml'.";
-        assert onbutton != null : "fx:id=\"onbutton\" was not injected: check your FXML file 'hello-view -serverstatus.fxml'.";
-
-    }
+//    @FXML
+//    void initialize() {
+//        assert childBorderpanethree != null : "fx:id=\"childBorderpanethree\" was not injected: check your FXML file 'hello-view -serverstatus.fxml'.";
+//        assert offbutton != null : "fx:id=\"offbutton\" was not injected: check your FXML file 'hello-view -serverstatus.fxml'.";
+//        assert onbutton != null : "fx:id=\"onbutton\" was not injected: check your FXML file 'hello-view -serverstatus.fxml'.";
+//
+//    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
+            c= ClientImpl.getInstance();
+            c.setServerStatusController(this);
+
 //        if(App.isOnPressed){
 //            onbutton.setStyle("-fx-background-color: #00FF00; -fx-text-fill: black;");
 //            offbutton.setStyle("");

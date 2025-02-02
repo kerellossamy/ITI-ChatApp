@@ -1,13 +1,31 @@
 package gov.iti.jets.client.controller;
 
 
+import gov.iti.jets.client.model.ClientImpl;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import shared.interfaces.AdminInt;
+import shared.interfaces.UserInt;
 
-public class AdminSignupController {
+import java.net.URL;
+import java.util.ResourceBundle;
+
+public class AdminSignupController  {
+    private UserInt userInt;
+    private AdminInt adminInt;
+    ClientImpl c;
+
+    public void setUserInt(UserInt userInt) {
+        this.userInt = userInt;
+    }
+
+    public  void setAdminInt(AdminInt adminInt) {
+        this.adminInt = adminInt;
+    }
 
 
     @FXML
@@ -238,6 +256,10 @@ public class AdminSignupController {
 
     @FXML
     public void initialize() {
+
+        c= ClientImpl.getInstance();
+        c.setAdminSignupController(this);
+
         gender.getItems().addAll("Male", "Female");
         gender.setValue("Male");
 
@@ -401,4 +423,9 @@ public class AdminSignupController {
         alert.setContentText(message);
         alert.showAndWait();
     }
+//    @Override
+//    public void initialize(URL url, ResourceBundle resourceBundle) {
+//        c= ClientImpl.getInstance();
+//        c.setAdminSignupController(this);
+//    }
 }

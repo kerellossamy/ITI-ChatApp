@@ -1,5 +1,6 @@
 package gov.iti.jets.client.controller;
 
+import gov.iti.jets.client.model.ClientImpl;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -7,6 +8,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.chart.PieChart;
 import javafx.scene.layout.BorderPane;
+import shared.interfaces.AdminInt;
+import shared.interfaces.UserInt;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -14,6 +17,17 @@ import java.util.ResourceBundle;
 
 
 public class CountryPieController implements Initializable {
+
+    private UserInt userInt;
+    private AdminInt adminInt;
+    ClientImpl c;
+    public void setUserInt(UserInt userInt) {
+        this.userInt = userInt;
+    }
+
+    public  void setAdminInt(AdminInt adminInt) {
+        this.adminInt = adminInt;
+    }
     @FXML
     private ResourceBundle resources;
 
@@ -26,12 +40,12 @@ public class CountryPieController implements Initializable {
     @FXML
     private PieChart countrypie;
 
-    @FXML
-    void initialize() {
-        assert grandchildborderpanetwo != null : "fx:id=\"grandchildborderpaneone\" was not injected: check your FXML file 'hello-view -country.fxml'.";
-        assert countrypie != null : "fx:id=\"countrypie\" was not injected: check your FXML file 'hello-view -country.fxml'.";
-
-    }
+//    @FXML
+//    void initialize() {
+//        assert grandchildborderpanetwo != null : "fx:id=\"grandchildborderpaneone\" was not injected: check your FXML file 'hello-view -country.fxml'.";
+//        assert countrypie != null : "fx:id=\"countrypie\" was not injected: check your FXML file 'hello-view -country.fxml'.";
+//
+//    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -49,7 +63,13 @@ public class CountryPieController implements Initializable {
         pieChartData.forEach(data->data.nameProperty().bind(Bindings.concat(data.getName()," number ",data.pieValueProperty())));
         countrypie.getData().addAll(pieChartData);
 
+        c= ClientImpl.getInstance();
+        c.setCountryPieController(this);
+
 
     }
+
+
+
 }
 

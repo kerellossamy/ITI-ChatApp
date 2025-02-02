@@ -1,5 +1,6 @@
 package gov.iti.jets.client.controller;
 
+import gov.iti.jets.client.model.ClientImpl;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -7,9 +8,26 @@ import javafx.scene.control.*;
 import javafx.fxml.*;
 import javafx.scene.*;
 import javafx.stage.*;
+import shared.interfaces.AdminInt;
+import shared.interfaces.UserInt;
+
+import java.net.URL;
+import java.util.ResourceBundle;
 
 
 public class UserSignupController {
+
+    private UserInt userInt;
+    private AdminInt adminInt;
+    ClientImpl c;
+
+    public void setUserInt(UserInt userInt) {
+        this.userInt = userInt;
+    }
+
+    public  void setAdminInt(AdminInt adminInt) {
+        this.adminInt = adminInt;
+    }
 
     @FXML
     private TextField firstName;
@@ -242,6 +260,9 @@ public class UserSignupController {
 
     @FXML
     public void initialize() {
+        c= ClientImpl.getInstance();
+        c.setUserSignupController(this);
+
         gender.getItems().addAll("Male", "Female");
         gender.setValue("Male");
 
@@ -299,6 +320,7 @@ public class UserSignupController {
         // If all fields are filled and passwords match, proceed with signup logic
         String selectedGender = gender.getValue();
         String selectedCountry = country.getValue();
+
 
         // Print or process the selected values
         System.out.println("First Name: " + firstName.getText());
@@ -438,4 +460,11 @@ public class UserSignupController {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
+//
+//    @Override
+//    public void initialize(URL url, ResourceBundle resourceBundle) {
+//        c= ClientImpl.getInstance();
+//        c.setUserSignupController(this);
+//    }
 }

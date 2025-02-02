@@ -1,16 +1,33 @@
 package gov.iti.jets.client.controller;
 
+import gov.iti.jets.client.ClientMain;
+import gov.iti.jets.client.model.ClientImpl;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
+import shared.interfaces.AdminInt;
+import shared.interfaces.UserInt;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class GeneralStatisticsController {
+public class GeneralStatisticsController implements Initializable {
+
+    private UserInt userInt;
+    private AdminInt adminInt;
+    ClientImpl c;
+
+    public void setUserInt(UserInt userInt) {
+        this.userInt = userInt;
+    }
+
+    public  void setAdminInt(AdminInt adminInt) {
+        this.adminInt = adminInt;
+    }
 
     @FXML
     private BorderPane childBorderpane;
@@ -38,7 +55,13 @@ public class GeneralStatisticsController {
         Genderpiebutton.setStyle("");
         BorderPane borderPane=null;
         try {
-            borderPane= FXMLLoader.load(getClass().getResource("/fxml/hello-view -country.fxml"));
+
+            FXMLLoader loader= new  FXMLLoader(getClass().getResource("/fxml/hello-view -country.fxml"));
+            borderPane=loader.load();
+            CountryPieController countryPieController= loader.getController();
+           countryPieController.setAdminInt(ClientMain.adminInt);
+           countryPieController.setUserInt(ClientMain.userInt);
+
         } catch (IOException e) {
             System.out.println("failed to load it");
         }
@@ -56,7 +79,12 @@ public class GeneralStatisticsController {
         countrypiebutton.setStyle("");
         BorderPane borderPane=null;
         try {
-            borderPane= FXMLLoader.load(getClass().getResource("/fxml/hello-view -gender.fxml"));
+            FXMLLoader  loader=  new FXMLLoader(getClass().getResource("/fxml/hello-view -gender.fxml"));
+            borderPane=loader.load();
+            GenderPieController genderPieController= loader.getController();
+            genderPieController.setAdminInt(ClientMain.adminInt);
+            genderPieController.setUserInt(ClientMain.userInt);
+
         } catch (IOException e) {
             System.out.println("failed to load it");
         }
@@ -68,12 +96,18 @@ public class GeneralStatisticsController {
     @FXML
     void statepiemethod(ActionEvent event) {
 
+
         statepiebutton.setStyle("-fx-background-color: #B0B0B0;");
         Genderpiebutton.setStyle("");
         countrypiebutton.setStyle("");
         BorderPane borderPane=null;
         try {
-            borderPane= FXMLLoader.load(getClass().getResource("/fxml/hello-view - statistics.fxml"));
+            FXMLLoader loader= new FXMLLoader((getClass().getResource("/fxml/hello-view - statistics.fxml")));
+            borderPane=loader.load();
+            StatisticsPieController statisticsPieController=loader.getController();
+            statisticsPieController.setAdminInt(ClientMain.adminInt);
+            statisticsPieController.setUserInt(ClientMain.userInt);
+
         } catch (IOException e) {
             System.out.println("failed to load it");
         }
@@ -82,11 +116,17 @@ public class GeneralStatisticsController {
 
     }
 
-    @FXML
-    void initialize() {
-        assert statepiebutton != null : "fx:id=\"statepiebutton\" was not injected: check your FXML file 'hello-view - stone.fxml'.";
-        assert Genderpiebutton != null : "fx:id=\"Genderpiebutton\" was not injected: check your FXML file 'hello-view - stone.fxml'.";
-        assert countrypiebutton != null : "fx:id=\"countrypiebutton\" was not injected: check your FXML file 'hello-view - stone.fxml'.";
+//    @FXML
+//    void initialize() {
+//        assert statepiebutton != null : "fx:id=\"statepiebutton\" was not injected: check your FXML file 'hello-view - stone.fxml'.";
+//        assert Genderpiebutton != null : "fx:id=\"Genderpiebutton\" was not injected: check your FXML file 'hello-view - stone.fxml'.";
+//        assert countrypiebutton != null : "fx:id=\"countrypiebutton\" was not injected: check your FXML file 'hello-view - stone.fxml'.";
+//
+//    }
 
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        c= ClientImpl.getInstance();
+        c.setGeneralStatisticsController(this);
     }
 }
