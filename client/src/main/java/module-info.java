@@ -1,9 +1,9 @@
 module gov.iti.jets.client {
+    requires java.sql;
     requires java.rmi;
     requires javafx.fxml;
     requires javafx.controls;
     //requires gov.iti.jets.shared;
-    requires java.sql;
     requires javafx.web;
     //requires javafx.web;
 

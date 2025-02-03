@@ -159,11 +159,16 @@ public class ServerHomePageController implements Initializable {
         announcebut.setStyle("-fx-background-color: #67BCFEF5;");
         serverstatbut.setStyle("-fx-background-color: #67BCFEF5;");
         outbut.setStyle("-fx-background-color: #67BCFEF5;");
-       registerAdminButton.setStyle("-fx-background-color: #479AC9;");
+        registerAdminButton.setStyle("-fx-background-color: #479AC9;");
 
         BorderPane borderPane=null;
         try {
+
             borderPane=FXMLLoader.load(getClass().getResource("/fxml/AdminSignupPage.fxml"));
+            AdminSignupController adminSignupController = new AdminSignupController();
+            adminSignupController.setAdminInt(ClientMain.adminInt);
+            adminSignupController.setUserInt(ClientMain.userInt);
+
         } catch (IOException e) {
             System.out.println("failed to load it");
         }

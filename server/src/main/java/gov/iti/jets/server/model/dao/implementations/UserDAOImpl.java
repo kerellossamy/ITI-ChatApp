@@ -370,30 +370,31 @@ public class UserDAOImpl implements UserDAOInt {
          return  getAllUsers().size();
     }
 
-    public int countMaleUsers() {
+    public int countCertainGenderUsers(String gender) {
 
-        int maleCount = 0;
-        String sql =  "SELECT COUNT(*) FROM user WHERE gender = 'male'";
+        int Count = 0;
+        String sql =  "SELECT COUNT(*) FROM user WHERE gender =?";
 
         try (Connection connection = DB_UtilityClass.getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql))
         {
+            stmt.setString(1 , gender);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    maleCount=rs.getInt(1);
+                    Count=rs.getInt(1);
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return maleCount;
+        return Count;
     }
-
 
     public int countCertainCountryUsers(String country) {
 
         int Count = 0;
+        System.out.println(Count);
         String sql =  "SELECT COUNT(*) FROM user WHERE country = ?";
 
         try (Connection connection = DB_UtilityClass.getConnection();

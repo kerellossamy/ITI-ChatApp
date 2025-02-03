@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
@@ -10,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<HBox cache="true" focusTraversable="true" prefHeight="600" prefWidth="1200" stylesheets="@../cssStyles/AdminLoginPageStyle.css" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gov.iti.jets.client.controller.AdminLoginController">
+<HBox cache="true" focusTraversable="true" prefHeight="600" prefWidth="1200" stylesheets="@../cssStyles/AdminLoginPageStyle.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gov.iti.jets.client.controller.AdminLoginController">
    <children>
       <VBox maxHeight="1.7976931348623157E308" minHeight="300.0" minWidth="200.0" prefHeight="500.0" prefWidth="339.0" styleClass="login-background" HBox.hgrow="SOMETIMES">
          <children>

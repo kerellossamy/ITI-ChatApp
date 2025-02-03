@@ -99,5 +99,35 @@ public class AdminDAOImpl implements AdminDAOInt {
             stmt.executeUpdate();
         }
     }
+
+    public boolean validateAdminCredentials(String username, String passwordHash) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM admin WHERE user_name = ? AND password_hash = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, username);
+            stmt.setString(2, passwordHash);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) == 1; // Returns true if a matching record is found
+                }
+            }
+        }
+        return false;
+    }
+
+   /* @Override
+    public int getAdminId(String username, String passwordHash) throws SQLException {
+        String sql = "SELECT admin_id FROM admin WHERE user_name = ? AND password_hash = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, username);
+            stmt.setString(2, passwordHash);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1); // Returns true if a matching record is found
+                }
+            }
+        }
+        return -1;
+    }
+    */
 }
 

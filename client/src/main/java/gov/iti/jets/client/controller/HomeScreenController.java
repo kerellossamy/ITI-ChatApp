@@ -8,7 +8,10 @@ import gov.iti.jets.client.ClientMain;
 import gov.iti.jets.client.model.ClientImpl;
 import javafx.event.*;
 import javafx.scene.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.stage.*;
 
 
@@ -100,6 +103,23 @@ public class HomeScreenController implements Initializable {
     @FXML
     private Button Imagebtn;
 
+    public enum colorEnum
+    {
+        RED("#ff3939"),
+        GREEN("#74ff58"),
+        YELLOW("#fff848"),
+        GRAY("");
+
+        public String haxColor ;
+        colorEnum(String haxColor) {
+            this.haxColor =  haxColor;
+        }
+
+        public String getColor()
+        {
+            return haxColor;
+        }
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -116,41 +136,80 @@ public class HomeScreenController implements Initializable {
 
     void populateCard(ListView<HBox> chatList)
     {
+        //first Card
         HBox card = new HBox();
-        VBox v = new VBox();
-        Text name = new Text("Salma");
-        Text message = new Text("hello");
-        v.getChildren().addAll(name , message);
+        Group g1 = new Group();
+        VBox v1 = new VBox();
+        VBox v2 = new VBox();
 
-        card.getChildren().addAll(v );
-        chatList.getItems().addAll(card);
+        // Image image = new Image(getClass().getResourceAsStream("img/man1.png"));
+        //System.out.println("Image =" + image.getUrl());
+        ImageView imageView = new ImageView(new Image(getClass().getResourceAsStream("/img/girl.png")));
+        Circle status = new Circle();
+        status.setFill(Color.valueOf(colorEnum.YELLOW.getColor()));
+        g1.getChildren().addAll(imageView , status);
+
+
+        Text name = new Text("Salma");
+        Text message = new Text("Hi,are you available tomorrow?");
+        v1.getChildren().addAll(name , message);
+
+
+        Text time = new Text("2:45AM");
+        Text numOfMessage = new Text("1");
+        v2.getChildren().addAll(time , numOfMessage);
+
+        card.getChildren().addAll(g1 , v1 , v2);
+
+
+        //Second Card
+        HBox card1 = new HBox();
+        Group g11 = new Group();
+        VBox v11 = new VBox();
+        VBox v22 = new VBox();
+
+        //Image image = new Image(getClass().getResourceAsStream("img/boy.png"))
+        ImageView imageView1 = new ImageView(new Image(getClass().getResourceAsStream("/img/man1.png")));
+        Circle status1 = new Circle();
+        status1.setFill(Color.valueOf(colorEnum.GREEN.getColor()));
+        g11.getChildren().addAll(imageView1 , status1);
+
+
+        Text name1 = new Text("Ali");
+        Text message1 = new Text("Hello");
+        v11.getChildren().addAll(name1 , message1);
+
+
+        Text time1 = new Text("10:45AM");
+        Text numOfMessage1 = new Text("5");
+        v22.getChildren().addAll(time1 , numOfMessage1);
+
+        card1.getChildren().addAll(g11 , v11 , v22);
+
+        chatList.getItems().addAll(card  ,card1);
     }
+
 
 
     public void fullListView(ListView<HBox> friendListView)
     {
         friendListView.setCellFactory((param) -> {
 
-            ListCell<HBox> cell = new ListCell<HBox>(){
+            ListCell<HBox> cell = new ListCell<>(){
                 @Override
                 protected void updateItem(HBox item, boolean empty) {
                     super.updateItem(item, empty);
-                    System.out.println("1");
                     if(!empty)
                     {
-                        System.out.println("2");
                         if(item != null)
                         {
                             try {
-                                FXMLLoader Cardloader = new FXMLLoader(getClass().getResource("fxml/Card.fxml"));
-
-                                Node n = Cardloader.load();
+                                FXMLLoader Cardloader = new FXMLLoader(getClass().getResource("/fxml/Card.fxml"));
+                                Node n = Cardloader.load(); // must load before getController
                                 CardController card = Cardloader.getController();
-                                card.setAdminInt(ClientMain.adminInt);
-                                card.setUserInt(ClientMain.userInt);
                                 card.setCard(item);
-                                System.out.println("name :" + card.getName());
-                                System.out.println("Message :" + card.getMessage());
+                                //System.out.println("name :" + card.getName());
+                                //System.out.println("Message :" + card.getMessage());
                                 setGraphic(n);
 
                             } catch (IOException ex) {
@@ -161,15 +220,13 @@ public class HomeScreenController implements Initializable {
                     else
                     {
                         System.out.println("empty");
-                        setText(null);
-                        setGraphic(null);
+                        return;
                     }
                 }
             };
 
             return cell;
         });
-
 
     }
 

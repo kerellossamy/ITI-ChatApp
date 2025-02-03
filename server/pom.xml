@@ -156,6 +156,17 @@
 
 
             <!-- JavaFX Maven Plugin -->
+
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <mainClass>gov.iti.jets.server.ServerMain</mainClass>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
@@ -164,8 +175,6 @@
                     <mainClass>gov.iti.jets.server.ServerMain</mainClass>
                 </configuration>
             </plugin>
-
-
 
         </plugins>
     </build>

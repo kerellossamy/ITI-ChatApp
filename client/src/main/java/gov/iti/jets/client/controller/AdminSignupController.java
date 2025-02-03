@@ -8,15 +8,23 @@ import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import shared.dto.Admin;
 import shared.interfaces.AdminInt;
 import shared.interfaces.UserInt;
 
 import java.net.URL;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ResourceBundle;
 
 public class AdminSignupController  {
     private UserInt userInt;
     private AdminInt adminInt;
+    private Registry registry;
     ClientImpl c;
 
     public void setUserInt(UserInt userInt) {
@@ -137,7 +145,6 @@ public class AdminSignupController  {
             "Iran",
             "Iraq",
             "Ireland",
-            "Israel",
             "Italy",
             "Jamaica",
             "Japan",
@@ -257,6 +264,13 @@ public class AdminSignupController  {
     @FXML
     public void initialize() {
 
+
+        try {
+            registry = LocateRegistry.getRegistry("localhost" , 8554);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
         c= ClientImpl.getInstance();
         c.setAdminSignupController(this);
 
@@ -282,6 +296,8 @@ public class AdminSignupController  {
 
     @FXML
     private void handleSignup() {
+
+        System.out.println("hello in signup");
         // Validate that all fields are filled
         boolean isValid = validateFields();
 
@@ -316,18 +332,73 @@ public class AdminSignupController  {
 
         // If all fields are filled and passwords match, proceed with signup logic
         String selectedGender = gender.getValue();
-        String selectedCountry = country.getValue();
-
-        // Print or process the selected values
-        System.out.println("Last Name: " + userName.getText());
-        System.out.println("Phone Number: " + phoneNumber.getText());
-        System.out.println("Email: " + email.getText());
-        System.out.println("Date of Birth: " + dateOfBirth.getValue());
-        System.out.println("Selected Gender: " + selectedGender);
-        System.out.println("Selected Country: " + selectedCountry);
-        System.out.println("Password: " + password.getText());
+   //     String selectedCountry = country.getValue();
+   
 
         // Add your signup logic here
+        LocalDate localDate = dateOfBirth.getValue();
+        Date sqlDate = Date.valueOf(localDate);
+        Admin newAdmin = null;
+
+        if(selectedGender.equals("Male"))
+        {
+             newAdmin = new Admin(userName.getText() ,
+                    phoneNumber.getText() ,
+                    email.getText() ,
+                    password.getText() ,
+                    Admin.Gender.male ,
+                    "egypt" ,
+                    sqlDate);
+        }
+        else if(selectedGender.equals("Female"))
+        {
+            newAdmin = new Admin(userName.getText() ,
+                    phoneNumber.getText() ,
+                    email.getText() ,
+                    password.getText() ,
+                    Admin.Gender.female ,
+                    "egypt" ,
+                    sqlDate);
+        }
+
+ 
+        // Look up the remote object
+        System.out.println("Admin: Looking up remote object...");
+
+        try {
+            adminInt = (AdminInt) registry.lookup("AdminServices");
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        } catch (NotBoundException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Admin: Remote object found.");
+
+            System.out.println(newAdmin);
+        // Call the remote method
+         boolean response = false;
+        try {
+            response = adminInt.Register(newAdmin);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+            
+
+
+        // Print or process the selected values
+        if(response) {
+            System.out.println("Last Name: " + userName.getText());
+            System.out.println("Phone Number: " + phoneNumber.getText());
+            System.out.println("Email: " + email.getText());
+            System.out.println("Date of Birth: " + dateOfBirth.getValue());
+            System.out.println("Selected Gender: " + selectedGender);
+          //  System.out.println("Selected Country: " + selectedCountry);
+            System.out.println("Password: " + password.getText());
+        }
+        else
+        {
+            System.out.println("Error");
+        }
     }
 
     // Helper method to validate all fields
@@ -373,7 +444,7 @@ public class AdminSignupController  {
         } else {
             gender.setStyle("");
         }
-
+/* 
         // Check country
         if (country.getValue() == null) {
             country.setStyle("-fx-border-color: #dc3545; -fx-border-width: 2px;");
@@ -381,6 +452,7 @@ public class AdminSignupController  {
         } else {
             country.setStyle("");
         }
+            */
 
         // Check password
         if (password.getText().isEmpty()) {

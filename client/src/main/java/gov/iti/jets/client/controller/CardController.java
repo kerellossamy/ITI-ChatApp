@@ -9,8 +9,11 @@ import java.util.ResourceBundle;
 import gov.iti.jets.client.model.ClientImpl;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Group;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import shared.interfaces.AdminInt;
 import shared.interfaces.UserInt;
@@ -25,6 +28,20 @@ public class CardController implements Initializable {
     private AdminInt adminInt;
     ClientImpl c;
 
+    @FXML
+    private Text friendNameText;
+    @FXML
+    private Text friendMessageText;
+    @FXML
+    private Circle friendStatusCircle;
+    @FXML
+    private Text friendMessageTimeText;
+    @FXML
+    private Text friendNumOfMessageText;
+    @FXML
+    private ImageView frinedImage;
+
+
     public void setUserInt(UserInt userInt) {
         this.userInt = userInt;
     }
@@ -33,52 +50,36 @@ public class CardController implements Initializable {
         this.adminInt = adminInt;
     }
 
-    @FXML
-    private Text friendName;
-    @FXML
-    private Text friendMessage;
-
     /**
      * Initializes the controller class.
      */
-
-    private String name;
-    private String message;
-
-
-    public CardController() {
-        this.name = null;
-        this.message = null;
-
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
     public void setCard(HBox item)
     {
-        VBox vbox =  (VBox) item.getChildren().get(0);
-        Text nametext = (Text)vbox.getChildren().get(0);
-        Text messagetext = (Text)vbox.getChildren().get(1);
+
+        Group group1 = (Group) item.getChildren().get(0);
+        ImageView image = (ImageView)group1.getChildren().get(0);
+        Circle status = (Circle)group1.getChildren().get(1);
+        //new Image(getClass().getResourceAsStream("/images/user.png"))
+
+        VBox vbox1 =  (VBox) item.getChildren().get(1);
+        Text name = (Text)vbox1.getChildren().get(0);
+        Text message = (Text)vbox1.getChildren().get(1);
+
+
+        VBox vbox2 =  (VBox) item.getChildren().get(2);
+        Text time = (Text)vbox2.getChildren().get(0);
+        Text numOfMessage = (Text)vbox2.getChildren().get(1);
+
 
         //System.out.println("name =" + nametext.toString());
         //System.out.println("message =" + messagetext.toString());
 
-        friendName.setText(nametext.getText());
-        friendMessage.setText(messagetext.getText());
+        frinedImage.setImage(image.getImage());
+        friendStatusCircle.setFill(status.getFill());
+        friendNameText.setText(name.getText());
+        friendMessageText.setText(message.getText());
+        friendMessageTimeText.setText(time.getText());
+        friendNumOfMessageText.setText(numOfMessage.getText());
 
     }
     @Override

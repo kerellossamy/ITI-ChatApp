@@ -59,16 +59,13 @@ public class GeneralStatisticsController implements Initializable {
             FXMLLoader loader= new  FXMLLoader(getClass().getResource("/fxml/hello-view -country.fxml"));
             borderPane=loader.load();
             CountryPieController countryPieController= loader.getController();
-           countryPieController.setAdminInt(ClientMain.adminInt);
-           countryPieController.setUserInt(ClientMain.userInt);
+            countryPieController.setAdminInt(ClientMain.adminInt);
+            countryPieController.setUserInt(ClientMain.userInt);
 
         } catch (IOException e) {
             System.out.println("failed to load it");
         }
         childBorderpane.setCenter(borderPane);
-
-
-
     }
 
     @FXML

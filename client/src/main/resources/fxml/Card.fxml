@@ -9,7 +9,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<HBox maxWidth="300.0" minWidth="100.0" prefHeight="70.0" prefWidth="100.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gov.iti.jets.client.controller.CardController">
+<HBox maxWidth="300.0" minWidth="250.0" prefHeight="70.0" prefWidth="80.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gov.iti.jets.client.controller.CardController">
    <children>
       <Group>
          <children>
@@ -18,7 +18,7 @@
                   <Image url="@../img/woman.png" />
                </image>
             </ImageView>
-            <Circle fx:id="statusCircle" fill="#1fff47" layoutX="40.0" layoutY="45.0" radius="8.0" stroke="BLACK" strokeType="INSIDE" />
+            <Circle fx:id="friendStatusCircle" fill="#fff848" layoutX="40.0" layoutY="45.0" radius="8.0" stroke="BLACK" strokeType="INSIDE" />
          </children>
          <HBox.margin>
             <Insets left="7.0" />
@@ -26,14 +26,14 @@
       </Group>
       <VBox prefHeight="55.0" prefWidth="173.0">
          <children>
-            <Text fx:id="friendName" fill="#3ca9fd" strokeType="OUTSIDE" strokeWidth="0.0" text="Jana">
+            <Text fx:id="friendNameText" fill="#3ca9fd" strokeType="OUTSIDE" strokeWidth="0.0" text="Jana">
                <font>
                   <Font name="System Bold" size="15.0" />
                </font>
             </Text>
             <TextFlow prefHeight="22.0" prefWidth="173.0">
                <children>
-                  <Text fx:id="friendMessage" strokeType="OUTSIDE" strokeWidth="0.0" text="Hi,are you available tommorow?" wrappingWidth="164.880859375">
+                  <Text fx:id="friendMessageText" strokeType="OUTSIDE" strokeWidth="0.0" text="Hi,are you available tommorow?" wrappingWidth="164.880859375">
                      <font>
                         <Font size="12.0" />
                      </font>
@@ -50,15 +50,15 @@
       </VBox>
       <VBox prefHeight="59.0" prefWidth="37.0">
          <children>
-            <Text fx:id="friendMessageTime" strokeType="OUTSIDE" strokeWidth="0.0" text="9:22 PM">
+            <Text fx:id="friendMessageTimeText" strokeType="OUTSIDE" strokeWidth="0.0" text="9:22 PM">
                <font>
                   <Font size="10.0" />
                </font>
             </Text>
             <Pane prefHeight="19.0" prefWidth="23.0">
                <children>
-                  <Circle fill="#67bcfe" layoutX="19.0" layoutY="10.0" radius="7.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
-                  <Text layoutX="16.0" layoutY="14.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1">
+                  <Circle fill="#67bcfe" layoutX="19.0" layoutY="10.0" radius="8.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+                  <Text fx:id="friendNumOfMessageText" layoutX="15.0" layoutY="14.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1">
                      <font>
                         <Font size="11.0" />
                      </font>
