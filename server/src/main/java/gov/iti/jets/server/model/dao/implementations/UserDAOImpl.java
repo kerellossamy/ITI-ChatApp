@@ -394,7 +394,6 @@ public class UserDAOImpl implements UserDAOInt {
     public int countCertainCountryUsers(String country) {
 
         int Count = 0;
-        System.out.println(Count);
         String sql =  "SELECT COUNT(*) FROM user WHERE country = ?";
 
         try (Connection connection = DB_UtilityClass.getConnection();
