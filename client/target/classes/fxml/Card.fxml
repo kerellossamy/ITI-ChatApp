@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<HBox maxWidth="300.0" minWidth="250.0" prefHeight="70.0" prefWidth="80.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gov.iti.jets.client.controller.CardController">
+   <children>
+      <Group>
+         <children>
+            <ImageView fx:id="frinedImage" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../img/woman.png" />
+               </image>
+            </ImageView>
+            <Circle fx:id="friendStatusCircle" fill="#fff848" layoutX="40.0" layoutY="45.0" radius="8.0" stroke="BLACK" strokeType="INSIDE" />
+         </children>
+         <HBox.margin>
+            <Insets left="7.0" />
+         </HBox.margin>
+      </Group>
+      <VBox prefHeight="55.0" prefWidth="173.0">
+         <children>
+            <Text fx:id="friendNameText" fill="#3ca9fd" strokeType="OUTSIDE" strokeWidth="0.0" text="Jana">
+               <font>
+                  <Font name="System Bold" size="15.0" />
+               </font>
+            </Text>
+            <TextFlow prefHeight="22.0" prefWidth="173.0">
+               <children>
+                  <Text fx:id="friendMessageText" strokeType="OUTSIDE" strokeWidth="0.0" text="Hi,are you available tommorow?" wrappingWidth="164.880859375">
+                     <font>
+                        <Font size="12.0" />
+                     </font>
+                  </Text>
+               </children>
+               <VBox.margin>
+                  <Insets top="8.0" />
+               </VBox.margin>
+            </TextFlow>
+         </children>
+         <HBox.margin>
+            <Insets left="5.0" top="2.0" />
+         </HBox.margin>
+      </VBox>
+      <VBox prefHeight="59.0" prefWidth="37.0">
+         <children>
+            <Text fx:id="friendMessageTimeText" strokeType="OUTSIDE" strokeWidth="0.0" text="9:22 PM">
+               <font>
+                  <Font size="10.0" />
+               </font>
+            </Text>
+            <Pane prefHeight="19.0" prefWidth="23.0">
+               <children>
+                  <Circle fill="#67bcfe" layoutX="19.0" layoutY="10.0" radius="8.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
+                  <Text fx:id="friendNumOfMessageText" layoutX="15.0" layoutY="14.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1">
+                     <font>
+                        <Font size="11.0" />
+                     </font>
+                  </Text>
+               </children>
+               <VBox.margin>
+                  <Insets top="14.0" />
+               </VBox.margin>
+            </Pane>
+         </children>
+         <HBox.margin>
+            <Insets left="8.0" />
+         </HBox.margin>
+      </VBox>
+   </children>
+   <padding>
+      <Insets top="8.0" />
+   </padding>
+</HBox>
