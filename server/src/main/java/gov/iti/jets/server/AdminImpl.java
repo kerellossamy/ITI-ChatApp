@@ -2,12 +2,14 @@ package gov.iti.jets.server;
 
 
 import gov.iti.jets.server.model.dao.implementations.*;
+import shared.dto.Admin;
 import shared.interfaces.AdminInt;
 import shared.utils.DB_UtilityClass;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.Connection;
+import java.sql.SQLException;
 
 public class AdminImpl extends UnicastRemoteObject implements AdminInt {
 
@@ -42,5 +44,47 @@ public class AdminImpl extends UnicastRemoteObject implements AdminInt {
     }
 
 
+    @Override
+    public boolean Register(Admin admin) throws RemoteException{
+        try {
+            if(!adminDAO.validateAdminCredentials(admin.getUserName() , admin.getPasswordHash()))
+            {
+                   adminDAO.addAdmin(admin);
+                   return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean Login(String userName, String password) throws RemoteException {
+        try {
+            if(adminDAO.validateAdminCredentials(userName, password))
+            {
+                return true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    @Override
+    public int getNumberOfUsersBasedOnCountry(String country)  throws RemoteException{
+        return userDAO.countCertainCountryUsers(country);
+    }
+
+    @Override
+    public int getNumberOfUsersBasedOnGender(String gender) throws RemoteException {
+        return userDAO.countCertainGenderUsers(gender);
+    }
+
+
 }
+
+
+
 

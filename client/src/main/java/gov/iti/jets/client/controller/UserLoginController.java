@@ -7,6 +7,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.Scene;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -38,6 +39,12 @@ public class UserLoginController {
     private Button loginAsAdminButton;
 
     @FXML
+    private TextField username;
+
+    @FXML
+    private TextField password;
+
+    @FXML
     public void initialize()
     {
 
@@ -52,6 +59,9 @@ public class UserLoginController {
     {
         try
         {
+            //System.out.println(username.getText());
+            //System.out.println(password.getText());
+
             // Load the UserSignupPage.fxml
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/homeScreen.fxml"));
             Parent homeRoot = loader.load();
@@ -121,6 +131,9 @@ public class UserLoginController {
             // Load the AdminLoginPage.fxml
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AdminLoginPage.fxml"));
             Parent adminLoginRoot = loader.load();
+            AdminLoginController adminLoginController = new AdminLoginController();
+            adminLoginController.setUserInt(ClientMain.userInt);
+            adminLoginController.setAdminInt(ClientMain.adminInt);
 
             // Get the current stage
             Stage stage = (Stage) loginAsAdminButton.getScene().getWindow();
