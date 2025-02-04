@@ -14,6 +14,8 @@ import java.sql.SQLException;
 
 public class AdminImpl extends UnicastRemoteObject implements AdminInt {
 
+
+    private static boolean isServerAvailabe= true;
     private final AdminDAOImpl adminDAO;
     private final ChatbotDAOImpl chatbotDAO;
     private final  DirectMessageDAOImpl directMessageDAO;
@@ -29,6 +31,8 @@ public class AdminImpl extends UnicastRemoteObject implements AdminInt {
     private Connection connection  =DB_UtilityClass.getConnection();
 
     public AdminImpl() throws RemoteException {
+
+       
 
         this.adminDAO = new AdminDAOImpl(connection);
         this.chatbotDAO = new ChatbotDAOImpl(connection);
@@ -115,6 +119,15 @@ public class AdminImpl extends UnicastRemoteObject implements AdminInt {
 
     }
 
+    public static void turnOnServer()
+    {
+         isServerAvailabe=true;
+    }
+
+    public static void turnOffServer()
+    {
+         isServerAvailabe=false;
+    }
 
 
 }

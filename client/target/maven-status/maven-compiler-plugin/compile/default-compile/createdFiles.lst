@@ -1,10 +1,10 @@
 gov\iti\jets\client\controller\AdminLoginController.class
 gov\iti\jets\client\model\ClientImpl.class
 shared\interfaces\AdminInt.class
-shared\dto\Admin$Gender.class
 shared\interfaces\ClientInt.class
 shared\interfaces\UserInt.class
 module-info.class
-gov\iti\jets\client\controller\AddContactWindowController.class
 gov\iti\jets\client\ClientMain.class
+shared\dto\Admin$Gender.class
+gov\iti\jets\client\controller\AddContactWindowController.class
 shared\dto\Admin.class
