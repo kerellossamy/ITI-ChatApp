@@ -13,6 +13,8 @@ public interface AdminInt extends Remote {
     int getNumberOfUsersBasedOnGender(String gender) throws  RemoteException;
     int getNumberOfUsersBasedOnStat(String stat) throws  RemoteException;
     void sendAnnouncement(ServerAnnouncement announcement) throws RemoteException;
+    void turnOnServer() throws RemoteException;
+    void turnOffServer() throws RemoteException;
 
 
 }

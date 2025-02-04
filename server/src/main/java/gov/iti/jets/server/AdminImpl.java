@@ -118,14 +118,18 @@ public class AdminImpl extends UnicastRemoteObject implements AdminInt {
         }
 
     }
-
-    public static void turnOnServer()
-    {
+    
+    @Override
+    public void turnOnServer()
+    { 
+        System.out.println("server is turned on");
          isServerAvailabe=true;
     }
-
-    public static void turnOffServer()
-    {
+    
+    @Override
+    public void turnOffServer()
+    { 
+        System.out.println("server is turned off");
          isServerAvailabe=false;
     }
 
