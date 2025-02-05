@@ -271,7 +271,6 @@ public class UserSignupController {
         c.setUserSignupController(this);
 
         gender.getItems().addAll("Male", "Female");
-        gender.setValue("Male");
 
         country.setItems(countries);
 
