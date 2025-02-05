@@ -1,19 +1,19 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/javafx/FXMLController.java to edit this template
- */
 package gov.iti.jets.client.controller;
 
 import gov.iti.jets.client.ClientMain;
 import gov.iti.jets.client.model.ClientImpl;
+import javafx.application.Platform;
 import javafx.event.*;
 import javafx.scene.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.stage.*;
 
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,6 +31,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.scene.web.HTMLEditor;
+import shared.dto.User;
 import shared.interfaces.AdminInt;
 import shared.interfaces.UserInt;
 
@@ -44,12 +45,24 @@ public class HomeScreenController implements Initializable {
     private UserInt userInt;
     private AdminInt adminInt;
     ClientImpl c;
+    private User currentUser = null;
+
+    public void setCurrentUser(User currentUser) {
+        System.out.println("setting the current user in the home page");
+        System.out.println(currentUser);
+        this.currentUser = currentUser;
+    }
+
+    public User getCurrentUser() {
+        return currentUser;
+    }
+
 
     public void setUserInt(UserInt userInt) {
         this.userInt = userInt;
     }
 
-    public  void setAdminInt(AdminInt adminInt) {
+    public void setAdminInt(AdminInt adminInt) {
         this.adminInt = adminInt;
     }
 
@@ -104,43 +117,62 @@ public class HomeScreenController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
+        System.out.println("currentUser is: " + currentUser);
+        Platform.runLater(() -> {
+            userNameText.setText(currentUser.getDisplayName());
+            userProfileImage.setImage(new Image(getClass().getResource(currentUser.getProfilePicturePath()).toExternalForm()));
+
+            // try to see the absolute path
+//            File file = Paths.get(currentUser.getProfilePicturePath()).toAbsolutePath().toFile();
+//            userProfileImage.setImage(new Image(file.toURI().toString()));
+
+        });
 
         fullListView(ContactList);
         populateCard(ContactList);
 
 
-        c= ClientImpl.getInstance();
+        c = ClientImpl.getInstance();
         c.setHomeScreenController(this);
 
     }
 
-    void populateCard(ListView<HBox> chatList)
-    {
+    public void updateUI() {
+        userNameText.setText(currentUser.getDisplayName());
+        //userProfileImage.setImage(new Image(getClass().getResource(currentUser.getProfilePicturePath()).toString()));
+        File file = new File(currentUser.getProfilePicturePath());
+        if (file.exists()) {
+            Image defaultPhoto = new Image(file.toURI().toString());
+            userProfileImage.setImage(defaultPhoto);
+        } else {
+            // Handle case where the file doesn't exist
+            System.out.println("Image file not found: " + currentUser.getProfilePicturePath());
+        }
+    }
+
+    void populateCard(ListView<HBox> chatList) {
         HBox card = new HBox();
         VBox v = new VBox();
         Text name = new Text("Salma");
         Text message = new Text("hello");
-        v.getChildren().addAll(name , message);
+        v.getChildren().addAll(name, message);
 
-        card.getChildren().addAll(v );
+        card.getChildren().addAll(v);
         chatList.getItems().addAll(card);
     }
 
 
-    public void fullListView(ListView<HBox> friendListView)
-    {
+    public void fullListView(ListView<HBox> friendListView) {
         friendListView.setCellFactory((param) -> {
 
-            ListCell<HBox> cell = new ListCell<HBox>(){
+            ListCell<HBox> cell = new ListCell<HBox>() {
                 @Override
                 protected void updateItem(HBox item, boolean empty) {
                     super.updateItem(item, empty);
                     System.out.println("1");
-                    if(!empty)
-                    {
+                    if (!empty) {
                         System.out.println("2");
-                        if(item != null)
-                        {
+                        if (item != null) {
                             try {
                                 FXMLLoader Cardloader = new FXMLLoader(getClass().getResource("fxml/Card.fxml"));
 
@@ -157,9 +189,7 @@ public class HomeScreenController implements Initializable {
                                 Logger.getLogger(HomeScreenController.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         }
-                    }
-                    else
-                    {
+                    } else {
                         System.out.println("empty");
                         setText(null);
                         setGraphic(null);
@@ -178,12 +208,11 @@ public class HomeScreenController implements Initializable {
         System.out.println("Add Contact button clicked!");
         // Add your logic here
 
-        try
-        {
+        try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AddContactWindow.fxml"));
 
             Parent root = loader.load();
-            AddContactWindowController addContactWindowController= loader.getController();
+            AddContactWindowController addContactWindowController = loader.getController();
             addContactWindowController.setAdminInt(ClientMain.adminInt);
             addContactWindowController.setUserInt(ClientMain.userInt);
 
@@ -200,9 +229,7 @@ public class HomeScreenController implements Initializable {
             // Show the small window
             addContactStage.showAndWait(); // Use show() for a non-blocking window
 
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -211,12 +238,11 @@ public class HomeScreenController implements Initializable {
     void handleCreateGroup(ActionEvent event) {
         System.out.println("Create Group button clicked!");
 
-        try
-        {
+        try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/CreateGroupWindow.fxml"));
 
             Parent root = loader.load();
-            CreateGroupController createGroupController=loader.getController();
+            CreateGroupController createGroupController = loader.getController();
             createGroupController.setAdminInt(ClientMain.adminInt);
             createGroupController.setUserInt(ClientMain.userInt);
 
@@ -233,40 +259,32 @@ public class HomeScreenController implements Initializable {
             // Show the small window
             createGroupStage.showAndWait(); // Use show() for a non-blocking window
 
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @FXML
-    void handleLogoutButton()
-    {
-        System.out.println("log out button pressed");
-
-        // Add your logic here
+    void handleLogoutButton() {
 
         try {
-            // Load the UserLoginPage.fxml
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/UserLoginPage.fxml"));
             Parent userLoginRoot = loader.load();
+            UserLoginController controller = loader.getController();
+            controller.setUserInt(userInt);
+            controller.setAdminInt(adminInt);
 
 
-            // Get the current stage
             Stage stage = (Stage) logOutbtn.getScene().getWindow();
 
-            double width=stage.getWidth();
-            double height=stage.getHeight();
+            double width = stage.getWidth();
+            double height = stage.getHeight();
 
-            // Set the scene with the signup page
+
             Scene scene = new Scene(userLoginRoot);
             stage.setScene(scene);
             stage.setWidth(width);
             stage.setHeight(height);
-
-            // Set the scene with the user login page
-
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -274,18 +292,16 @@ public class HomeScreenController implements Initializable {
     }
 
     @FXML
-    void handleInvitationListButton()
-    {
+    void handleInvitationListButton() {
         // Add your logic here
 
-        try
-        {
+        try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/InvitationWindow.fxml"));
             Parent root = loader.load();
-            if(root==null){
+            if (root == null) {
                 System.out.println("nullllllllllllllllllllllllllllllllllllll");
             }
-            InvitationListWindowController invitationListWindowController=loader.getController();
+            InvitationListWindowController invitationListWindowController = loader.getController();
             invitationListWindowController.setAdminInt(ClientMain.adminInt);
             invitationListWindowController.setUserInt(ClientMain.userInt);
 
@@ -304,26 +320,24 @@ public class HomeScreenController implements Initializable {
             addContactStage.showAndWait(); // Use show() for a non-blocking window
 
 
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
 
     @FXML
-    void handleEditProfileButton()
-    {
+    void handleEditProfileButton() {
         System.out.println("Edit button clicked!");
-        try
-        {
+        try {
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/EditWindow.fxml"));
             Parent root = loader.load();
-            EditWindowController editWindowController=loader.getController();
-            editWindowController.setAdminInt(ClientMain.adminInt);
-            editWindowController.setUserInt(ClientMain.userInt);
+            EditWindowController editWindowController = loader.getController();
+            editWindowController.setAdminInt(adminInt);
+            editWindowController.setUserInt(userInt);
+            editWindowController.setCurrentUser(currentUser);
+            editWindowController.setHomeScreenController(this);
 
             Stage editStage = new Stage();
             editStage.setTitle("Edit Info");
@@ -338,10 +352,8 @@ public class HomeScreenController implements Initializable {
 
             // Show the small window
             editStage.showAndWait(); // Use show() for a non-blocking window
-        }
-        catch(Exception e)
-        {
-
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
     }

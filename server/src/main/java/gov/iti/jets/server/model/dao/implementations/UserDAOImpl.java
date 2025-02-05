@@ -1,7 +1,6 @@
 package gov.iti.jets.server.model.dao.implementations;
 
 
-
 import gov.iti.jets.server.model.dao.interfaces.UserDAOInt;
 import shared.dto.User;
 import shared.utils.DB_UtilityClass;
@@ -15,12 +14,12 @@ import java.util.*;
 
 public class UserDAOImpl implements UserDAOInt {
 
-    public boolean createUser(User user)  {
+    public boolean createUser(User user) {
 
-        boolean result =false;
+        boolean result = false;
         String sql = "INSERT INTO user (phone_number, display_name, email, password_hash, profile_picture_path, gender, country, date_of_birth, bio, status, last_seen) " + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection connection= DB_UtilityClass.getConnection();
+        try (Connection connection = DB_UtilityClass.getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, user.getPhoneNumber());
             stmt.setString(2, user.getDisplayName());
@@ -33,9 +32,8 @@ public class UserDAOImpl implements UserDAOInt {
             stmt.setString(9, user.getBio());
             stmt.setString(10, user.getStatus().toString());
             stmt.setTimestamp(11, user.getLastSeen());
-            result= stmt.executeUpdate()>0 ;
-        }
-        catch (Exception e){
+            result = stmt.executeUpdate() > 0;
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -80,13 +78,12 @@ public class UserDAOImpl implements UserDAOInt {
     }
 
 
-
     public User getUserById(int userId) {
         User user = null;
         String sql = "SELECT * FROM user WHERE user_id = ?";
 
-        try ( Connection connection = DB_UtilityClass.getConnection();
-              PreparedStatement stmt = connection.prepareStatement(sql)) {
+        try (Connection connection = DB_UtilityClass.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, userId);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -112,8 +109,6 @@ public class UserDAOImpl implements UserDAOInt {
 
         return user;
     }
-
-
 
 
     public boolean updateUser(User user) {
@@ -145,6 +140,28 @@ public class UserDAOImpl implements UserDAOInt {
         return result;
     }
 
+    public boolean editUserShownInfo(int userId, String name, User.Status status, String picPath, String bio) {
+        boolean result = false;
+        String sql = "UPDATE user SET display_name = ?,status = ?,profile_picture_path = ?,bio = ? WHERE user_id = ?";
+
+        System.out.println("Executing SQL: " + sql);
+        System.out.println("Parameters: " + name + ", " + status + ", " + picPath + ", " + bio + ", " + userId);
+
+        try (Connection connection = DB_UtilityClass.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, name);
+            stmt.setString(2, status.toString().toLowerCase());
+            stmt.setString(3, picPath);
+            stmt.setString(4, bio);
+            stmt.setInt(5, userId);
+            result = stmt.executeUpdate() > 0;
+        } catch (Exception e) {
+            System.out.println("there is an error in teh editUserShowInfo in dao");
+            e.printStackTrace();
+        }
+
+        return result;
+    }
 
     public boolean deleteUser(int userId) {
         boolean result = false;
@@ -161,7 +178,7 @@ public class UserDAOImpl implements UserDAOInt {
         return result;
     }
 
-       //the delete method which resets the id after deleting so that there will be no gaps
+    //the delete method which resets the id after deleting so that there will be no gaps
 
 //    public boolean deleteUser(int userId) {
 //        boolean result = false;
@@ -200,8 +217,7 @@ public class UserDAOImpl implements UserDAOInt {
 
         try (Connection connection = DB_UtilityClass.getConnection();
              Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery(sql))
-        {
+             ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 User user = new User(
                         rs.getInt("user_id"),
@@ -225,6 +241,44 @@ public class UserDAOImpl implements UserDAOInt {
         return users;
     }
 
+    public boolean isUserFoundByPhoneNumber(String phone_number) {
+        String sql = "SELECT * FROM user WHERE phone_number = ?";
+
+        try (Connection connection = DB_UtilityClass.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setString(1, phone_number);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public boolean isUserFoundByEmail(String email) {
+        String sql = "SELECT * FROM user WHERE email = ?";
+
+        try (Connection connection = DB_UtilityClass.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setString(1, email);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
     public User getUserByPhoneNumber(String phone_number) {
 
@@ -244,7 +298,7 @@ public class UserDAOImpl implements UserDAOInt {
                             rs.getString("email"),
                             rs.getString("password_hash"),
                             rs.getString("profile_picture_path"),
-                            User.Gender.valueOf(rs.getString("gender").toUpperCase()),
+                            User.Gender.valueOf(rs.getString("gender")),
                             rs.getString("country"),
                             rs.getDate("date_of_birth"),
                             rs.getString("bio"),
@@ -263,23 +317,23 @@ public class UserDAOImpl implements UserDAOInt {
         boolean result = false;
         String sql = "UPDATE user SET last_seen = CURRENT_TIMESTAMP WHERE user_id = ?";
 
-        try ( Connection connection = DB_UtilityClass.getConnection();
-              PreparedStatement stmt = connection.prepareStatement(sql)) {
+        try (Connection connection = DB_UtilityClass.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, userId);
             result = stmt.executeUpdate() > 0;
-         } catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
         return result;
     }
 
-    public boolean updateBio(int userId,String bio) {
+    public boolean updateBio(int userId, String bio) {
         boolean result = false;
         String sql = "UPDATE user SET bio = ? WHERE user_id = ?";
 
-        try ( Connection connection = DB_UtilityClass.getConnection();
-              PreparedStatement stmt = connection.prepareStatement(sql)) {
+        try (Connection connection = DB_UtilityClass.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, bio);
             stmt.setInt(2, userId);
             result = stmt.executeUpdate() > 0;
@@ -291,8 +345,7 @@ public class UserDAOImpl implements UserDAOInt {
     }
 
 
-
-    public boolean updatePic(int userId,String picPath) {
+    public boolean updatePic(int userId, String picPath) {
 
         boolean result = false;
         String sql = "UPDATE user SET profile_picture_path = ? user_id = ?";
@@ -316,7 +369,7 @@ public class UserDAOImpl implements UserDAOInt {
 
         try (Connection connection = DB_UtilityClass.getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, status.toString());
+            stmt.setString(1, status.toString().toLowerCase());
             stmt.setInt(2, userId);
             result = stmt.executeUpdate() > 0;
         } catch (Exception e) {
@@ -327,11 +380,10 @@ public class UserDAOImpl implements UserDAOInt {
     }
 
 
-
     public boolean updatePassword(int userId, String password) {
         boolean result = false;
         String sql = "UPDATE user SET password_hash = ? WHERE user_id = ?";
-        String hashedPassword= Hashing_UtilityClass.hashString(password);
+        String hashedPassword = Hashing_UtilityClass.hashString(password);
 
         try (Connection connection = DB_UtilityClass.getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -350,8 +402,7 @@ public class UserDAOImpl implements UserDAOInt {
         String sql = "SELECT COUNT(*) FROM user WHERE last_seen >= NOW() - INTERVAL ? MINUTE";
 
         try (Connection connection = DB_UtilityClass.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(sql))
-        {
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, minutesThreshold);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -365,22 +416,21 @@ public class UserDAOImpl implements UserDAOInt {
         return onlineCount;
     }
 
-    public int countAllUsers (){
+    public int countAllUsers() {
 
-         return  getAllUsers().size();
+        return getAllUsers().size();
     }
 
     public int countMaleUsers() {
 
         int maleCount = 0;
-        String sql =  "SELECT COUNT(*) FROM user WHERE gender = 'male'";
+        String sql = "SELECT COUNT(*) FROM user WHERE gender = 'male'";
 
         try (Connection connection = DB_UtilityClass.getConnection();
-             PreparedStatement stmt = connection.prepareStatement(sql))
-        {
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    maleCount=rs.getInt(1);
+                    maleCount = rs.getInt(1);
                 }
             }
         } catch (SQLException e) {
@@ -394,16 +444,16 @@ public class UserDAOImpl implements UserDAOInt {
     public int countCertainCountryUsers(String country) {
 
         int Count = 0;
-        String sql =  "SELECT COUNT(*) FROM user WHERE country = ?";
+        String sql = "SELECT COUNT(*) FROM user WHERE country = ?";
 
         try (Connection connection = DB_UtilityClass.getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql)) {
 
-            stmt.setString(1,country );
+            stmt.setString(1, country);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
 
-                    Count=rs.getInt(1);
+                    Count = rs.getInt(1);
                 }
             }
         } catch (SQLException e) {
@@ -420,8 +470,7 @@ public class UserDAOImpl implements UserDAOInt {
 
         try (Connection connection = DB_UtilityClass.getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery())
-        {
+             ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
                 String country = rs.getString("country");
@@ -452,15 +501,46 @@ public class UserDAOImpl implements UserDAOInt {
         } finally {
             try {
                 fos.close();
-            } catch ( IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
         return path + "/" + imgID + ".jpg";
     }
 
+    public User getUserByPhoneNumberAndPassword(String phone_number, String password) {
+        User user = null;
+        String hashed_password = Hashing_UtilityClass.hashString(password);
+        String sql = "SELECT * FROM user WHERE phone_number = ? And password_hash= ?";
 
+        try (Connection connection = DB_UtilityClass.getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
 
+            stmt.setString(1, phone_number);
+            stmt.setString(2, hashed_password);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    user = new User(
+                            rs.getInt("user_id"),
+                            rs.getString("phone_number"),
+                            rs.getString("display_name"),
+                            rs.getString("email"),
+                            rs.getString("password_hash"),
+                            rs.getString("profile_picture_path"),
+                            User.Gender.valueOf(rs.getString("gender")),
+                            rs.getString("country"),
+                            rs.getDate("date_of_birth"),
+                            rs.getString("bio"),
+                            User.Status.valueOf(rs.getString("status").toUpperCase()),
+                            rs.getTimestamp("last_seen")
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
 
 
 }

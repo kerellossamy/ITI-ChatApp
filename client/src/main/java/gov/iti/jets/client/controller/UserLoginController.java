@@ -2,18 +2,24 @@ package gov.iti.jets.client.controller;
 
 import gov.iti.jets.client.ClientMain;
 import gov.iti.jets.client.model.ClientImpl;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.Scene;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import shared.dto.SocialNetwork;
+import shared.dto.User;
 import shared.interfaces.AdminInt;
 import shared.interfaces.UserInt;
 
 import java.net.URL;
+import java.rmi.RemoteException;
 import java.util.ResourceBundle;
 
 
@@ -21,13 +27,14 @@ public class UserLoginController {
 
     private UserInt userInt;
     private AdminInt adminInt;
+    private User currentUser = null;
     ClientImpl c;
 
     public void setUserInt(UserInt userInt) {
         this.userInt = userInt;
     }
 
-    public  void setAdminInt(AdminInt adminInt) {
+    public void setAdminInt(AdminInt adminInt) {
         this.adminInt = adminInt;
     }
 
@@ -38,86 +45,97 @@ public class UserLoginController {
     private Button loginAsAdminButton;
 
     @FXML
-    public void initialize()
-    {
+    private TextField phoneNumberTextField;
 
+    @FXML
+    private TextField passwordTextField;
+
+    @FXML
+    private Button loginButton;
+
+    @FXML
+    public void initialize() {
+        loginButton.setOnAction(event -> handleLogInButton());
         signupLabel.setOnMouseClicked(event -> navigateToSignup());
-        loginAsAdminButton.setOnAction(event-> navigateToAdminLogin());
-        c= ClientImpl.getInstance();
+        loginAsAdminButton.setOnAction(event -> navigateToAdminLogin());
+        c = ClientImpl.getInstance();
         c.setUserLoginController(this);
     }
 
     @FXML
-    public void handleLogInButton()
-    {
-        try
-        {
-            // Load the UserSignupPage.fxml
+    public void handleLogInButton() {
+        // here I need to check about user validation
+        String phoneNumber = phoneNumberTextField.getText();
+        String password = passwordTextField.getText();
+
+        try {
+            currentUser = userInt.isValidUser(phoneNumber, password);
+
+            if (currentUser == null) {
+                showErrorAlert("Invalid User", "Phone number or password are not correct");
+                return;
+            }
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+
+
+        try {
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/homeScreen.fxml"));
             Parent homeRoot = loader.load();
-            HomeScreenController homeScreenController=loader.getController();
+            HomeScreenController homeScreenController = loader.getController();
             homeScreenController.setUserInt(ClientMain.userInt);
             homeScreenController.setAdminInt(ClientMain.adminInt);
+            homeScreenController.setCurrentUser(currentUser);
 
 
-            // Get the current stage
+
             Stage stage = (Stage) signupLabel.getScene().getWindow();
-            double width=stage.getWidth();
-            double height=stage.getHeight();
+            double width = stage.getWidth();
+            double height = stage.getHeight();
 
-            // Set the scene with the admin login page
+
             Scene scene = new Scene(homeRoot);
             stage.setScene(scene);
             stage.setWidth(width);
             stage.setHeight(height);
 
-            // Set the scene with the signup page
- 
-
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
 
-
-    public void navigateToSignup()
-    {
-        try
-        {
+    public void navigateToSignup() {
+        try {
             // Load the UserSignupPage.fxml
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/UserSignupPage.fxml"));
             Parent signupRoot = loader.load();
-            UserSignupController userSignupController=loader.getController();
+            UserSignupController userSignupController = loader.getController();
             userSignupController.setUserInt(ClientMain.userInt);
             userSignupController.setAdminInt(ClientMain.adminInt);
-
 
 
             // Get the current stage
             Stage stage = (Stage) signupLabel.getScene().getWindow();
 
-            double width=stage.getWidth();
-            double height=stage.getHeight();
+            double width = stage.getWidth();
+            double height = stage.getHeight();
 
             // Set the scene with the admin login page
             Scene scene = new Scene(signupRoot);
             stage.setScene(scene);
             stage.setWidth(width);
             stage.setHeight(height);
-           
-        }
-        catch (Exception e)
-        {
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    public void navigateToAdminLogin()
-    {
-        try
-        {
+
+    public void navigateToAdminLogin() {
+        try {
             // Load the AdminLoginPage.fxml
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AdminLoginPage.fxml"));
             Parent adminLoginRoot = loader.load();
@@ -126,23 +144,28 @@ public class UserLoginController {
             Stage stage = (Stage) loginAsAdminButton.getScene().getWindow();
 
 
-            double width=stage.getWidth();
-            double height=stage.getHeight();
+            double width = stage.getWidth();
+            double height = stage.getHeight();
 
             // Set the scene with the admin login page
             Scene scene = new Scene(adminLoginRoot);
             stage.setScene(scene);
             stage.setWidth(width);
             stage.setHeight(height);
-         
 
-        }
-        catch (Exception e)
-        {
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    private void showErrorAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
 //    @Override
 //    public void initialize(URL url, ResourceBundle resourceBundle) {
 //        c= ClientImpl.getInstance();

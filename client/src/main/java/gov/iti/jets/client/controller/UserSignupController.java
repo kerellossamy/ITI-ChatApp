@@ -1,5 +1,6 @@
 package gov.iti.jets.client.controller;
 
+import gov.iti.jets.client.ClientMain;
 import gov.iti.jets.client.model.ClientImpl;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -8,11 +9,16 @@ import javafx.scene.control.*;
 import javafx.fxml.*;
 import javafx.scene.*;
 import javafx.stage.*;
+import shared.dto.User;
 import shared.interfaces.AdminInt;
 import shared.interfaces.UserInt;
+import shared.utils.Hashing_UtilityClass;
 
-import java.net.URL;
-import java.util.ResourceBundle;
+import java.rmi.RemoteException;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 
 public class UserSignupController {
@@ -20,12 +26,13 @@ public class UserSignupController {
     private UserInt userInt;
     private AdminInt adminInt;
     ClientImpl c;
+    private User currentUser = null;
 
     public void setUserInt(UserInt userInt) {
         this.userInt = userInt;
     }
 
-    public  void setAdminInt(AdminInt adminInt) {
+    public void setAdminInt(AdminInt adminInt) {
         this.adminInt = adminInt;
     }
 
@@ -260,7 +267,7 @@ public class UserSignupController {
 
     @FXML
     public void initialize() {
-        c= ClientImpl.getInstance();
+        c = ClientImpl.getInstance();
         c.setUserSignupController(this);
 
         gender.getItems().addAll("Male", "Female");
@@ -271,6 +278,14 @@ public class UserSignupController {
         // Make the country ComboBox searchable
         FilteredList<String> filteredCountries = new FilteredList<>(countries, p -> true);
         country.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
+
+            // If the change is due to selecting an item, skip updating the filter
+            if (country.getSelectionModel().getSelectedItem() != null &&
+                    country.getSelectionModel().getSelectedItem().equals(newValue)) {
+                return;
+            }
+
+
             filteredCountries.setPredicate(country -> {
                 if (newValue == null || newValue.isEmpty()) {
                     return true;
@@ -302,6 +317,19 @@ public class UserSignupController {
             phoneNumber.setStyle("");
         }
 
+        try {
+            if (isUsedPhoneNumber(phoneNumber.getText())) {
+                showErrorAlert("Phone Number", "The phone number already exists.");
+                phoneNumber.setStyle("-fx-border-color: #dc3545; -fx-border-width: 2px;");
+                return;
+            } else {
+                phoneNumber.setStyle("");
+            }
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+
+
         // Validate email (must be in a valid format)
         if (!isValidEmail(email.getText())) {
             showErrorAlert("Invalid Email", "Please enter a valid email address.");
@@ -310,6 +338,19 @@ public class UserSignupController {
         } else {
             email.setStyle("");
         }
+
+        try {
+            if (isUsedEmail(email.getText())) {
+                showErrorAlert("Email", "Email is already exists.");
+                email.setStyle("-fx-border-color: #dc3545; -fx-border-width: 2px;");
+                return;
+            } else {
+                phoneNumber.setStyle("");
+            }
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+
 
         // Validate password and confirm password
         if (!password.getText().equals(confirmPassword.getText())) {
@@ -322,39 +363,62 @@ public class UserSignupController {
         String selectedCountry = country.getValue();
 
 
-        // Print or process the selected values
-        System.out.println("First Name: " + firstName.getText());
-        System.out.println("Last Name: " + lastName.getText());
-        System.out.println("Phone Number: " + phoneNumber.getText());
-        System.out.println("Email: " + email.getText());
-        System.out.println("Date of Birth: " + dateOfBirth.getValue());
-        System.out.println("Selected Gender: " + selectedGender);
-        System.out.println("Selected Country: " + selectedCountry);
-        System.out.println("Password: " + password.getText());
+//        // Print or process the selected values
+//        System.out.println("First Name: " + firstName.getText());
+//        System.out.println("Last Name: " + lastName.getText());
+//        System.out.println("Phone Number: " + phoneNumber.getText());
+//        System.out.println("Email: " + email.getText());
+//        System.out.println("Date of Birth: " + dateOfBirth.getValue());
+//        System.out.println("Selected Gender: " + selectedGender);
+//        System.out.println("Selected Country: " + selectedCountry);
+//        System.out.println("Password: " + password.getText());
 
-        try
-        {
+
+        User newUser = new User();
+        newUser.setLastSeen(Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES)));
+        newUser.setEmail(email.getText());
+        newUser.setBio("I am a new user");
+        newUser.setCountry(selectedCountry);
+        newUser.setDisplayName(firstName.getText() + " " + lastName.getText());
+        newUser.setGender(User.Gender.valueOf(selectedGender.toLowerCase()));
+        newUser.setPasswordHash(Hashing_UtilityClass.hashString(password.getText()));
+        newUser.setPhoneNumber(phoneNumber.getText());
+        newUser.setDateOfBirth(Date.valueOf(dateOfBirth.getValue()));
+        newUser.setStatus(User.Status.AVAILABLE);
+        newUser.setProfilePicturePath("/img/man.png");
+
+        try {
+            userInt.addUsertoDB(newUser);
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println("new User is created successfully!!!");
+        currentUser = newUser;
+
+        try {
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/homeScreen.fxml"));
+            //to inject the current user to the home screen controller.
+            //loader.setControllerFactory(param -> new HomeScreenController(newUser));
+
             Parent signupRoot = loader.load();
+            HomeScreenController homeScreenController = loader.getController();
+            homeScreenController.setCurrentUser(currentUser);
+            homeScreenController.setUserInt(ClientMain.userInt);
+            homeScreenController.setAdminInt(ClientMain.adminInt);
 
 
 
             Stage stage = (Stage) button.getScene().getWindow();
-
-           double width=stage.getWidth();
-           double height=stage.getHeight();
-
+            double width = stage.getWidth();
+            double height = stage.getHeight();
 
             Scene scene = new Scene(signupRoot);
             stage.setScene(scene);
             stage.setWidth(width);
             stage.setHeight(height);
-          
 
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -438,13 +502,11 @@ public class UserSignupController {
         return isValid;
     }
 
-
     private boolean isValidPhoneNumber(String phoneNumber) {
         // Regex to match only numbers
         String regex = "^[0-9]+$";
         return phoneNumber.matches(regex);
     }
-
 
     private boolean isValidEmail(String email) {
         // Regex for a basic email validation
@@ -452,13 +514,20 @@ public class UserSignupController {
         return email.matches(regex);
     }
 
-
     private void showErrorAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    private boolean isUsedPhoneNumber(String phoneNumber) throws RemoteException {
+        return userInt.isUserFoundByPhoneNumber(phoneNumber);
+    }
+
+    private boolean isUsedEmail(String email) throws RemoteException {
+        return userInt.isUserFoundByEmail(email);
     }
 
 //

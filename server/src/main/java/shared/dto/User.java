@@ -15,12 +15,12 @@ public class User implements Serializable {
     private String country;
     private Date dateOfBirth;
     private String bio;
-    private Status status;                        // Enum for 'available', 'busy', 'away', 'offline'
+    private Status status;                        // Enum for 'available', 'busy', 'away', 'OFFLINE'
     private Timestamp lastSeen;
 
     // Enum for Gender
     public enum Gender {
-        MALE, FEMALE
+        male, female
     }
 
     // Enum for Status
