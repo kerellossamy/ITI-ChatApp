@@ -46,6 +46,7 @@ public class HomeScreenController implements Initializable {
     private AdminInt adminInt;
     ClientImpl c;
     private User currentUser = null;
+    static boolean isBotEnabled = false;
 
     public void setCurrentUser(User currentUser) {
         System.out.println("setting the current user in the home page");
@@ -355,6 +356,49 @@ public class HomeScreenController implements Initializable {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+    }
+
+    public void handleBotButton(ActionEvent actionEvent) {
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ChatbotWindow.fxml"));
+            Parent root = loader.load();
+            if (root == null) {
+                System.out.println("nullllllllllllllllllllllllllllllllllllll");
+            }
+
+            Stage addContactStage = new Stage();
+            addContactStage.setTitle("Chat bot");
+
+            // Set the scene for the small window
+            addContactStage.setScene(new Scene(root));
+
+            // Optional: Set modality to block the main window
+            addContactStage.initModality(Modality.APPLICATION_MODAL);
+            addContactStage.setResizable(false);
+
+
+            // Show the small window
+            addContactStage.showAndWait(); // Use show() for a non-blocking window
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     }
    /* public void fullListView(ListView<Friend> contListView , ScrollPane scrollPane)

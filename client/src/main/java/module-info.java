@@ -5,6 +5,15 @@ module gov.iti.jets.client {
     //requires gov.iti.jets.shared;
     requires java.sql;
     requires javafx.web;
+
+    //chatbot requires
+    requires org.apache.httpcomponents.core5.httpcore5;
+    requires org.apache.httpcomponents.httpclient;
+    requires org.apache.httpcomponents.httpcore;
+    requires org.json;
+    //**********************************
+
+
     //requires javafx.web;
 
     opens gov.iti.jets.client to javafx.fxml;
