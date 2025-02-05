@@ -14,8 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserImpl extends UnicastRemoteObject implements UserInt {
-
-    List<ClientInt> OnlineClintsList =new ArrayList<>();
+  
+   
+   static List<ClientInt> OnlineClintsList =new ArrayList<>();
     private final AdminDAOImpl adminDAO;
     private final ChatbotDAOImpl chatbotDAO;
     private final DirectMessageDAOImpl directMessageDAO;
@@ -45,11 +46,12 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
         this.userDAO = new UserDAOImpl();
         this.userGroupsDAO = new UserGroupsDAOImpl(connection);
     }
-
+    
+   
 
     @Override
     public void register(ClientInt client) throws RemoteException {
-
+        
         OnlineClintsList.add(client);
 
 
@@ -59,5 +61,10 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
     public void unregister(ClientInt client) throws RemoteException {
 
         OnlineClintsList.remove(client);
+    }
+   
+    public static int getOnlineUsers()
+    {
+        return OnlineClintsList.size();
     }
 }

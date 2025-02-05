@@ -210,7 +210,7 @@ public class UserDAOImpl implements UserDAOInt {
                         rs.getString("email"),
                         rs.getString("password_hash"),
                         rs.getString("profile_picture_path"),
-                        User.Gender.valueOf(rs.getString("gender").toUpperCase()),
+                        User.Gender.valueOf(rs.getString("gender")),
                         rs.getString("country"),
                         rs.getDate("date_of_birth"),
                         rs.getString("bio"),
@@ -394,6 +394,7 @@ public class UserDAOImpl implements UserDAOInt {
     public int countCertainCountryUsers(String country) {
 
         int Count = 0;
+        System.out.println(Count);
         String sql =  "SELECT COUNT(*) FROM user WHERE country = ?";
 
         try (Connection connection = DB_UtilityClass.getConnection();

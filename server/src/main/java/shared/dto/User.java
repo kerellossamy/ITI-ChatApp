@@ -20,7 +20,7 @@ public class User implements Serializable {
 
     // Enum for Gender
     public enum Gender {
-        MALE, FEMALE
+        male, female
     }
 
     // Enum for Status

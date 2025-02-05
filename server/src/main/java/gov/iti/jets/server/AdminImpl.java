@@ -3,6 +3,7 @@ package gov.iti.jets.server;
 
 import gov.iti.jets.server.model.dao.implementations.*;
 import shared.dto.Admin;
+import shared.dto.ServerAnnouncement;
 import shared.interfaces.AdminInt;
 import shared.utils.DB_UtilityClass;
 
@@ -13,6 +14,8 @@ import java.sql.SQLException;
 
 public class AdminImpl extends UnicastRemoteObject implements AdminInt {
 
+
+    private static boolean isServerAvailabe= true;
     private final AdminDAOImpl adminDAO;
     private final ChatbotDAOImpl chatbotDAO;
     private final  DirectMessageDAOImpl directMessageDAO;
@@ -28,6 +31,8 @@ public class AdminImpl extends UnicastRemoteObject implements AdminInt {
     private Connection connection  =DB_UtilityClass.getConnection();
 
     public AdminImpl() throws RemoteException {
+
+       
 
         this.adminDAO = new AdminDAOImpl(connection);
         this.chatbotDAO = new ChatbotDAOImpl(connection);
@@ -80,6 +85,52 @@ public class AdminImpl extends UnicastRemoteObject implements AdminInt {
     @Override
     public int getNumberOfUsersBasedOnGender(String gender) throws RemoteException {
         return userDAO.countCertainGenderUsers(gender);
+    }
+    @Override
+    public int getNumberOfUsersBasedOnStat(String stat) throws  RemoteException
+    {   
+      
+       
+        int onlineusers=UserImpl.getOnlineUsers();
+        if(stat.equals("online" ))
+        {
+           return onlineusers;
+        }
+        else 
+        {
+           return userDAO.countAllUsers()-onlineusers;
+        }
+        
+       
+       
+    }
+    @Override 
+   public void sendAnnouncement(ServerAnnouncement announcement) throws RemoteException
+    {   
+       
+        try 
+        {
+        serverAnnouncementDAO.addServerAnnouncement(announcement);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+
+    }
+    
+    @Override
+    public void turnOnServer()
+    { 
+        System.out.println("server is turned on");
+         isServerAvailabe=true;
+    }
+    
+    @Override
+    public void turnOffServer()
+    { 
+        System.out.println("server is turned off");
+         isServerAvailabe=false;
     }
 
 

@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -121,6 +122,12 @@ public class AdminLoginController {
                 e.printStackTrace();
             }
         }
+        else 
+        {
+           
+                showErrorAlert("Login Error", "Incorrect username or password.");
+               
+        }
 
     }
 
@@ -145,6 +152,15 @@ public class AdminLoginController {
             e.printStackTrace();
         }
         return false;
+    }
+
+        // Helper method to show an error alert
+    private void showErrorAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
 
