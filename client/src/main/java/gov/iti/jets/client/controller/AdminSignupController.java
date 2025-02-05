@@ -8,15 +8,23 @@ import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import shared.dto.Admin;
 import shared.interfaces.AdminInt;
 import shared.interfaces.UserInt;
 
 import java.net.URL;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ResourceBundle;
 
 public class AdminSignupController  {
     private UserInt userInt;
     private AdminInt adminInt;
+    private Registry registry;
     ClientImpl c;
 
     public void setUserInt(UserInt userInt) {
@@ -137,7 +145,6 @@ public class AdminSignupController  {
             "Iran",
             "Iraq",
             "Ireland",
-            "Israel",
             "Italy",
             "Jamaica",
             "Japan",
@@ -257,24 +264,45 @@ public class AdminSignupController  {
     @FXML
     public void initialize() {
 
+
+        try {
+            registry = LocateRegistry.getRegistry("localhost" , 8554);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
         c= ClientImpl.getInstance();
         c.setAdminSignupController(this);
 
-        gender.getItems().addAll("Male", "Female");
-        gender.setValue("Male");
+        gender.getItems().addAll("male", "female");
+        gender.setValue("male");
 
         country.setItems(countries);
 
-        // Make the country ComboBox searchable
-        FilteredList<String> filteredCountries = new FilteredList<>(countries, p -> true);
-        country.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
-            filteredCountries.setPredicate(country -> {
-                if (newValue == null || newValue.isEmpty()) {
-                    return true;
-                }
-                return country.toLowerCase().contains(newValue.toLowerCase());
-            });
-        });
+        //---------------------------------------------------------------
+
+// Make the country ComboBox searchable
+FilteredList<String> filteredCountries = new FilteredList<>(countries, p -> true);
+country.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
+
+    // If the change is due to selecting an item, skip updating the filter
+    if (country.getSelectionModel().getSelectedItem() != null &&
+            country.getSelectionModel().getSelectedItem().equals(newValue)) {
+        return;
+    }
+
+
+    filteredCountries.setPredicate(country -> {
+        if (newValue == null || newValue.isEmpty()) {
+            return true;
+        }
+        return country.toLowerCase().contains(newValue.toLowerCase());
+    });
+       });
+
+    
+
+        
 
         // Bind the filtered list to the ComboBox
         country.setItems(filteredCountries);
@@ -282,6 +310,8 @@ public class AdminSignupController  {
 
     @FXML
     private void handleSignup() {
+
+        System.out.println("hello in signup");
         // Validate that all fields are filled
         boolean isValid = validateFields();
 
@@ -292,7 +322,7 @@ public class AdminSignupController  {
 
         // Validate phone number (must contain only numbers)
         if (!isValidPhoneNumber(phoneNumber.getText())) {
-            showErrorAlert("Invalid Phone Number", "The phone number must contain only numbers.");
+            showErrorAlert("Invalid Phone Number", "Please enter a valid 11-digit phone number using only numbers.");
             phoneNumber.setStyle("-fx-border-color: #dc3545; -fx-border-width: 2px;");
             return;
         } else {
@@ -317,17 +347,64 @@ public class AdminSignupController  {
         // If all fields are filled and passwords match, proceed with signup logic
         String selectedGender = gender.getValue();
         String selectedCountry = country.getValue();
-
-        // Print or process the selected values
-        System.out.println("Last Name: " + userName.getText());
-        System.out.println("Phone Number: " + phoneNumber.getText());
-        System.out.println("Email: " + email.getText());
-        System.out.println("Date of Birth: " + dateOfBirth.getValue());
-        System.out.println("Selected Gender: " + selectedGender);
-        System.out.println("Selected Country: " + selectedCountry);
-        System.out.println("Password: " + password.getText());
+   
 
         // Add your signup logic here
+        LocalDate localDate = dateOfBirth.getValue();
+        Date sqlDate = Date.valueOf(localDate);
+        Admin newAdmin = null;
+
+      
+             newAdmin = new Admin(userName.getText() ,
+                    phoneNumber.getText() ,
+                    email.getText() ,
+                    password.getText() ,
+                    Admin.Gender.valueOf(selectedGender),
+                    selectedCountry ,
+                    sqlDate);
+     
+
+ 
+        // Look up the remote object
+        System.out.println("Admin: Looking up remote object...");
+
+        try {
+            adminInt = (AdminInt) registry.lookup("AdminServices");
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        } catch (NotBoundException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Admin: Remote object found.");
+
+            System.out.println(newAdmin);
+        // Call the remote method
+         boolean response = false;
+        try {
+            response = adminInt.Register(newAdmin);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+            
+
+
+        // Print or process the selected values
+        if(response) {
+            System.out.println("Last Name: " + userName.getText());
+            System.out.println("Phone Number: " + phoneNumber.getText());
+            System.out.println("Email: " + email.getText());
+            System.out.println("Date of Birth: " + dateOfBirth.getValue());
+            System.out.println("Selected Gender: " + selectedGender);
+            System.out.println("Selected Country: " + selectedCountry);
+            System.out.println("Password: " + password.getText());
+
+            showSuccessAlert("Signup Successful", "Your account has been created successfully.");
+        }
+        else
+        {
+            System.out.println("Error");
+            showErrorAlert("Registration Error", "This username already exists. Please choose a different one.");
+        }
     }
 
     // Helper method to validate all fields
@@ -373,7 +450,7 @@ public class AdminSignupController  {
         } else {
             gender.setStyle("");
         }
-
+ 
         // Check country
         if (country.getValue() == null) {
             country.setStyle("-fx-border-color: #dc3545; -fx-border-width: 2px;");
@@ -381,6 +458,7 @@ public class AdminSignupController  {
         } else {
             country.setStyle("");
         }
+        
 
         // Check password
         if (password.getText().isEmpty()) {
@@ -404,7 +482,7 @@ public class AdminSignupController  {
     // Helper method to validate phone number (must contain only numbers)
     private boolean isValidPhoneNumber(String phoneNumber) {
         // Regex to match only numbers
-        String regex = "^[0-9]+$";
+        String regex = "^\\d{11}$";
         return phoneNumber.matches(regex);
     }
 
@@ -418,6 +496,14 @@ public class AdminSignupController  {
     // Helper method to show an error alert
     private void showErrorAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    private void showSuccessAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);

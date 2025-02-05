@@ -108,18 +108,23 @@ public class UserLoginController {
             homeScreenController.setCurrentUser(currentUser);
 
 
-
+            // Get the current stage
             Stage stage = (Stage) signupLabel.getScene().getWindow();
             double width = stage.getWidth();
             double height = stage.getHeight();
 
-
+            // Set the scene with the admin login page
             Scene scene = new Scene(homeRoot);
             stage.setScene(scene);
             stage.setWidth(width);
             stage.setHeight(height);
 
-        } catch (Exception e) {
+            // Set the scene with the signup page
+ 
+
+        }
+        catch (Exception e)
+        {
             e.printStackTrace();
         }
     }
@@ -130,9 +135,10 @@ public class UserLoginController {
             // Load the UserSignupPage.fxml
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/UserSignupPage.fxml"));
             Parent signupRoot = loader.load();
-            UserSignupController userSignupController = loader.getController();
+            UserSignupController userSignupController=loader.getController();
             userSignupController.setUserInt(ClientMain.userInt);
             userSignupController.setAdminInt(ClientMain.adminInt);
+
 
 
             // Get the current stage
@@ -157,6 +163,9 @@ public class UserLoginController {
             // Load the AdminLoginPage.fxml
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AdminLoginPage.fxml"));
             Parent adminLoginRoot = loader.load();
+            AdminLoginController adminLoginController = new AdminLoginController();
+            adminLoginController.setUserInt(ClientMain.userInt);
+            adminLoginController.setAdminInt(ClientMain.adminInt);
 
             // Get the current stage
             Stage stage = (Stage) loginAsAdminButton.getScene().getWindow();

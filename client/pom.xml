@@ -15,7 +15,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>21</maven.compiler.release>
-        <javafx.version>21.0.1</javafx.version>
+        <javafx.version>23.0.1</javafx.version>
         <!--        <env.JAVAFX_HOME>C:\Users\Kerellos Samy\Downloads\Compressed\openjfx-21.0.1_windows-x64_bin-sdk\javafx-sdk-21.0.1</env.JAVAFX_HOME>-->
     </properties>
     <dependencies>
@@ -196,16 +196,14 @@
 
 
             <!-- JavaFX Maven Plugin -->
-            <!--            <plugin>-->
-            <!--                <groupId>org.openjfx</groupId>-->
-            <!--                <artifactId>javafx-maven-plugin</artifactId>-->
-            <!--                <version>0.0.8</version>-->
-            <!--                <configuration>-->
-            <!--                    <mainClass>gov.iti.jets.client.ClientMain</mainClass>-->
-            <!--                </configuration>-->
-            <!--            </plugin>-->
-
-
+                <plugin>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>javafx-maven-plugin</artifactId>
+                    <version>0.0.8</version>
+                    <configuration>
+                        <mainClass>gov.iti.jets.client.ClientMain</mainClass>
+                    </configuration>
+                </plugin>
         </plugins>
     </build>
 </project>

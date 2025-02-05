@@ -17,6 +17,7 @@ public class ServerMain {
             registry.rebind("UserServices",userInt);
             registry.rebind("AdminServices",adminInt);
             System.out.println("server is running .....");
+            while(true);
         }
         catch (Exception e){
             e.printStackTrace();

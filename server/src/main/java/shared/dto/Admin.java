@@ -30,6 +30,16 @@ public class Admin implements Serializable {
         this.country = country;
         this.dateOfBirth = dateOfBirth;
     }
+    public Admin(String userName, String phoneNumber, String email, String passwordHash, Gender gender, String country, Date dateOfBirth) {
+        
+        this.userName = userName;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.passwordHash = passwordHash;
+        this.gender = gender;
+        this.country = country;
+        this.dateOfBirth = dateOfBirth;
+    }
 
     public int getAdminId() {
         return adminId;

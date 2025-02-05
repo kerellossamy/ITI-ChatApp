@@ -148,7 +148,6 @@ public class UserSignupController {
             "Iran",
             "Iraq",
             "Ireland",
-            "Israel",
             "Italy",
             "Jamaica",
             "Japan",

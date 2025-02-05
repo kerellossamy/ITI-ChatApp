@@ -36,7 +36,8 @@ public interface UserDAOInt {
 
     int countAllUsers();
 
-    int countMaleUsers();
+    int countCertainGenderUsers(String gender);
+
 
     int countCertainCountryUsers(String country);
 

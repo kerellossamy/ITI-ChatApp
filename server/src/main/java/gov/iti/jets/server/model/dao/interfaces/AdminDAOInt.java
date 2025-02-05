@@ -12,4 +12,6 @@ public interface AdminDAOInt {
     List<shared.dto.Admin> getAllAdmins() throws SQLException;
     void updateAdmin(Admin admin) throws SQLException;
     void deleteAdmin(int adminId) throws SQLException;
+    boolean validateAdminCredentials(String username, String passwordHash) throws SQLException;
+    //public int getAdminId(String userName , String password) throws SQLException;
 }
