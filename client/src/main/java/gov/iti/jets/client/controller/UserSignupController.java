@@ -310,7 +310,7 @@ public class UserSignupController {
 
         // Validate phone number (must contain only numbers)
         if (!isValidPhoneNumber(phoneNumber.getText())) {
-            showErrorAlert("Invalid Phone Number", "The phone number must contain only numbers.");
+            showErrorAlert("Invalid Phone Number", "The phone number must contain 11 digits.");
             phoneNumber.setStyle("-fx-border-color: #dc3545; -fx-border-width: 2px;");
             return;
         } else {
@@ -507,8 +507,8 @@ public class UserSignupController {
     }
 
     private boolean isValidPhoneNumber(String phoneNumber) {
-        // Regex to match only numbers
-        String regex = "^[0-9]+$";
+        // Regex to match exactly 11 digits
+        String regex = "^[0-9]{11}$";
         return phoneNumber.matches(regex);
     }
 

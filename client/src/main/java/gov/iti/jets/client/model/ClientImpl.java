@@ -1,4 +1,4 @@
-package gov.iti.jets.client.model;//package gov.iti.jets;
+package gov.iti.jets.client.model;
 
 import gov.iti.jets.client.controller.*;
 import shared.interfaces.ClientInt;

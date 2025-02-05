@@ -60,6 +60,24 @@ public class UserLoginController {
         loginAsAdminButton.setOnAction(event -> navigateToAdminLogin());
         c = ClientImpl.getInstance();
         c.setUserLoginController(this);
+
+        phoneNumberTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("\\d*")) {
+                showAlert("Invalid Input", "Phone number must contain only digits.");
+                phoneNumberTextField.setText(oldValue);
+            } else if (newValue.length() > 11) {
+                showAlert("Invalid Input", "Phone number must be exactly 11 digits.");
+                phoneNumberTextField.setText(oldValue);
+            }
+        });
+    }
+
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     @FXML

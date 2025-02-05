@@ -5,18 +5,15 @@ import java.util.ResourceBundle;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
-import shared.dto.SocialNetwork;
 
 
-public class chatbotWindowController {
+public class ChatbotWindowController {
 
     boolean toggleState ;
     Stage stage;
