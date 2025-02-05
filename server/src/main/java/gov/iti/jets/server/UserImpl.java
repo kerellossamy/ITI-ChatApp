@@ -3,6 +3,7 @@ package gov.iti.jets.server;
 
 import gov.iti.jets.server.model.dao.implementations.*;
 import shared.dto.User;
+import shared.dto.UserConnection;
 import shared.interfaces.ClientInt;
 import shared.interfaces.UserInt;
 import shared.utils.DB_UtilityClass;
@@ -28,10 +29,12 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
     private final UserBlockedConnectionDAOImpl userBlockedConnectionDAO;
     private final UserDAOImpl userDAO;
     private final UserGroupsDAOImpl userGroupsDAO;
+    private final UserConnectionDAOImpl userConnectionDAO;
     private Connection connection = DB_UtilityClass.getConnection();
 
     protected UserImpl() throws RemoteException {
 
+        this.userConnectionDAO=new UserConnectionDAOImpl();
         this.adminDAO = new AdminDAOImpl(connection);
         this.chatbotDAO = new ChatbotDAOImpl(connection);
         this.directMessageDAO = new DirectMessageDAOImpl();
@@ -86,5 +89,15 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
         System.out.println("for testing i'm in editUserShownInfo in the user impl");
 
         return userDAO.editUserShownInfo(userId, name, status, picPath, bio);
+    }
+
+   public User getUserByPhoneNumber(String phone_number) {
+
+        return userDAO.getUserByPhoneNumber(phone_number);
+    }
+
+    @Override
+    public boolean insertUserConnection(UserConnection userConnection) throws RemoteException {
+        return userConnectionDAO.insertUserConnection(userConnection);
     }
 }

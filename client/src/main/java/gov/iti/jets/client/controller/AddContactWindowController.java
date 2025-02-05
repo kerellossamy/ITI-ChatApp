@@ -6,6 +6,8 @@ import javafx.event.*;
 
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import shared.dto.User;
+import shared.dto.UserConnection;
 import shared.interfaces.AdminInt;
 import shared.interfaces.UserInt;
 
@@ -48,7 +50,40 @@ public class AddContactWindowController  {
     @FXML
     public void handleAddContactButton(ActionEvent event) throws IOException
      {
-          System.out.println(numberTextField.getText());
+         User user = userInt.getUserByPhoneNumber( numberTextField.getText());
+         if(user!=null)
+         {
+
+
+             UserConnection userConnection=new UserConnection();
+             userConnection.setUserId(HomeScreenController.currentUser.getUserId());
+             userConnection.setConnectedUserId(user.getUserId());
+             userConnection.setRelationship("Friend");
+            if(userInt.insertUserConnection(userConnection)){
+                showInfoMessage("Done!", "User added successfully");
+            }
+
+         }
+         else
+         {
+            showErrorAlert("Error", "User not found");
+         }
+
+    }
+
+    private void showErrorAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+    private void showInfoMessage(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
 //    @Override

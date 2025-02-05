@@ -45,7 +45,7 @@ public class HomeScreenController implements Initializable {
     private UserInt userInt;
     private AdminInt adminInt;
     ClientImpl c;
-    private User currentUser = null;
+    static User currentUser = null;
     static boolean isBotEnabled = false;
 
     public void setCurrentUser(User currentUser) {

@@ -44,7 +44,8 @@ public class ChatbotService {
                 return botResponse;
 
             }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
             return "Error: Unable to connect to chatbot service.";
         }
