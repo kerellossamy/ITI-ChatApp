@@ -15,34 +15,34 @@ import java.util.List;
 public class InvitationDAOImpl implements InvitationDAOInt {
 
 
-    public void addInvitation(Invitation invitation)  {
+    public boolean addInvitation(Invitation invitation) {
 
+        boolean result = false;
         String query = "INSERT INTO invitation (sender_id, receiver_id, status) VALUES (?, ?, ?)";
         try (Connection connection = DB_UtilityClass.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query))
-        {
+             PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, invitation.getSenderId());
             statement.setInt(2, invitation.getReceiverId());
             statement.setString(3, invitation.getStatus().toString());
             statement.executeUpdate();
-        }
-        catch (SQLException e){
+            result = statement.executeUpdate() > 0;
+        } catch (SQLException e) {
             e.printStackTrace();
         }
+        return result;
     }
 
 
-    public Invitation getInvitationById(int invitationId)  {
+    public Invitation getInvitationById(int invitationId) {
 
-        Invitation invitation=null;
+        Invitation invitation = null;
         String query = "SELECT * FROM invitation WHERE invitation_id = ?";
         try (Connection connection = DB_UtilityClass.getConnection();
-             PreparedStatement statement = connection.prepareStatement(query))
-        {
+             PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, invitationId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    invitation= new Invitation(
+                    invitation = new Invitation(
                             resultSet.getInt("invitation_id"),
                             resultSet.getInt("sender_id"),
                             resultSet.getInt("receiver_id"),
@@ -51,15 +51,14 @@ public class InvitationDAOImpl implements InvitationDAOInt {
                     );
                 }
             }
-        }
-        catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return invitation;
     }
 
 
-    public void updateInvitationStatus(int invitationId, Invitation.Status newStatus)  {
+    public void updateInvitationStatus(int invitationId, Invitation.Status newStatus) {
         String query = "UPDATE invitation SET status = ? WHERE invitation_id = ?";
         try (Connection connection = DB_UtilityClass.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
@@ -67,9 +66,7 @@ public class InvitationDAOImpl implements InvitationDAOInt {
             statement.setInt(2, invitationId);
             statement.executeUpdate();
             handleStatusChange(invitationId, newStatus);
-        }
-
-        catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -97,14 +94,14 @@ public class InvitationDAOImpl implements InvitationDAOInt {
             }
         }
     }
+
     public void deleteInvitation(int invitationId) {
         String query = "DELETE FROM invitation WHERE invitation_id = ?";
-        try (Connection connection = DB_UtilityClass.getConnection() ;
+        try (Connection connection = DB_UtilityClass.getConnection();
              PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, invitationId);
             statement.executeUpdate();
-        }
-        catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -115,11 +112,10 @@ public class InvitationDAOImpl implements InvitationDAOInt {
         String query = "SELECT * FROM invitation";
         try (Connection connection = DB_UtilityClass.getConnection();
              Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(query))
-        {
+             ResultSet resultSet = statement.executeQuery(query)) {
             while (resultSet.next()) {
 
-                Invitation invitation=(new Invitation(
+                Invitation invitation = (new Invitation(
                         resultSet.getInt("invitation_id"),
                         resultSet.getInt("sender_id"),
                         resultSet.getInt("receiver_id"),
@@ -127,10 +123,38 @@ public class InvitationDAOImpl implements InvitationDAOInt {
                 ));
                 invitations.add(invitation);
             }
-        }
-        catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return invitations;
+    }
+
+
+    public Invitation getInvitationBySenderAndReciever(int senderId, int receiverId) {
+        {
+
+            Invitation invitation = null;
+            String query = "SELECT * FROM invitation WHERE sender_id  = ? And receiver_id = ?";
+            try (Connection connection = DB_UtilityClass.getConnection();
+                 PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setInt(1, senderId);
+                statement.setInt(2, receiverId);
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        invitation = new Invitation(
+                                resultSet.getInt("invitation_id"),
+                                resultSet.getInt("sender_id"),
+                                resultSet.getInt("receiver_id"),
+                                Invitation.Status.valueOf(resultSet.getString("status").toUpperCase())
+
+                        );
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return invitation;
+        }
+
     }
 }

@@ -2,6 +2,7 @@ package gov.iti.jets.server;
 
 
 import gov.iti.jets.server.model.dao.implementations.*;
+import shared.dto.Invitation;
 import shared.dto.User;
 import shared.dto.UserConnection;
 import shared.interfaces.ClientInt;
@@ -99,5 +100,15 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
     @Override
     public boolean insertUserConnection(UserConnection userConnection) throws RemoteException {
         return userConnectionDAO.insertUserConnection(userConnection);
+    }
+
+    @Override
+    public boolean addInvitation(Invitation invitation) throws RemoteException {
+       return invitationDAO.addInvitation(invitation);
+    }
+
+    @Override
+    public Invitation getInvitationBySenderAndReciever(int senderId, int receiverId) throws RemoteException {
+        return invitationDAO.getInvitationBySenderAndReciever(senderId, receiverId);
     }
 }

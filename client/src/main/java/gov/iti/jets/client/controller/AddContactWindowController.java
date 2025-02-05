@@ -6,6 +6,7 @@ import javafx.event.*;
 
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import shared.dto.Invitation;
 import shared.dto.User;
 import shared.dto.UserConnection;
 import shared.interfaces.AdminInt;
@@ -50,23 +51,27 @@ public class AddContactWindowController  {
     @FXML
     public void handleAddContactButton(ActionEvent event) throws IOException
      {
+         Invitation invitation=null;
          User user = userInt.getUserByPhoneNumber( numberTextField.getText());
-         if(user!=null)
+         if(user!=null) {
+              invitation = userInt.getInvitationBySenderAndReciever(HomeScreenController.currentUser.getUserId(), user.getUserId());
+         }
+         if(user!=null && user.getUserId()!=HomeScreenController.currentUser.getUserId() && invitation==null)
          {
 
+             Invitation new_invitation=new Invitation();
+             new_invitation.setSenderId(HomeScreenController.currentUser.getUserId());
+             new_invitation.setReceiverId(user.getUserId());
+             new_invitation.setStatus(Invitation.Status.PENDING);
 
-             UserConnection userConnection=new UserConnection();
-             userConnection.setUserId(HomeScreenController.currentUser.getUserId());
-             userConnection.setConnectedUserId(user.getUserId());
-             userConnection.setRelationship("Friend");
-            if(userInt.insertUserConnection(userConnection)){
-                showInfoMessage("Done!", "User added successfully");
+            if(userInt.addInvitation(new_invitation)){
+                showInfoMessage("Done!", "Invitation sent successfully");
             }
 
          }
          else
          {
-            showErrorAlert("Error", "User not found");
+            showErrorAlert("Error", "Sorry..... can't send invitation");
          }
 
     }
