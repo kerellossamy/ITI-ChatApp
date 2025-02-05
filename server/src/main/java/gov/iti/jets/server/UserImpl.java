@@ -2,7 +2,9 @@ package gov.iti.jets.server;
 
 
 import gov.iti.jets.server.model.dao.implementations.*;
+import shared.dto.Invitation;
 import shared.dto.User;
+import shared.dto.UserConnection;
 import shared.interfaces.ClientInt;
 import shared.interfaces.UserInt;
 import shared.utils.DB_UtilityClass;
@@ -28,10 +30,12 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
     private final UserBlockedConnectionDAOImpl userBlockedConnectionDAO;
     private final UserDAOImpl userDAO;
     private final UserGroupsDAOImpl userGroupsDAO;
+    private final UserConnectionDAOImpl userConnectionDAO;
     private Connection connection = DB_UtilityClass.getConnection();
 
     protected UserImpl() throws RemoteException {
 
+        this.userConnectionDAO=new UserConnectionDAOImpl();
         this.adminDAO = new AdminDAOImpl(connection);
         this.chatbotDAO = new ChatbotDAOImpl(connection);
         this.directMessageDAO = new DirectMessageDAOImpl();
@@ -84,5 +88,25 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
     @Override
     public boolean editUserShownInfo(int userId, String name, User.Status status, String picPath, String bio) throws RemoteException {
         return userDAO.editUserShownInfo(userId, name, status, picPath, bio);
+    }
+
+   public User getUserByPhoneNumber(String phone_number) {
+
+        return userDAO.getUserByPhoneNumber(phone_number);
+    }
+
+    @Override
+    public boolean insertUserConnection(UserConnection userConnection) throws RemoteException {
+        return userConnectionDAO.insertUserConnection(userConnection);
+    }
+
+    @Override
+    public boolean addInvitation(Invitation invitation) throws RemoteException {
+       return invitationDAO.addInvitation(invitation);
+    }
+
+    @Override
+    public Invitation getInvitationBySenderAndReciever(int senderId, int receiverId) throws RemoteException {
+        return invitationDAO.getInvitationBySenderAndReciever(senderId, receiverId);
     }
 }
