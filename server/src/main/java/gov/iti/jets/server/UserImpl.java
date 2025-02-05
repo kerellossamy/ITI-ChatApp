@@ -83,8 +83,6 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
 
     @Override
     public boolean editUserShownInfo(int userId, String name, User.Status status, String picPath, String bio) throws RemoteException {
-        System.out.println("for testing i'm in editUserShownInfo in the user impl");
-
         return userDAO.editUserShownInfo(userId, name, status, picPath, bio);
     }
 }

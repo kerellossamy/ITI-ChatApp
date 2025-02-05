@@ -31,11 +31,15 @@ import shared.interfaces.UserInt;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ResourceBundle;
 
 
 public class EditWindowController {
+
+    private static final String USER_IMAGE_DIR = "/user_data/users/";
 
     private UserInt userInt;
     private AdminInt adminInt;
@@ -92,10 +96,9 @@ public class EditWindowController {
 //            File file = Paths.get(profilePicturePath).toAbsolutePath().toFile();
 //            Image defaultPhoto = new Image(file.toURI().toString());
 //            photoCircle.setFill(new ImagePattern(defaultPhoto));
-
-            nameTextField.setText(currentUser.getDisplayName());
-            bioTextField.setText(currentUser.getBio());
-            statusComboBox.setValue(currentUser.getStatus());
+            if (currentUser != null) {
+                loadUserDetails();
+            }
         });
 
 
@@ -145,105 +148,114 @@ public class EditWindowController {
 
     }
 
+    private void loadUserDetails() {
+        if (currentUser == null) return;
 
-    @FXML
-    public void changePhotoEvent(MouseEvent event) throws Exception {
+        nameTextField.setText(currentUser.getDisplayName());
+        bioTextField.setText(currentUser.getBio());
+        statusComboBox.setValue(currentUser.getStatus());
 
-        System.out.println("add photo");
+        //working for only relative path
+//        String profilePicturePath = currentUser.getProfilePicturePath();
+//        if (profilePicturePath != null && !profilePicturePath.isEmpty()) {
+//            try {
+//                Image profileImage = new Image(getClass().getResource(profilePicturePath).toExternalForm());
+//                photoCircle.setFill(new ImagePattern(profileImage));
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                System.out.println("Error loading profile image: " + e.getMessage());
+//            }
+//        }
 
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Choose an Image");
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg")
-        );
-        Stage stage = (Stage) applyButton.getScene().getWindow();
+        String profilePicturePath = currentUser.getProfilePicturePath();
+        if (profilePicturePath != null && !profilePicturePath.isEmpty()) {
+            try {
+                Image profileImage;
 
-        File selectedFile = fileChooser.showOpenDialog(stage);
-        if (selectedFile != null) {
+                // Check if the path is absolute
+                if (Paths.get(profilePicturePath).isAbsolute()) {
+                    File file = new File(profilePicturePath);
+                    if (file.exists() && file.canRead()) {
+                        profileImage = new Image(file.toURI().toString());
+                    } else {
+                        System.out.println("Error: File does not exist or cannot be read.");
+                        return;
+                    }
+                } else {
+                    profileImage = new Image(getClass().getResource(profilePicturePath).toExternalForm());
+                }
 
-            Image image = new Image(selectedFile.toURI().toString());
+                photoCircle.setFill(new ImagePattern(profileImage));
 
-            // Setting the image view
-            photoCircle.setFill(new ImagePattern(image));
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("Error loading profile image: " + e.getMessage());
+            }
         }
-
 
     }
 
     @FXML
-    public void handleApplyButton(ActionEvent event) throws IOException {
+    public void changePhotoEvent(MouseEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Choose an Image");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
+        Stage stage = (Stage) applyButton.getScene().getWindow();
 
+        File selectedFile = fileChooser.showOpenDialog(stage);
+        if (selectedFile != null) {
+            String newImagePath = saveProfileImage(selectedFile, currentUser.getUserId());
+            if (newImagePath != null) {
+                currentUser.setProfilePicturePath(newImagePath);
+                Image newImage = new Image(new File(newImagePath).toURI().toString());
+                photoCircle.setFill(new ImagePattern(newImage));
+            }
+        }
+    }
+
+    private String saveProfileImage(File sourceFile, int userId) {
+        File userDir = new File(USER_IMAGE_DIR + "user_" + userId);
+        if (!userDir.exists()) userDir.mkdirs();
+
+        File destFile = new File(userDir, "profile.jpg");
         try {
+            Files.copy(sourceFile.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            return destFile.getAbsolutePath(); // Return relative path
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
-
-
-//            ImagePattern pattern = (ImagePattern) photoCircle.getFill();
-//            String newPicPath = pattern.getImage().getUrl();
-
-            //temp
-            String newPicPath = "";
+    @FXML
+    public void handleApplyButton() {
+        try {
+            String newPicPath = currentUser.getProfilePicturePath();
             String newDisplayName = nameTextField.getText();
             String newBio = bioTextField.getText();
-            User.Status newStatus = (User.Status) statusComboBox.getValue();
+            User.Status newStatus = statusComboBox.getValue();
 
+            boolean isUpdated = userInt.editUserShownInfo(currentUser.getUserId(), newDisplayName, newStatus, newPicPath, newBio);
 
-            boolean flag = userInt.editUserShownInfo(currentUser.getUserId(), newDisplayName, newStatus, newPicPath, newBio);
-            if (!flag) {
+            if (!isUpdated) {
                 System.out.println("Failed to update user information.");
                 return;
             }
 
             currentUser.setDisplayName(newDisplayName);
-            currentUser.setProfilePicturePath(newPicPath);
             currentUser.setStatus(newStatus);
             currentUser.setBio(newBio);
 
             if (homeScreenController != null) {
-                homeScreenController.setCurrentUser(currentUser);  // Update HomeScreenController with the new details
-                homeScreenController.updateUI();  // A method in HomeScreenController to refresh UI
+                homeScreenController.setCurrentUser(currentUser);
+                homeScreenController.updateUI();
             }
-
-//        Platform.runLater(() -> {
-////            Image defaultPhoto = new Image(getClass().getResource(currentUser.getProfilePicturePath()).toExternalForm());
-//                    photoCircle.setFill(pattern);
-//
-//                    nameTextField.setText(newDisplayName);
-//                    bioTextField.setText(newBio);
-//                    statusComboBox.setValue(newStatus);
-//                });
-//
-//
-//
-//
-//            currentUser.setProfilePicturePath(newPicPath);
-//            currentUser.setDisplayName(newDisplayName);
-//            currentUser.setBio(newBio);
-//            currentUser.setStatus(newStatus);
-//
-//
-//        });
 
             Stage stage = (Stage) applyButton.getScene().getWindow();
             stage.close();
-//        photoCircle.setFill(pattern);
-//
-//        nameTextField.setText(newDisplayName);
-//        bioTextField.setText(newBio);
-//        statusComboBox.setValue(newStatus);
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
-
-//    @Override
-//    public void initialize(URL url, ResourceBundle resourceBundle) {
-//        c= ClientImpl.getInstance();
-//        c.setEditWindowController(this);
-//    }
-
 
 }

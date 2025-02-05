@@ -35,11 +35,7 @@ import shared.dto.User;
 import shared.interfaces.AdminInt;
 import shared.interfaces.UserInt;
 
-/**
- * FXML Controller class
- *
- * @author Nadam_2kg0od8
- */
+
 public class HomeScreenController implements Initializable {
 
     private UserInt userInt;
@@ -120,11 +116,34 @@ public class HomeScreenController implements Initializable {
         System.out.println("currentUser is: " + currentUser);
         Platform.runLater(() -> {
             userNameText.setText(currentUser.getDisplayName());
-            userProfileImage.setImage(new Image(getClass().getResource(currentUser.getProfilePicturePath()).toExternalForm()));
+//            userProfileImage.setImage(new Image(getClass().getResource(currentUser.getProfilePicturePath()).toExternalForm()));
 
-            // try to see the absolute path
-//            File file = Paths.get(currentUser.getProfilePicturePath()).toAbsolutePath().toFile();
-//            userProfileImage.setImage(new Image(file.toURI().toString()));
+
+            String profilePicturePath = currentUser.getProfilePicturePath();
+            if (profilePicturePath != null && !profilePicturePath.isEmpty()) {
+                try {
+                    Image profileImage;
+
+                    if (Paths.get(profilePicturePath).isAbsolute()) {
+                        File file = new File(profilePicturePath);
+                        if (file.exists() && file.canRead()) {
+                            profileImage = new Image(file.toURI().toString());
+                        } else {
+                            System.out.println("Error: File does not exist or cannot be read.");
+                            return;
+                        }
+                    } else {
+                        profileImage = new Image(getClass().getResource(profilePicturePath).toExternalForm());
+                    }
+
+                    userProfileImage.setImage(profileImage);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    System.out.println("Error loading profile image: " + e.getMessage());
+                }
+            }
+
 
         });
 
