@@ -393,7 +393,11 @@ public class UserSignupController {
             throw new RuntimeException(e);
         }
         System.out.println("new User is created successfully!!!");
-        currentUser = newUser;
+        try {
+            currentUser = userInt.isValidUser(phoneNumber.getText(), password.getText());
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
 
         try {
 
@@ -403,9 +407,9 @@ public class UserSignupController {
 
             Parent signupRoot = loader.load();
             HomeScreenController homeScreenController = loader.getController();
-            homeScreenController.setCurrentUser(currentUser);
             homeScreenController.setUserInt(ClientMain.userInt);
             homeScreenController.setAdminInt(ClientMain.adminInt);
+            homeScreenController.setCurrentUser(currentUser);
 
 
 

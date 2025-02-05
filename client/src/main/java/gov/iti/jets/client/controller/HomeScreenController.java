@@ -347,6 +347,7 @@ public class HomeScreenController implements Initializable {
 
     @FXML
     void handleEditProfileButton() {
+        System.out.println(currentUser);
         System.out.println("Edit button clicked!");
         try {
 
