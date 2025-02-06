@@ -3,7 +3,7 @@ package shared.dto;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class DirectMessage implements Serializable {
+public class DirectMessage extends BaseMessage implements Serializable {
         private Integer messageId;
         private Integer senderId;
         private Integer receiverId;
@@ -149,5 +149,26 @@ public class DirectMessage implements Serializable {
                     ", timestamp=" + timestamp +
                     '}';
         }
+
+    @Override
+    public String getSenderName2() {
+
+        return"DM";
     }
+
+    @Override
+    public int getSenderID2() {
+        return getSenderId();
+    }
+
+    @Override
+    public Timestamp getTimeStamp2() {
+        return getTimestamp();
+    }
+
+    @Override
+    public String getMessageContent2() {
+        return getMessageContent();
+    }
+}
 

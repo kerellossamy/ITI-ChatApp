@@ -1,10 +1,7 @@
 package shared.interfaces;
 
-import shared.dto.Card;
-import shared.dto.User;
-import shared.dto.UserConnection;
+import shared.dto.*;
 
-import shared.dto.Invitation;
 import shared.dto.User;
 import shared.dto.UserConnection;
 
@@ -29,4 +26,10 @@ public interface UserInt extends Remote {
     boolean insertUserConnection(UserConnection userConnection)throws  RemoteException;
      boolean addInvitation(Invitation invitation)throws RemoteException;
     Invitation getInvitationBySenderAndReciever(int senderId, int receiverId) throws RemoteException;
+
+    List<GroupMessage> getGroupMessages(int groupId) throws RemoteException;
+    List<ServerAnnouncement> getAllServerAnnouncements()throws RemoteException;
+    List<DirectMessage> getMessagesBetweenTwo(int receiverId,int senderId) throws RemoteException;
+
+
 }

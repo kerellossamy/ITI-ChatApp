@@ -3,12 +3,18 @@ package gov.iti.jets.client.controller;
 import gov.iti.jets.client.ClientMain;
 import gov.iti.jets.client.model.ClientImpl;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.event.*;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.*;
+import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.*;
 
 
@@ -17,6 +23,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.rmi.RemoteException;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -35,8 +42,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.scene.web.HTMLEditor;
-import shared.dto.Card;
-import shared.dto.User;
+import shared.dto.*;
 import shared.interfaces.AdminInt;
 import shared.interfaces.UserInt;
 
@@ -99,7 +105,7 @@ public class HomeScreenController implements Initializable {
     @FXML
     private ScrollPane chatMessageScrollPane;
     @FXML
-    private HTMLEditor messsgeField;
+    private HTMLEditor messageField;
     @FXML
     private ImageView friendProfileImage;
     @FXML
@@ -114,6 +120,9 @@ public class HomeScreenController implements Initializable {
     private Button musicbtn;
     @FXML
     private Button Imagebtn;
+    @FXML
+    private ListView<BaseMessage> chatListView;
+    private ObservableList<BaseMessage> observableMessages= javafx.collections.FXCollections.observableArrayList();
 
     public enum colorEnum {
         RED("#d06f65"),
@@ -178,13 +187,111 @@ public class HomeScreenController implements Initializable {
             fullListView(ContactList);
             populateCard(ContactList);
 
+
+            try {
+               // populateChatListView("user",7);
+                populateChatListView("group",1);
+                //populateChatListView("group",1);
+                System.out.println("sizeeeeee of the list="+observableMessages.size());
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
+
         });
-
-
-
 
         c = ClientImpl.getInstance();
         c.setHomeScreenController(this);
+
+
+        //********************************************chatlistview*************************************************
+
+        chatListView.setCellFactory(listView -> new ListCell<BaseMessage>() {
+
+            @Override
+            protected void updateItem(BaseMessage msg, boolean empty) {
+                super.updateItem(msg, empty);
+                if (empty || msg == null) {
+                    setGraphic(null);
+                } else {
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm dd-MM");
+                    String formattedTime = msg.getTimeStamp2().toLocalDateTime().format(formatter);
+
+                    HBox container = new HBox();
+                    VBox bubble = new VBox();
+
+
+                    String senderName ="";
+
+                    if(msg.getSenderName2().equals("DM")) {
+                        //get sender name
+                        User user = null;
+                        try {
+                            user = userInt.getUserById(msg.getSenderID2());
+                            senderName = user.getDisplayName();
+
+                        } catch (RemoteException e) {
+                            System.out.println("Error in getting user name from base message incase of the type is user");
+                            throw new RuntimeException(e);
+                        }
+
+                    }
+                    else if(msg.getSenderName2().equals("GM")){
+                        User user = null;
+                        try {
+                            user = userInt.getUserById(msg.getSenderID2());
+                            senderName = user.getDisplayName();
+
+                        } catch (RemoteException e) {
+                            System.out.println("Error in getting user name from base message incase of the type is group");
+                            throw new RuntimeException(e);
+                        }
+
+                    } else if (msg.getSenderName2().equals("TAWASOL")) {
+                            senderName="TAWASOL";
+                    }
+                    else {
+                        System.out.println("Error in getting sender name");
+                    }
+
+
+
+                    // If sender is not 1, prepend (senderName): to message content
+                    String displayMessage = (msg.getSenderID2() != currentUser.getUserId() ? senderName+" : " : "") + msg.getMessageContent2();
+                    Text messageText = new Text(displayMessage);
+
+                    Text timestampText = new Text(formattedTime);
+                    timestampText.setStyle("-fx-font-size: 10px; -fx-fill: gray;");
+
+                    bubble.getChildren().addAll(messageText, timestampText);
+                    bubble.setPadding(new Insets(8));
+                    bubble.setMaxWidth(250);
+                    bubble.setStyle("-fx-background-radius: 15px; -fx-padding: 10px;");
+
+                    if (msg.getSenderID2() == currentUser.getUserId()) {
+                        bubble.setStyle("-fx-background-color: lightblue; -fx-background-radius: 15px;");
+                        container.setAlignment(Pos.CENTER_RIGHT);
+                    } else {
+                        bubble.setStyle("-fx-background-color: lightgray; -fx-background-radius: 15px;");
+                        container.setAlignment(Pos.CENTER_LEFT);
+                    }
+
+                    container.getChildren().add(bubble);
+                    setGraphic(container);
+                }
+            }
+
+
+        });
+
+
+//***************************************************************************************************************************
+
+
+
+
+
+
+
 
     }
 
@@ -466,6 +573,43 @@ public class HomeScreenController implements Initializable {
         }
 
     }
+
+
+
+
+
+//chat work*****************************************************
+    public void populateChatListView(String type,int id) throws RemoteException {
+
+           if(type.equals("group")){
+
+                List<GroupMessage> list=userInt.getGroupMessages(id);
+               observableMessages.clear();
+               observableMessages.addAll(list);
+
+           }
+           else if (type.equals("user")){
+
+                List<DirectMessage>list=userInt.getMessagesBetweenTwo(currentUser.getUserId(),id);
+                observableMessages.clear();
+                observableMessages.addAll(list);
+
+           }
+           else if (type.equals("announcement")){
+               observableMessages.clear();
+               List<ServerAnnouncement>list=userInt.getAllServerAnnouncements();
+               observableMessages.addAll(list);
+           }
+           else{
+
+               System.out.println("Error in type");
+           }
+
+            chatListView.setItems(observableMessages);
+           chatListView.refresh();
+    }
+//********************************************************************************************************************
+
    /* public void fullListView(ListView<Friend> contListView , ScrollPane scrollPane)
     {
             /*   ChatListId.setCellFactory(param -> new ListCell<unitMessage>(){

@@ -3,7 +3,7 @@ package shared.dto;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class GroupMessage implements Serializable {
+public class GroupMessage extends BaseMessage implements Serializable {
     private int messageId;
     private int senderId;
     private int groupId;
@@ -134,5 +134,26 @@ public class GroupMessage implements Serializable {
     @Override
     public String toString() {
         return String.format("Message ID: %d, Sender ID: %d, Group ID: %d, Message Content: %s", messageId, senderId, groupId, messageContent);
+    }
+
+
+    @Override
+    public String getSenderName2() {
+        return "GM";
+    }
+
+    @Override
+    public int getSenderID2() {
+        return getSenderId();
+    }
+
+    @Override
+    public Timestamp getTimeStamp2() {
+        return getTimestamp();
+    }
+
+    @Override
+    public String getMessageContent2() {
+        return getMessageContent();
     }
 }

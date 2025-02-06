@@ -223,4 +223,29 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
     public Invitation getInvitationBySenderAndReciever(int senderId, int receiverId) throws RemoteException {
         return invitationDAO.getInvitationBySenderAndReciever(senderId, receiverId);
     }
+
+    @Override
+    public List<GroupMessage> getGroupMessages(int groupId) throws RemoteException {
+        try {
+            return groupMessageDAO.getGroupMessageByGroupId(groupId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
+    @Override
+    public List<ServerAnnouncement> getAllServerAnnouncements()  {
+        try {
+            return serverAnnouncementDAO.getAllServerAnnouncements();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public List<DirectMessage> getMessagesBetweenTwo(int receiverId, int senderId) throws RemoteException {
+        return directMessageDAO.getMessagesBetweenTwo(receiverId, senderId);
+    }
 }

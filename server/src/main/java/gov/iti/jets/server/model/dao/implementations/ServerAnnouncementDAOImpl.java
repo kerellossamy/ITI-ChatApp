@@ -51,7 +51,7 @@ public class ServerAnnouncementDAOImpl implements ServerAnnouncementDAOInt {
 
     public List<ServerAnnouncement> getAllServerAnnouncements() throws SQLException {
         List<ServerAnnouncement> announcements = new ArrayList<>();
-        String sql = "SELECT * FROM server_announcement ORDER BY created_at DESC";
+        String sql = "SELECT * FROM server_announcement ORDER BY created_at ASC";
         try (PreparedStatement stmt = connection.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {

@@ -3,7 +3,7 @@ package shared.dto;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class ServerAnnouncement implements Serializable {
+public class ServerAnnouncement extends BaseMessage implements Serializable {
     private int announcementId;
     private String message;
     private Timestamp createdAt;
@@ -44,5 +44,26 @@ public class ServerAnnouncement implements Serializable {
     @Override
     public String toString() {
         return String.format("Announcement ID: %d, Message: %s", announcementId, message);
+    }
+
+
+    @Override
+    public String getSenderName2() {
+        return "TAWASOL";
+    }
+
+    @Override
+    public int getSenderID2() {
+        return 0;
+    }
+
+    @Override
+    public Timestamp getTimeStamp2() {
+        return getCreatedAt();
+    }
+
+    @Override
+    public String getMessageContent2() {
+        return getMessage();
     }
 }

@@ -151,4 +151,31 @@ public class GroupMessageDAOImpl implements GroupMessageDAOInt {
                 rs.getTimestamp("timestamp")
         );
     }
+
+//*******************chat
+    public List<GroupMessage> getGroupMessageByGroupId(int groupID) throws SQLException {
+        List<GroupMessage> messages = new ArrayList<>();
+        String sql = "SELECT * FROM group_message WHERE group_id = ? ORDER BY timestamp ASC";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, groupID);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    messages.add(mapResultSetToGroupMessage(rs));
+                }
+            }
+        }
+        return messages;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 }

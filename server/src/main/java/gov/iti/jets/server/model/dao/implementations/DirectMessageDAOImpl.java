@@ -110,7 +110,7 @@ public class DirectMessageDAOImpl implements DirectMessageDAOInt {
     //the most recent ones will come first
     public List<DirectMessage> getMessagesByReceiverId(int receiverId) {
         List<DirectMessage> messages = new ArrayList<>();
-        String query = "SELECT * FROM direct_message WHERE receiver_id = ? ORDER BY timestamp DESC";
+        String query = "SELECT * FROM direct_message WHERE receiver_id = ? AND sender_id != ? ORDER BY timestamp DESC";
 
         try (Connection connection = DB_UtilityClass.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -195,4 +195,50 @@ public class DirectMessageDAOImpl implements DirectMessageDAOInt {
         return directMessage;
 
     }
+
+    //messages between two
+    //all messages between two people
+    public List<DirectMessage> getMessagesBetweenTwo(int receiverId,int senderId) {
+        List<DirectMessage> messages = new ArrayList<>();
+        String query = "SELECT * FROM direct_message \n" +
+                "WHERE (receiver_id = ? AND sender_id = ?) \n" +
+                "   OR (receiver_id = ? AND sender_id = ?)\n" +
+                "ORDER BY timestamp ASC;\n";
+
+        try (Connection connection = DB_UtilityClass.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
+            preparedStatement.setInt(1, receiverId);
+            preparedStatement.setInt(2, senderId);
+            preparedStatement.setInt(3, senderId);
+            preparedStatement.setInt(4, receiverId);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    DirectMessage dm = new DirectMessage(
+                            resultSet.getInt("message_id"),
+                            resultSet.getInt("sender_id"),
+                            resultSet.getInt("receiver_id"),
+                            resultSet.getString("message_content"),
+                            resultSet.getString("font_style"),
+                            resultSet.getString("font_color"),
+                            resultSet.getString("text_background"),
+                            resultSet.getInt("font_size"),
+                            resultSet.getBoolean("is_bold"),
+                            resultSet.getBoolean("is_italic"),
+                            resultSet.getBoolean("is_underlined"),
+                            resultSet.getTimestamp("timestamp")
+                    );
+                    messages.add(dm);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return messages;
+    }
+
+
+
+
 }
