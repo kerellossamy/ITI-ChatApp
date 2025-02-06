@@ -13,7 +13,7 @@
    <children>
       <Group>
          <children>
-            <ImageView fx:id="frinedImage" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="frinedImage" fitHeight="44.0" fitWidth="44.0" layoutY="3.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@../img/woman.png" />
                </image>
@@ -24,7 +24,7 @@
             <Insets left="7.0" />
          </HBox.margin>
       </Group>
-      <VBox prefHeight="55.0" prefWidth="173.0">
+      <VBox prefHeight="55.0" prefWidth="130.0">
          <children>
             <Text fx:id="friendNameText" fill="#3ca9fd" strokeType="OUTSIDE" strokeWidth="0.0" text="Jana">
                <font>
@@ -33,7 +33,7 @@
             </Text>
             <TextFlow prefHeight="22.0" prefWidth="173.0">
                <children>
-                  <Text fx:id="friendMessageText" strokeType="OUTSIDE" strokeWidth="0.0" text="Hi,are you available tommorow?" wrappingWidth="164.880859375">
+                  <Text fx:id="friendMessageText" strokeType="OUTSIDE" strokeWidth="0.0" text="Hi,are you available tommorow?" wrappingWidth="144.18359375">
                      <font>
                         <Font size="12.0" />
                      </font>
@@ -45,32 +45,22 @@
             </TextFlow>
          </children>
          <HBox.margin>
-            <Insets left="5.0" top="2.0" />
+            <Insets bottom="8.0" left="12.0" />
          </HBox.margin>
       </VBox>
-      <VBox prefHeight="59.0" prefWidth="37.0">
+      <VBox maxHeight="40.0" minHeight="40.0" prefHeight="40.0" prefWidth="37.0">
          <children>
             <Text fx:id="friendMessageTimeText" strokeType="OUTSIDE" strokeWidth="0.0" text="9:22 PM">
                <font>
-                  <Font size="10.0" />
+                  <Font size="12.0" />
                </font>
-            </Text>
-            <Pane prefHeight="19.0" prefWidth="23.0">
-               <children>
-                  <Circle fill="#67bcfe" layoutX="19.0" layoutY="10.0" radius="8.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" />
-                  <Text fx:id="friendNumOfMessageText" layoutX="15.0" layoutY="14.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1">
-                     <font>
-                        <Font size="11.0" />
-                     </font>
-                  </Text>
-               </children>
                <VBox.margin>
-                  <Insets top="14.0" />
+                  <Insets left="20.0" />
                </VBox.margin>
-            </Pane>
+            </Text>
          </children>
          <HBox.margin>
-            <Insets left="8.0" />
+            <Insets />
          </HBox.margin>
       </VBox>
    </children>

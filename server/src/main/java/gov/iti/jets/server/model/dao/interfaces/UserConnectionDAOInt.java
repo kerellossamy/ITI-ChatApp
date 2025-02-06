@@ -10,4 +10,6 @@ public interface UserConnectionDAOInt {
     boolean deleteUserConnection(int userId, int connectedUserId);
     UserConnection getUserConnection(int userId, int connectedUserId);
     List<UserConnection> getAllConnectionsForUser(int userId);
+
+
 }

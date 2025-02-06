@@ -20,13 +20,13 @@
 -fx-font-size:20;
 }
 
-.inviationListItem
+.contactItem
 {
      -fx-background-color: F0F0F0;
      -fx-background-radius:50;
 }
 
-.inviationListItemName
+.contactItemName
 {   
      -fx-font-weight: 600;
      -fx-text-fill: #6495ED;

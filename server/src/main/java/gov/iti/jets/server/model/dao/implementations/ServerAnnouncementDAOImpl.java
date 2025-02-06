@@ -81,6 +81,24 @@ public class ServerAnnouncementDAOImpl implements ServerAnnouncementDAOInt {
         }
     }
 
+    @Override
+    public ServerAnnouncement getLatestAnnouncement() throws SQLException {
+        String sql = "SELECT announcement_id, message, created_at FROM server_announcement ORDER BY created_at DESC LIMIT 1";
+        try (PreparedStatement stmt = connection.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                return new ServerAnnouncement(
+                        rs.getInt("announcement_id"),
+                        rs.getString("message"),
+                        rs.getTimestamp("created_at")
+                );
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;    }
+
 
     private ServerAnnouncement mapResultSetToServerAnnouncement(ResultSet rs) throws SQLException {
         return new ServerAnnouncement(

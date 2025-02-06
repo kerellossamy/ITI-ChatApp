@@ -11,4 +11,6 @@ public interface GroupMessageDAOInt {
     List<GroupMessage> getAllGroupMessages() throws SQLException;
     void updateGroupMessage(GroupMessage message) throws SQLException;
     void deleteGroupMessage(int messageId) throws SQLException;
-}
+    GroupMessage getLatestMessageInGroup(int groupId) throws SQLException ;
+
+    }

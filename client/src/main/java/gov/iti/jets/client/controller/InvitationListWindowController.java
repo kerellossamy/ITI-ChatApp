@@ -66,7 +66,7 @@ public class InvitationListWindowController
         invitationListItemName.setPrefWidth(150.0);
         invitationListItemName.getStyleClass().add("inviationListItemName");
 
-        ImageView acceptIcon = new ImageView(new Image(getClass().getResourceAsStream("img/accept.png")));
+        ImageView acceptIcon = new ImageView(new Image(getClass().getResourceAsStream("/img/accept.png")));
         acceptIcon.setFitHeight(20.0);
         acceptIcon.setFitWidth(20.0);
         acceptIcon.setPickOnBounds(true);
@@ -105,8 +105,12 @@ public class InvitationListWindowController
 
         vBox.setSpacing(2);
 
-//        vBox.getChildren().add(createHBox(new Image(getClass().getResourceAsStream("img/spnog.jpg")), "leena almekkawy"));
-//        vBox.getChildren().add(createHBox(new Image(getClass().getResourceAsStream("img/elsa.jpeg")), "nada mohamed"));
+        vBox.getChildren().add(createHBox(new Image(getClass().getResourceAsStream("/img/spnog.jpg")), "leena almekkawy"));
+        vBox.getChildren().add(createHBox(new Image(getClass().getResourceAsStream("/img/elsa.jpeg")), "nada mohamed"));
+        vBox.getChildren().add(createHBox(new Image(getClass().getResourceAsStream("/img/spnog.jpg")), "leena almekkawy"));
+        vBox.getChildren().add(createHBox(new Image(getClass().getResourceAsStream("/img/elsa.jpeg")), "nada mohamed"));
+        vBox.getChildren().add(createHBox(new Image(getClass().getResourceAsStream("/img/spnog.jpg")), "leena almekkawy"));
+        vBox.getChildren().add(createHBox(new Image(getClass().getResourceAsStream("/img/elsa.jpeg")), "nada mohamed"));
 
 
     }

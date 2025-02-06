@@ -15,8 +15,16 @@ import javafx.scene.shape.Circle;
 import javafx.stage.*;
 
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,9 +39,10 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.scene.web.HTMLEditor;
+import shared.dto.Card;
+import shared.dto.User;
 import shared.interfaces.AdminInt;
 import shared.interfaces.UserInt;
 
@@ -47,6 +56,10 @@ public class HomeScreenController implements Initializable {
     private UserInt userInt;
     private AdminInt adminInt;
     ClientImpl c;
+    Registry registry = null;
+    private User user = null ;
+    List<Card>  listOfContactCards;
+
 
     public void setUserInt(UserInt userInt) {
         this.userInt = userInt;
@@ -103,12 +116,13 @@ public class HomeScreenController implements Initializable {
     @FXML
     private Button Imagebtn;
 
+
     public enum colorEnum
     {
-        RED("#ff3939"),
-        GREEN("#74ff58"),
-        YELLOW("#fff848"),
-        GRAY("");
+        RED("#d06f65"),
+        GREEN("#8dc587"),
+        YELLOW("#e7df6d"),
+        GRAY("#d0c4c4");
 
         public String haxColor ;
         colorEnum(String haxColor) {
@@ -124,6 +138,28 @@ public class HomeScreenController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
+        try {
+            registry = LocateRegistry.getRegistry("localhost" , 8554);
+            userInt = (UserInt) registry.lookup("UserServices");
+
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        } catch (NotBoundException e) {
+            e.printStackTrace();
+        }
+
+        user = new User(1 , "'0111'" , "Nada" , "Nada@gmail.com" , "123" , "picturesPath" , User.Gender.FEMALE , "Egyot", Date.valueOf("2025-02-03") , "Busy" , User.Status.AVAILABLE , Timestamp.valueOf("2025-02-04 13:10:11"));
+
+        try {
+            listOfContactCards = userInt.getCards(user);
+             userInt.getUserConncectionById(1);
+           
+            System.out.println("home screen :" + user.getUserId());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+
 
         fullListView(ContactList);
         populateCard(ContactList);
@@ -131,62 +167,52 @@ public class HomeScreenController implements Initializable {
 
         c= ClientImpl.getInstance();
         c.setHomeScreenController(this);
+        try 
+        {
+        c.test();
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
 
     }
+    void populateCard(ListView<HBox> chatList) {
+        for (Card c : listOfContactCards) {
+            HBox card = new HBox();
+            Group g1 = new Group();
+            VBox v1 = new VBox();
+            VBox v2 = new VBox();
 
-    void populateCard(ListView<HBox> chatList)
-    {
-        //first Card
-        HBox card = new HBox();
-        Group g1 = new Group();
-        VBox v1 = new VBox();
-        VBox v2 = new VBox();
+            //ImageView imageView = new ImageView(new Image(getClass().getResourceAsStream("/img/girl.png")));
+            File file = new File(c.getImagePath());
+            ImageView imageView = new ImageView(new Image(file.toURI().toString()));
+            Circle status = new Circle();
+            //System.out.println("status : " + c.getStatus().toString().equals("AVAILABLE"));
+            if(c.getStatus().toString().equals("AVAILABLE"))
+                status.setFill(Color.valueOf(colorEnum.GREEN.getColor()));
+            else if(c.getStatus().toString().equals("BUSY"))
+                status.setFill(Color.valueOf(colorEnum.RED.getColor()));
+            else if(c.getStatus().toString().equals("AWAY"))
+                status.setFill(Color.valueOf(colorEnum.YELLOW.getColor()));
+            else
+                status.setFill(Color.valueOf(colorEnum.GRAY.getColor()));
 
-        // Image image = new Image(getClass().getResourceAsStream("img/man1.png"));
-        //System.out.println("Image =" + image.getUrl());
-        ImageView imageView = new ImageView(new Image(getClass().getResourceAsStream("/img/girl.png")));
-        Circle status = new Circle();
-        status.setFill(Color.valueOf(colorEnum.YELLOW.getColor()));
-        g1.getChildren().addAll(imageView , status);
+            g1.getChildren().addAll(imageView, status);
 
+            Text name = new Text(c.getSenderName());
+            Text message = new Text(c.getMessageContent());
+            v1.getChildren().addAll(name, message);
+            //System.out.println("time : " + c.getTimestamp().toString().substring(11 , 16));
 
-        Text name = new Text("Salma");
-        Text message = new Text("Hi,are you available tomorrow?");
-        v1.getChildren().addAll(name , message);
+            String messageTime = c.getTimestamp().toString().substring(11 , 16);
+            Text time = new Text(messageTime);
+            v2.getChildren().addAll(time);
 
+            card.getChildren().addAll(g1, v1, v2);
 
-        Text time = new Text("2:45AM");
-        Text numOfMessage = new Text("1");
-        v2.getChildren().addAll(time , numOfMessage);
-
-        card.getChildren().addAll(g1 , v1 , v2);
-
-
-        //Second Card
-        HBox card1 = new HBox();
-        Group g11 = new Group();
-        VBox v11 = new VBox();
-        VBox v22 = new VBox();
-
-        //Image image = new Image(getClass().getResourceAsStream("img/boy.png"))
-        ImageView imageView1 = new ImageView(new Image(getClass().getResourceAsStream("/img/man1.png")));
-        Circle status1 = new Circle();
-        status1.setFill(Color.valueOf(colorEnum.GREEN.getColor()));
-        g11.getChildren().addAll(imageView1 , status1);
-
-
-        Text name1 = new Text("Ali");
-        Text message1 = new Text("Hello");
-        v11.getChildren().addAll(name1 , message1);
-
-
-        Text time1 = new Text("10:45AM");
-        Text numOfMessage1 = new Text("5");
-        v22.getChildren().addAll(time1 , numOfMessage1);
-
-        card1.getChildren().addAll(g11 , v11 , v22);
-
-        chatList.getItems().addAll(card  ,card1);
+            chatList.getItems().add(card); // Add card to chatList
+        }
     }
 
 

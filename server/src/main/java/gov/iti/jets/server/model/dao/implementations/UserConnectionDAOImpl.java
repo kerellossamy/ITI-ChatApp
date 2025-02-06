@@ -89,6 +89,8 @@ public class UserConnectionDAOImpl implements UserConnectionDAOInt {
         String sql = "SELECT * FROM user_connection WHERE user_id = ?";
         try (Connection conn = DB_UtilityClass.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            System.out.println("userid in func" + userId);
+
             pstmt.setInt(1, userId);
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
