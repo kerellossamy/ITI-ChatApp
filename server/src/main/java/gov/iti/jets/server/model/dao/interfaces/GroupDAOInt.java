@@ -10,4 +10,6 @@ public interface GroupDAOInt {
     void updateGroupName(int groupId, String groupName) throws SQLException;
     void deleteGroup(int groupId) throws SQLException;
     List<Map<String, Object>> getGroupsByUser(int userId) throws SQLException;
-}
+    String getGroupNameById(int groupId) throws SQLException ;
+
+    }

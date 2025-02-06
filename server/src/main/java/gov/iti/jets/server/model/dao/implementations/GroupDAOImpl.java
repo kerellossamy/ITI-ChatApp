@@ -73,4 +73,21 @@ public class GroupDAOImpl implements GroupDAOInt {
             }
         }
     }
+
+    @Override
+    public String getGroupNameById(int groupId) throws SQLException {
+        String sql = "SELECT group_name FROM `group` WHERE group_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, groupId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("group_name");
+                }
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null; // Return null if the group ID does not exist
+    }
 }

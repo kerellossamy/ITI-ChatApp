@@ -98,6 +98,42 @@ public class GroupMessageDAOImpl implements GroupMessageDAOInt {
         }
     }
 
+    @Override
+    public GroupMessage getLatestMessageInGroup(int groupId) throws SQLException {
+        GroupMessage latestMessage = null;
+
+        String query = "SELECT * FROM group_message " +
+                "WHERE group_id = ? " +
+                "ORDER BY timestamp DESC " +
+                "LIMIT 1";
+
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, groupId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    latestMessage = new GroupMessage();
+                    latestMessage.setMessageId(rs.getInt("message_id"));
+                    latestMessage.setSenderId(rs.getInt("sender_id"));
+                    latestMessage.setGroupId(rs.getInt("group_id"));
+                    latestMessage.setMessageContent(rs.getString("message_content"));
+                    latestMessage.setFontStyle(rs.getString("font_style"));
+                    latestMessage.setFontColor(rs.getString("font_color"));
+                    latestMessage.setTextBackground(rs.getString("text_background"));
+                    latestMessage.setFontSize(rs.getInt("font_size"));
+                    latestMessage.setBold(rs.getBoolean("is_bold"));
+                    latestMessage.setItalic(rs.getBoolean("is_italic"));
+                    latestMessage.setUnderlined(rs.getBoolean("is_underlined"));
+                    latestMessage.setTimestamp(rs.getTimestamp("timestamp"));
+                }
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return latestMessage;
+    }
+
 
     private GroupMessage mapResultSetToGroupMessage(ResultSet rs) throws SQLException {
         return new GroupMessage(

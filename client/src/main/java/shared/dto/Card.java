@@ -1,0 +1,55 @@
+package shared.dto;
+
+import java.io.Serializable;
+import java.sql.Timestamp;
+
+public class Card implements Serializable {
+
+    private String senderName;
+    private String messageContent;
+    private Timestamp timestamp;
+    private User.Status status;
+    private String imagePath;
+
+
+    public Timestamp getTimestamp() {
+        return timestamp;
+    }
+
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
+    }
+
+    public void setMessageContent(String messageContent) {
+        this.messageContent = messageContent;
+    }
+
+    public void setTimeStamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public void setStatus(User.Status status) {
+        this.status = status;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
+    public String getSenderName() {
+        return senderName;
+    }
+
+    public String getMessageContent() {
+        return messageContent;
+    }
+
+    public User.Status getStatus() {
+        return status;
+    }
+
+    public String  getImagePath() {
+        return imagePath;
+    }
+
+}

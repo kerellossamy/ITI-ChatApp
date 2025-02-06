@@ -29,7 +29,6 @@ public class ClientMain extends Application {
             e.printStackTrace();
         }
     }
-
     @Override
     public void start(Stage stage) {
 

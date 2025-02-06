@@ -27,8 +27,7 @@ public class ClientImpl extends UnicastRemoteObject implements ClientInt {
    private StatisticsPieController statisticsPieController;
    private UserLoginController userLoginController;
    private UserSignupController userSignupController;
-
-    private static ClientImpl theOnlyClient;
+   private static ClientImpl theOnlyClient;
 
 
     private ClientImpl() throws RemoteException {
@@ -120,5 +119,11 @@ public class ClientImpl extends UnicastRemoteObject implements ClientInt {
     public void setUserSignupController(UserSignupController userSignupController) {
         this.userSignupController = userSignupController;
     }
+
+    @Override 
+     public  void test () throws RemoteException
+     {
+        System.out.println("hello from client");
+     }
 
 }

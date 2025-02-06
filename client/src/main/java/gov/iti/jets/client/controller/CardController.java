@@ -37,8 +37,6 @@ public class CardController implements Initializable {
     @FXML
     private Text friendMessageTimeText;
     @FXML
-    private Text friendNumOfMessageText;
-    @FXML
     private ImageView frinedImage;
 
 
@@ -68,7 +66,6 @@ public class CardController implements Initializable {
 
         VBox vbox2 =  (VBox) item.getChildren().get(2);
         Text time = (Text)vbox2.getChildren().get(0);
-        Text numOfMessage = (Text)vbox2.getChildren().get(1);
 
 
         //System.out.println("name =" + nametext.toString());
@@ -79,7 +76,6 @@ public class CardController implements Initializable {
         friendNameText.setText(name.getText());
         friendMessageText.setText(message.getText());
         friendMessageTimeText.setText(time.getText());
-        friendNumOfMessageText.setText(numOfMessage.getText());
 
     }
     @Override

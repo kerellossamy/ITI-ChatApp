@@ -122,10 +122,10 @@ public class HomeScreenController implements Initializable {
 
     public enum colorEnum
     {
-        RED("#ff3939"),
-        GREEN("#74ff58"),
-        YELLOW("#fff848"),
-        GRAY("");
+        RED("#d06f65"),
+        GREEN("#8dc587"),
+        YELLOW("#e7df6d"),
+        GRAY("#d0c4c4");
 
         public String haxColor ;
         colorEnum(String haxColor) {
@@ -203,51 +203,34 @@ public class HomeScreenController implements Initializable {
         VBox v1 = new VBox();
         VBox v2 = new VBox();
 
-        // Image image = new Image(getClass().getResourceAsStream("img/man1.png"));
-        //System.out.println("Image =" + image.getUrl());
-        ImageView imageView = new ImageView(new Image(getClass().getResourceAsStream("/img/girl.png")));
-        Circle status = new Circle();
-        status.setFill(Color.valueOf(colorEnum.YELLOW.getColor()));
-        g1.getChildren().addAll(imageView , status);
+            //ImageView imageView = new ImageView(new Image(getClass().getResourceAsStream("/img/girl.png")));
+            File file = new File(c.getImagePath());
+            ImageView imageView = new ImageView(new Image(file.toURI().toString()));
+            Circle status = new Circle();
+            //System.out.println("status : " + c.getStatus().toString().equals("AVAILABLE"));
+            if(c.getStatus().toString().equals("AVAILABLE"))
+                status.setFill(Color.valueOf(colorEnum.GREEN.getColor()));
+            else if(c.getStatus().toString().equals("BUSY"))
+                status.setFill(Color.valueOf(colorEnum.RED.getColor()));
+            else if(c.getStatus().toString().equals("AWAY"))
+                status.setFill(Color.valueOf(colorEnum.YELLOW.getColor()));
+            else
+                status.setFill(Color.valueOf(colorEnum.GRAY.getColor()));
 
+            g1.getChildren().addAll(imageView, status);
 
-        Text name = new Text("Salma");
-        Text message = new Text("Hi,are you available tomorrow?");
-        v1.getChildren().addAll(name , message);
+            Text name = new Text(c.getSenderName());
+            Text message = new Text(c.getMessageContent());
+            v1.getChildren().addAll(name, message);
 
+            String messageTime = c.getTimestamp().toString().substring(11 , 16);
+            Text time = new Text(messageTime);
+            v2.getChildren().addAll(time);
 
-        Text time = new Text("2:45AM");
-        Text numOfMessage = new Text("1");
-        v2.getChildren().addAll(time , numOfMessage);
+            card.getChildren().addAll(g1, v1, v2);
 
-        card.getChildren().addAll(g1 , v1 , v2);
-
-
-        //Second Card
-        HBox card1 = new HBox();
-        Group g11 = new Group();
-        VBox v11 = new VBox();
-        VBox v22 = new VBox();
-
-        //Image image = new Image(getClass().getResourceAsStream("img/boy.png"))
-        ImageView imageView1 = new ImageView(new Image(getClass().getResourceAsStream("/img/man1.png")));
-        Circle status1 = new Circle();
-        status1.setFill(Color.valueOf(colorEnum.GREEN.getColor()));
-        g11.getChildren().addAll(imageView1 , status1);
-
-
-        Text name1 = new Text("Ali");
-        Text message1 = new Text("Hello");
-        v11.getChildren().addAll(name1 , message1);
-
-
-        Text time1 = new Text("10:45AM");
-        Text numOfMessage1 = new Text("5");
-        v22.getChildren().addAll(time1 , numOfMessage1);
-
-        card1.getChildren().addAll(g11 , v11 , v22);
-
-        chatList.getItems().addAll(card  ,card1);
+            chatList.getItems().add(card); // Add card to chatList
+        }
     }
 
 
@@ -288,7 +271,6 @@ public class HomeScreenController implements Initializable {
 
             return cell;
         });
-
 
     }
 

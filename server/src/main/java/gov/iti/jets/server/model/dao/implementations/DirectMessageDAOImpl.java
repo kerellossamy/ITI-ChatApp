@@ -159,4 +159,40 @@ public class DirectMessageDAOImpl implements DirectMessageDAOInt {
         }
         return result;
     }
+
+    @Override
+    public DirectMessage getLastMessageForUser(int senderId , int receiverId) {
+        //Done
+        //4 1 1
+        DirectMessage directMessage = new DirectMessage();
+        String query = "SELECT * FROM direct_message dm WHERE dm.timestamp = ( SELECT MAX(timestamp) FROM direct_message WHERE sender_id = ? AND receiver_id = ? ) AND dm.receiver_id = ?";
+        //هنجيب اخر رسالة الreviever بعتها ل sender
+        try (PreparedStatement stmt =DB_UtilityClass.getConnection().prepareStatement(query)) {
+            stmt.setInt(1, receiverId); // Setting receiver_id
+            stmt.setInt(2, senderId);  // Setting sender_id
+            stmt.setInt(3, senderId);  // Setting sender_id again to filter results
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    directMessage.setMessageId(rs.getInt("message_id"));
+                    directMessage.setSenderId(rs.getInt("sender_id"));
+                    directMessage.setReceiverId(rs.getInt("receiver_id"));
+                    directMessage.setMessageContent(rs.getString("message_content"));
+                    directMessage.setFontStyle(rs.getString("font_style"));
+                    directMessage.setFontColor(rs.getString("font_color"));
+                    directMessage.setTextBackground(rs.getString("text_background"));
+                    directMessage.setFontSize(rs.getInt("font_size"));
+                    directMessage.setBold(rs.getBoolean("is_bold"));
+                    directMessage.setItalic(rs.getBoolean("is_italic"));
+                    directMessage.setUnderlined(rs.getBoolean("is_underlined"));
+                    directMessage.setTimestamp(rs.getTimestamp("timestamp"));
+                }
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return directMessage;
+
+    }
 }
