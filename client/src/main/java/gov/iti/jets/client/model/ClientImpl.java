@@ -120,10 +120,10 @@ public class ClientImpl extends UnicastRemoteObject implements ClientInt {
         this.userSignupController = userSignupController;
     }
 
-    @Override 
-     public  void test () throws RemoteException
-     {
-        System.out.println("hello from client");
-     }
+//    @Override
+//     public  void test () throws RemoteException
+//     {
+//        System.out.println("hello from client");
+//     }
 
 }

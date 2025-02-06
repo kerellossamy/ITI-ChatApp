@@ -35,9 +35,7 @@ import java.rmi.registry.Registry;
 import java.util.*;
 
 
-//io
 
-//stage
 
 
 public class CreateGroupController{
@@ -88,7 +86,7 @@ public class CreateGroupController{
             {
                 System.out.println("null");
             }
-            userConnections=userInt.getUserConncectionById(1);
+            userConnections=userInt.getUserConncectionById(63);
             System.out.println("User connections is here");
 
         } catch (RemoteException e) {

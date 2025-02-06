@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/javafx/FXMLController.java to edit this template
- */
 package gov.iti.jets.client.controller;
 
 import gov.iti.jets.client.ClientMain;
@@ -20,6 +16,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Paths;
+import java.rmi.RemoteException;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,20 +35,18 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.scene.web.HTMLEditor;
+import shared.dto.Card;
 import shared.dto.User;
 import shared.interfaces.AdminInt;
 import shared.interfaces.UserInt;
 
-/**
- * FXML Controller class
- *
- * @author Nadam_2kg0od8
- */
+
 public class HomeScreenController implements Initializable {
 
     private UserInt userInt;
     private AdminInt adminInt;
     ClientImpl c;
+    List<Card> listOfContactCards;
     static User currentUser = null;
     static boolean isBotEnabled = false;
 
@@ -63,7 +59,6 @@ public class HomeScreenController implements Initializable {
     public User getCurrentUser() {
         return currentUser;
     }
-
 
     public void setUserInt(UserInt userInt) {
         this.userInt = userInt;
@@ -120,28 +115,27 @@ public class HomeScreenController implements Initializable {
     @FXML
     private Button Imagebtn;
 
-    public enum colorEnum
-    {
+    public enum colorEnum {
         RED("#d06f65"),
         GREEN("#8dc587"),
         YELLOW("#e7df6d"),
         GRAY("#d0c4c4");
 
-        public String haxColor ;
+        public String haxColor;
+
         colorEnum(String haxColor) {
-            this.haxColor =  haxColor;
+            this.haxColor = haxColor;
         }
 
-        public String getColor()
-        {
+        public String getColor() {
             return haxColor;
         }
     }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+//        System.out.println("currentUser is: " + currentUser);
 
-        System.out.println("currentUser is: " + currentUser);
         Platform.runLater(() -> {
             userNameText.setText(currentUser.getDisplayName());
 //            userProfileImage.setImage(new Image(getClass().getResource(currentUser.getProfilePicturePath()).toExternalForm()));
@@ -173,13 +167,23 @@ public class HomeScreenController implements Initializable {
             }
 
 
+            try {
+                listOfContactCards = userInt.getCards(currentUser);
+//            userInt.getUserConncectionById(1);
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+
+            }
+
+            fullListView(ContactList);
+            populateCard(ContactList);
+
         });
 
-        fullListView(ContactList);
-        populateCard(ContactList);
 
 
-        c= ClientImpl.getInstance();
+
+        c = ClientImpl.getInstance();
         c.setHomeScreenController(this);
 
     }
@@ -198,21 +202,22 @@ public class HomeScreenController implements Initializable {
     }
 
     void populateCard(ListView<HBox> chatList) {
-        HBox card = new HBox();
-        Group g1 = new Group();
-        VBox v1 = new VBox();
-        VBox v2 = new VBox();
+        for (Card c : listOfContactCards) {
+            HBox card = new HBox();
+            Group g1 = new Group();
+            VBox v1 = new VBox();
+            VBox v2 = new VBox();
 
             //ImageView imageView = new ImageView(new Image(getClass().getResourceAsStream("/img/girl.png")));
             File file = new File(c.getImagePath());
             ImageView imageView = new ImageView(new Image(file.toURI().toString()));
             Circle status = new Circle();
             //System.out.println("status : " + c.getStatus().toString().equals("AVAILABLE"));
-            if(c.getStatus().toString().equals("AVAILABLE"))
+            if (c.getStatus().toString().equals("AVAILABLE"))
                 status.setFill(Color.valueOf(colorEnum.GREEN.getColor()));
-            else if(c.getStatus().toString().equals("BUSY"))
+            else if (c.getStatus().toString().equals("BUSY"))
                 status.setFill(Color.valueOf(colorEnum.RED.getColor()));
-            else if(c.getStatus().toString().equals("AWAY"))
+            else if (c.getStatus().toString().equals("AWAY"))
                 status.setFill(Color.valueOf(colorEnum.YELLOW.getColor()));
             else
                 status.setFill(Color.valueOf(colorEnum.GRAY.getColor()));
@@ -222,8 +227,9 @@ public class HomeScreenController implements Initializable {
             Text name = new Text(c.getSenderName());
             Text message = new Text(c.getMessageContent());
             v1.getChildren().addAll(name, message);
+            //System.out.println("time : " + c.getTimestamp().toString().substring(11 , 16));
 
-            String messageTime = c.getTimestamp().toString().substring(11 , 16);
+            String messageTime = c.getTimestamp().toString().substring(11, 16);
             Text time = new Text(messageTime);
             v2.getChildren().addAll(time);
 
@@ -234,19 +240,15 @@ public class HomeScreenController implements Initializable {
     }
 
 
-
-    public void fullListView(ListView<HBox> friendListView)
-    {
+    public void fullListView(ListView<HBox> friendListView) {
         friendListView.setCellFactory((param) -> {
 
-            ListCell<HBox> cell = new ListCell<>(){
+            ListCell<HBox> cell = new ListCell<>() {
                 @Override
                 protected void updateItem(HBox item, boolean empty) {
                     super.updateItem(item, empty);
-                    if(!empty)
-                    {
-                        if(item != null)
-                        {
+                    if (!empty) {
+                        if (item != null) {
                             try {
                                 FXMLLoader Cardloader = new FXMLLoader(getClass().getResource("/fxml/Card.fxml"));
                                 Node n = Cardloader.load(); // must load before getController
@@ -260,10 +262,8 @@ public class HomeScreenController implements Initializable {
                                 Logger.getLogger(HomeScreenController.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         }
-                    }
-                    else
-                    {
-                        System.out.println("empty");
+                    } else {
+//                        System.out.println("empty");
                         return;
                     }
                 }
@@ -279,12 +279,11 @@ public class HomeScreenController implements Initializable {
         System.out.println("Add Contact button clicked!");
         // Add your logic here
 
-        try
-        {
+        try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AddContactWindow.fxml"));
 
             Parent root = loader.load();
-            AddContactWindowController addContactWindowController= loader.getController();
+            AddContactWindowController addContactWindowController = loader.getController();
             addContactWindowController.setAdminInt(ClientMain.adminInt);
             addContactWindowController.setUserInt(ClientMain.userInt);
 
@@ -301,9 +300,7 @@ public class HomeScreenController implements Initializable {
             // Show the small window
             addContactStage.showAndWait(); // Use show() for a non-blocking window
 
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -312,12 +309,11 @@ public class HomeScreenController implements Initializable {
     void handleCreateGroup(ActionEvent event) {
         System.out.println("Create Group button clicked!");
 
-        try
-        {
+        try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/CreateGroupWindow.fxml"));
 
             Parent root = loader.load();
-            CreateGroupController createGroupController=loader.getController();
+            CreateGroupController createGroupController = loader.getController();
             createGroupController.setAdminInt(ClientMain.adminInt);
             createGroupController.setUserInt(ClientMain.userInt);
 
@@ -334,16 +330,13 @@ public class HomeScreenController implements Initializable {
             // Show the small window
             createGroupStage.showAndWait(); // Use show() for a non-blocking window
 
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @FXML
-    void handleLogoutButton()
-    {
+    void handleLogoutButton() {
         System.out.println("log out button pressed");
 
         // Add your logic here
@@ -360,8 +353,8 @@ public class HomeScreenController implements Initializable {
             // Get the current stage
             Stage stage = (Stage) logOutbtn.getScene().getWindow();
 
-            double width=stage.getWidth();
-            double height=stage.getHeight();
+            double width = stage.getWidth();
+            double height = stage.getHeight();
 
             // Set the scene with the signup page
             Scene scene = new Scene(userLoginRoot);
@@ -378,18 +371,16 @@ public class HomeScreenController implements Initializable {
     }
 
     @FXML
-    void handleInvitationListButton()
-    {
+    void handleInvitationListButton() {
         // Add your logic here
 
-        try
-        {
+        try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/InvitationWindow.fxml"));
             Parent root = loader.load();
-            if(root==null){
+            if (root == null) {
                 System.out.println("nullllllllllllllllllllllllllllllllllllll");
             }
-            InvitationListWindowController invitationListWindowController=loader.getController();
+            InvitationListWindowController invitationListWindowController = loader.getController();
             invitationListWindowController.setAdminInt(ClientMain.adminInt);
             invitationListWindowController.setUserInt(ClientMain.userInt);
 
@@ -408,20 +399,16 @@ public class HomeScreenController implements Initializable {
             addContactStage.showAndWait(); // Use show() for a non-blocking window
 
 
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
 
     @FXML
-    void handleEditProfileButton()
-    {
+    void handleEditProfileButton() {
         System.out.println("Edit button clicked!");
-        try
-        {
+        try {
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/EditWindow.fxml"));
             Parent root = loader.load();

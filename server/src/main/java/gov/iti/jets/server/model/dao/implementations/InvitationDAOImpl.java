@@ -24,7 +24,6 @@ public class InvitationDAOImpl implements InvitationDAOInt {
             statement.setInt(1, invitation.getSenderId());
             statement.setInt(2, invitation.getReceiverId());
             statement.setString(3, invitation.getStatus().toString());
-            statement.executeUpdate();
             result = statement.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
