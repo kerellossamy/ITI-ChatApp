@@ -21,7 +21,7 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ResourceBundle;
 
-public class AdminSignupController  {
+public class AdminSignupController {
     private UserInt userInt;
     private AdminInt adminInt;
     private Registry registry;
@@ -31,7 +31,7 @@ public class AdminSignupController  {
         this.userInt = userInt;
     }
 
-    public  void setAdminInt(AdminInt adminInt) {
+    public void setAdminInt(AdminInt adminInt) {
         this.adminInt = adminInt;
     }
 
@@ -266,43 +266,39 @@ public class AdminSignupController  {
 
 
         try {
-            registry = LocateRegistry.getRegistry("localhost" , 8554);
+            registry = LocateRegistry.getRegistry("localhost", 8554);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
 
-        c= ClientImpl.getInstance();
+        c = ClientImpl.getInstance();
         c.setAdminSignupController(this);
 
         gender.getItems().addAll("male", "female");
-        gender.setValue("male");
 
         country.setItems(countries);
 
         //---------------------------------------------------------------
 
 // Make the country ComboBox searchable
-FilteredList<String> filteredCountries = new FilteredList<>(countries, p -> true);
-country.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
+        FilteredList<String> filteredCountries = new FilteredList<>(countries, p -> true);
+        country.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
 
-    // If the change is due to selecting an item, skip updating the filter
-    if (country.getSelectionModel().getSelectedItem() != null &&
-            country.getSelectionModel().getSelectedItem().equals(newValue)) {
-        return;
-    }
+            // If the change is due to selecting an item, skip updating the filter
+            if (country.getSelectionModel().getSelectedItem() != null &&
+                    country.getSelectionModel().getSelectedItem().equals(newValue)) {
+                return;
+            }
 
 
-    filteredCountries.setPredicate(country -> {
-        if (newValue == null || newValue.isEmpty()) {
-            return true;
-        }
-        return country.toLowerCase().contains(newValue.toLowerCase());
-    });
-       });
+            filteredCountries.setPredicate(country -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+                return country.toLowerCase().contains(newValue.toLowerCase());
+            });
+        });
 
-    
-
-        
 
         // Bind the filtered list to the ComboBox
         country.setItems(filteredCountries);
@@ -347,24 +343,23 @@ country.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
         // If all fields are filled and passwords match, proceed with signup logic
         String selectedGender = gender.getValue();
         String selectedCountry = country.getValue();
-   
+
 
         // Add your signup logic here
         LocalDate localDate = dateOfBirth.getValue();
         Date sqlDate = Date.valueOf(localDate);
         Admin newAdmin = null;
 
-      
-             newAdmin = new Admin(userName.getText() ,
-                    phoneNumber.getText() ,
-                    email.getText() ,
-                    password.getText() ,
-                    Admin.Gender.valueOf(selectedGender),
-                    selectedCountry ,
-                    sqlDate);
-     
 
- 
+        newAdmin = new Admin(userName.getText(),
+                phoneNumber.getText(),
+                email.getText(),
+                password.getText(),
+                Admin.Gender.valueOf(selectedGender),
+                selectedCountry,
+                sqlDate);
+
+
         // Look up the remote object
         System.out.println("Admin: Looking up remote object...");
 
@@ -377,19 +372,18 @@ country.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
         }
         System.out.println("Admin: Remote object found.");
 
-            System.out.println(newAdmin);
+        System.out.println(newAdmin);
         // Call the remote method
-         boolean response = false;
+        boolean response = false;
         try {
             response = adminInt.Register(newAdmin);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-            
 
 
         // Print or process the selected values
-        if(response) {
+        if (response) {
             System.out.println("Last Name: " + userName.getText());
             System.out.println("Phone Number: " + phoneNumber.getText());
             System.out.println("Email: " + email.getText());
@@ -399,9 +393,7 @@ country.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
             System.out.println("Password: " + password.getText());
 
             showSuccessAlert("Signup Successful", "Your account has been created successfully.");
-        }
-        else
-        {
+        } else {
             System.out.println("Error");
             showErrorAlert("Registration Error", "This username already exists. Please choose a different one.");
         }
@@ -450,7 +442,7 @@ country.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
         } else {
             gender.setStyle("");
         }
- 
+
         // Check country
         if (country.getValue() == null) {
             country.setStyle("-fx-border-color: #dc3545; -fx-border-width: 2px;");
@@ -458,7 +450,7 @@ country.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
         } else {
             country.setStyle("");
         }
-        
+
 
         // Check password
         if (password.getText().isEmpty()) {

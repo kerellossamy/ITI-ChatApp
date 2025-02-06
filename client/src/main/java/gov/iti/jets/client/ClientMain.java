@@ -29,13 +29,14 @@ public class ClientMain extends Application {
             e.printStackTrace();
         }
     }
+
     @Override
     public void start(Stage stage) {
 
         Parent root = null;
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/UserLoginPage.fxml"));
-            root=loader.load();
+            root = loader.load();
             UserLoginController userLoginController = loader.getController();
 
             if (userLoginController == null) {
@@ -45,6 +46,7 @@ public class ClientMain extends Application {
                 userLoginController.setAdminInt(adminInt);
             }
         } catch (IOException e) {
+            e.printStackTrace();
             System.out.println("Could not load the UserLoginPage.fxml file.");
         }
 

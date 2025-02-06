@@ -4,5 +4,4 @@ import java.rmi.Remote;
 
 public interface ClientInt extends Remote {
 
-
 }

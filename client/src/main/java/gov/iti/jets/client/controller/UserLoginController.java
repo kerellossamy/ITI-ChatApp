@@ -16,6 +16,7 @@ import javafx.scene.Parent;
 import shared.dto.SocialNetwork;
 import shared.dto.User;
 import shared.interfaces.AdminInt;
+import shared.interfaces.ClientInt;
 import shared.interfaces.UserInt;
 
 import java.net.URL;
@@ -37,6 +38,7 @@ public class UserLoginController {
     public void setAdminInt(AdminInt adminInt) {
         this.adminInt = adminInt;
     }
+
 
     @FXML
     private Label signupLabel;

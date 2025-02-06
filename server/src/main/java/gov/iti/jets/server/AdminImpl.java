@@ -15,7 +15,7 @@ import java.sql.SQLException;
 public class AdminImpl extends UnicastRemoteObject implements AdminInt {
 
 
-    private static boolean isServerAvailabe= true;
+    public static boolean isServerAvailabe= true;
     private final AdminDAOImpl adminDAO;
     private final ChatbotDAOImpl chatbotDAO;
     private final  DirectMessageDAOImpl directMessageDAO;
