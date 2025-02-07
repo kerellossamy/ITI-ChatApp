@@ -11,6 +11,8 @@ module gov.iti.jets.client {
     requires org.apache.httpcomponents.httpclient;
     requires org.apache.httpcomponents.httpcore;
     requires org.json;
+    requires jdk.jsobject;
+    requires org.jsoup;
     //**********************************
 
 

@@ -4,6 +4,7 @@ import gov.iti.jets.client.ClientMain;
 import gov.iti.jets.client.model.ClientImpl;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Worker;
 import javafx.event.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -16,9 +17,13 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.TextFlow;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.*;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 
 import java.io.File;
@@ -40,6 +45,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.scene.web.HTMLEditor;
+import netscape.javascript.JSObject;
 import shared.dto.*;
 import shared.interfaces.AdminInt;
 import shared.interfaces.UserInt;
@@ -53,11 +59,10 @@ public class HomeScreenController implements Initializable {
     List<Card> listOfContactCards;
     static User currentUser = null;
     //***************chat
-    static String Target_Type="user";
-    static int Target_ID=7;
+    static String Target_Type = "group";
+    static int Target_ID = 1;
 
-    static Boolean isBotEnabled=false;
-
+    static Boolean isBotEnabled = false;
 
 
     public void setCurrentUser(User currentUser) {
@@ -128,86 +133,81 @@ public class HomeScreenController implements Initializable {
     private Button Imagebtn;
     @FXML
     private ListView<BaseMessage> chatListView;
-    private ObservableList<BaseMessage> observableMessages= javafx.collections.FXCollections.observableArrayList();
+    private ObservableList<BaseMessage> observableMessages = javafx.collections.FXCollections.observableArrayList();
 
-    public void handleSendButton(ActionEvent actionEvent)  {
+    public void handleSendButton(ActionEvent actionEvent) {
 
         String htmlString = messageField.getHtmlText();
-        String messageContent = htmlString.replaceAll("\\<.*?\\>", "").trim();
-        if (messageContent.isEmpty()) {
+//        String messageContent = htmlString.replaceAll("\\<.*?\\>", "").trim();
+        if (htmlString.isEmpty()) {
             return;
-        }
-        else{
-                if(Target_Type.equals("user")){
+        } else {
+            if (Target_Type.equals("user")) {
 
-                    UserBlockedConnection  userBlockedConnection =null;
-                    try {
-                         userBlockedConnection = userInt.getBlockedConnection(currentUser.getUserId(),Target_ID);
+                UserBlockedConnection userBlockedConnection = null;
+                try {
+                    userBlockedConnection = userInt.getBlockedConnection(currentUser.getUserId(), Target_ID);
 
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
-
-                    }
-                    if(userBlockedConnection==null){
-                        DirectMessage directMessage = new DirectMessage();
-                        directMessage.setMessageContent(messageContent);
-                        directMessage.setSenderId(currentUser.getUserId());
-                        directMessage.setReceiverId(Target_ID);
-                        directMessage.setFontStyle("Arial");
-                        directMessage.setFontColor("Black");
-                        directMessage.setTextBackground("White");
-                        directMessage.setFontSize(14);
-                        directMessage.setBold(false);
-                        directMessage.setItalic(false);
-                        directMessage.setUnderlined(false);
-                        directMessage.setTimestamp(new Timestamp(System.currentTimeMillis()));
-                        try {
-                            userInt.insertDirectMessage(directMessage);
-                        } catch (RemoteException e) {
-                            e.printStackTrace();
-                        }
-                        observableMessages.add(directMessage);
-                        chatListView.refresh();
-                        messageField.setHtmlText("");
-                    }
-                    else{
-                        showErrorAlert("Error","You can't send message to this user");
-                        messageField.setHtmlText("");
-
-                    }
-
+                } catch (RemoteException e) {
+                    e.printStackTrace();
 
                 }
-                else if(Target_Type.equals("group")){
-
-                    GroupMessage groupMessage = new GroupMessage();
-                    groupMessage.setMessageContent(messageContent);
-                    groupMessage.setSenderId(currentUser.getUserId());
-                    groupMessage.setGroupId(Target_ID);
-                    groupMessage.setFontStyle("Arial");
-                    groupMessage.setFontColor("Black");
-                    groupMessage.setTextBackground("White");
-                    groupMessage.setFontSize(14);
-                    groupMessage.setBold(false);
-                    groupMessage.setItalic(false);
-                    groupMessage.setUnderlined(false);
-                    groupMessage.setTimestamp(new Timestamp(System.currentTimeMillis()));
+                if (userBlockedConnection == null) {
+                    DirectMessage directMessage = new DirectMessage();
+                    directMessage.setMessageContent(htmlString);
+                    directMessage.setSenderId(currentUser.getUserId());
+                    directMessage.setReceiverId(Target_ID);
+                    directMessage.setFontStyle("Arial");
+                    directMessage.setFontColor("Black");
+                    directMessage.setTextBackground("White");
+                    directMessage.setFontSize(14);
+                    directMessage.setBold(false);
+                    directMessage.setItalic(false);
+                    directMessage.setUnderlined(false);
+                    directMessage.setTimestamp(new Timestamp(System.currentTimeMillis()));
                     try {
-                        userInt.addGroupMessage(groupMessage);
+                        userInt.insertDirectMessage(directMessage);
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
-                    observableMessages.add(groupMessage);
+                    observableMessages.add(directMessage);
                     chatListView.refresh();
                     messageField.setHtmlText("");
+                } else {
+                    showErrorAlert("Error", "You can't send message to this user");
+                    messageField.setHtmlText("");
 
                 }
-                else if(Target_Type.equals("announcement")){
-                    messageField.setHtmlText("");
+
+
+            } else if (Target_Type.equals("group")) {
+
+                GroupMessage groupMessage = new GroupMessage();
+                groupMessage.setMessageContent(htmlString);
+                groupMessage.setSenderId(currentUser.getUserId());
+                groupMessage.setGroupId(Target_ID);
+                groupMessage.setFontStyle("Arial");
+                groupMessage.setFontColor("Black");
+                groupMessage.setTextBackground("White");
+                groupMessage.setFontSize(14);
+                groupMessage.setBold(false);
+                groupMessage.setItalic(false);
+                groupMessage.setUnderlined(false);
+                groupMessage.setTimestamp(new Timestamp(System.currentTimeMillis()));
+                try {
+                    userInt.addGroupMessage(groupMessage);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
-                else{
-                    System.out.println("Error in type");
-                }
+                observableMessages.add(groupMessage);
+                chatListView.refresh();
+                messageField.setHtmlText("");
+
+            } else if (Target_Type.equals("announcement")) {
+                messageField.setHtmlText("");
+            } else {
+                System.out.println("Error in type");
+            }
 
         }
 
@@ -217,8 +217,6 @@ public class HomeScreenController implements Initializable {
         if (keyEvent.getCode() == KeyCode.ENTER) {
             handleSendButton(new ActionEvent());
         }
-
-
     }
 
     public enum colorEnum {
@@ -240,6 +238,7 @@ public class HomeScreenController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+
 //        System.out.println("currentUser is: " + currentUser);
 
         Platform.runLater(() -> {
@@ -286,10 +285,10 @@ public class HomeScreenController implements Initializable {
 
 
             try {
-                populateChatListView("user",7);
-               // populateChatListView("announcement",0);
+                populateChatListView("group", 1);
+                // populateChatListView("announcement",0);
                 //populateChatListView("group",1);
-                System.out.println("sizeeeeee of the list="+observableMessages.size());
+                System.out.println("sizeeeeee of the list=" + observableMessages.size());
             } catch (RemoteException e) {
                 throw new RuntimeException(e);
             }
@@ -317,9 +316,9 @@ public class HomeScreenController implements Initializable {
                     VBox bubble = new VBox();
 
 
-                    String senderName ="";
+                    String senderName = "";
 
-                    if(msg.getSenderName2().equals("DM")) {
+                    if (msg.getSenderName2().equals("DM")) {
                         //get sender name
                         User user = null;
                         try {
@@ -331,8 +330,7 @@ public class HomeScreenController implements Initializable {
                             throw new RuntimeException(e);
                         }
 
-                    }
-                    else if(msg.getSenderName2().equals("GM")){
+                    } else if (msg.getSenderName2().equals("GM")) {
                         User user = null;
                         try {
                             user = userInt.getUserById(msg.getSenderID2());
@@ -344,22 +342,43 @@ public class HomeScreenController implements Initializable {
                         }
 
                     } else if (msg.getSenderName2().equals("TAWASOL")) {
-                            senderName="TAWASOL";
-                    }
-                    else {
+                        senderName = "TAWASOL";
+                    } else {
                         System.out.println("Error in getting sender name");
                     }
 
 
-
                     // If sender is not 1, prepend (senderName): to message content
-                    String displayMessage = (msg.getSenderID2() != currentUser.getUserId() ? senderName+" : " : "") + msg.getMessageContent2();
-                    Text messageText = new Text(displayMessage);
+                    //String displayMessage = (msg.getSenderID2() != currentUser.getUserId() ? senderName+" : " : "") + msg.getMessageContent2();
+                    //Text messageText = new Text(displayMessage);
+
+                    // Extract plain text from HTML for storage
+                    //String plainText = extractPlainText(msg.getMessageContent2());
+
+                    Text username = new Text();
+                    if (msg.getSenderID2() != currentUser.getUserId()) {
+                        try {
+                            username = new Text(userInt.getUserById(msg.getSenderID2()).getDisplayName());
+                            username.setStyle("-fx-font-weight: bold;");
+                        } catch (RemoteException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+
+
+                    // Convert HTML content into JavaFX TextFlow
+                    TextFlow messageTextFlow = createStyledTextFlow(msg.getMessageContent2());
 
                     Text timestampText = new Text(formattedTime);
                     timestampText.setStyle("-fx-font-size: 10px; -fx-fill: gray;");
 
-                    bubble.getChildren().addAll(messageText, timestampText);
+                    if (username.getText().isEmpty()) {
+                        bubble.getChildren().addAll(messageTextFlow, timestampText);
+                    } else {
+                        bubble.getChildren().addAll(username, messageTextFlow, timestampText);
+                    }
+
+
                     bubble.setPadding(new Insets(8));
                     bubble.setMaxWidth(250);
                     bubble.setStyle("-fx-background-radius: 15px; -fx-padding: 10px;");
@@ -380,17 +399,137 @@ public class HomeScreenController implements Initializable {
 
         });
 
-
+    }
 //***************************************************************************************************************************
 
 
-
-
-
-
-
-
+    private String extractPlainText(String html) {
+        Document doc = Jsoup.parse(html);
+        return doc.text();
     }
+
+//    private TextFlow createStyledTextFlow(String html) {
+//        Document doc = Jsoup.parse(html);
+//        TextFlow textFlow = new TextFlow();
+//
+//        for (Element element : doc.select("body *")) { // Select all elements inside <body>
+//            String textContent = element.ownText();
+//            if (!textContent.isEmpty()) {
+//                Text textNode = new Text(textContent);
+//
+//                // Extract styles from the 'style' attribute
+//                String style = element.attr("style");
+//
+//                if (style.contains("font-weight: bold")) {
+//                    textNode.setStyle("-fx-font-weight: bold;");
+//                }
+//                if (style.contains("font-style: italic")) {
+//                    textNode.setStyle(textNode.getStyle() + "-fx-font-style: italic;");
+//                }
+//                if (style.contains("text-decoration: underline")) {
+//                    textNode.setStyle(textNode.getStyle() + "-fx-underline: true;");
+//                }
+//
+//                // Extract background color
+//                if (style.contains("background-color:")) {
+//                    String bgColor = extractStyleValue(style, "background-color");
+//                    textNode.setStyle(textNode.getStyle() + "-fx-background-color: " + bgColor + ";");
+//                }
+//
+//                // Extract font family
+//                if (style.contains("font-family:")) {
+//                    String fontFamily = extractStyleValue(style, "font-family");
+//                    textNode.setStyle(textNode.getStyle() + "-fx-font-family: " + fontFamily + ";");
+//                }
+//
+//                textFlow.getChildren().add(textNode);
+//            }
+//        }
+//        return textFlow;
+//    }
+//
+//    private String extractStyleValue(String style, String property) {
+//        int startIndex = style.indexOf(property);
+//        if (startIndex == -1) return "";
+//        startIndex += property.length() + 2; // Skip property name and colon
+//        int endIndex = style.indexOf(";", startIndex);
+//        return (endIndex == -1) ? style.substring(startIndex) : style.substring(startIndex, endIndex);
+//    }
+
+    private TextFlow createStyledTextFlow(String html) {
+        Document doc = Jsoup.parse(html);
+        TextFlow textFlow = new TextFlow();
+
+        for (Element element : doc.select("body *")) { // Select all elements inside <body>
+            String textContent = element.ownText();
+            if (!textContent.isEmpty()) {
+                Text textNode = new Text(textContent);
+
+                // Extract styles from the 'style' attribute
+                String style = element.attr("style");
+
+                StringBuilder fxStyle = new StringBuilder();
+
+                // Apply bold
+                if (style.contains("font-weight: bold")) {
+                    fxStyle.append("-fx-font-weight: bold;");
+                }
+
+                // Apply italic
+                if (style.contains("font-style: italic")) {
+                    fxStyle.append("-fx-font-style: italic;");
+                }
+
+                // Apply underline
+                if (style.contains("text-decoration: underline")) {
+                    textNode.setUnderline(true);
+                }
+
+                // Extract and apply font size
+                if (style.contains("font-size:")) {
+                    String fontSize = extractStyleValue(style, "font-size");
+                    fxStyle.append("-fx-font-size: ").append(fontSize).append(";");
+                }
+
+                // Extract and apply font color
+                if (style.contains("color:")) {
+                    String fontColor = extractStyleValue(style, "color");
+                    fxStyle.append("-fx-fill: ").append(fontColor).append(";");
+                }
+
+                // Extract and apply background color
+                if (style.contains("background-color:")) {
+                    String bgColor = extractStyleValue(style, "background-color");
+                    fxStyle.append("-fx-background-color: ").append(bgColor).append(";");
+                }
+
+                // Extract and apply font family
+                if (style.contains("font-family:")) {
+                    String fontFamily = extractStyleValue(style, "font-family");
+                    fxStyle.append("-fx-font-family: ").append(fontFamily).append(";");
+                }
+
+                // Apply final styles
+                textNode.setStyle(fxStyle.toString());
+
+                textFlow.getChildren().add(textNode);
+            }
+        }
+        return textFlow;
+    }
+
+    /**
+     * Extracts a specific style property from an inline CSS string.
+     */
+    private String extractStyleValue(String style, String property) {
+        int startIndex = style.indexOf(property);
+        if (startIndex == -1) return "";
+        startIndex += property.length() + 2; // Skip property name and colon
+        int endIndex = style.indexOf(";", startIndex);
+        return (endIndex == -1) ? style.substring(startIndex).trim() : style.substring(startIndex, endIndex).trim();
+    }
+
+
 
     public void updateUI() {
         userNameText.setText(currentUser.getDisplayName());
@@ -680,36 +819,32 @@ public class HomeScreenController implements Initializable {
     }
 
 
+    //chat work*****************************************************
+    public void populateChatListView(String type, int id) throws RemoteException {
 
-//chat work*****************************************************
-    public void populateChatListView(String type,int id) throws RemoteException {
+        if (type.equals("group")) {
 
-           if(type.equals("group")){
+            List<GroupMessage> list = userInt.getGroupMessages(id);
+            observableMessages.clear();
+            observableMessages.addAll(list);
 
-                List<GroupMessage> list=userInt.getGroupMessages(id);
-               observableMessages.clear();
-               observableMessages.addAll(list);
+        } else if (type.equals("user")) {
 
-           }
-           else if (type.equals("user")){
+            List<DirectMessage> list = userInt.getMessagesBetweenTwo(currentUser.getUserId(), id);
+            observableMessages.clear();
+            observableMessages.addAll(list);
 
-                List<DirectMessage>list=userInt.getMessagesBetweenTwo(currentUser.getUserId(),id);
-                observableMessages.clear();
-                observableMessages.addAll(list);
+        } else if (type.equals("announcement")) {
+            observableMessages.clear();
+            List<ServerAnnouncement> list = userInt.getAllServerAnnouncements();
+            observableMessages.addAll(list);
+        } else {
 
-           }
-           else if (type.equals("announcement")){
-               observableMessages.clear();
-               List<ServerAnnouncement>list=userInt.getAllServerAnnouncements();
-               observableMessages.addAll(list);
-           }
-           else{
+            System.out.println("Error in type");
+        }
 
-               System.out.println("Error in type");
-           }
-
-            chatListView.setItems(observableMessages);
-           chatListView.refresh();
+        chatListView.setItems(observableMessages);
+        chatListView.refresh();
     }
 //********************************************************************************************************************
 

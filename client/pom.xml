@@ -19,6 +19,14 @@
         <!--        <env.JAVAFX_HOME>C:\Users\Kerellos Samy\Downloads\Compressed\openjfx-21.0.1_windows-x64_bin-sdk\javafx-sdk-21.0.1</env.JAVAFX_HOME>-->
     </properties>
     <dependencies>
+
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.17.2</version>
+        </dependency>
+
+
         <dependency>
             <groupId>gov.iti.jets</groupId>
             <artifactId>server</artifactId>
