@@ -248,4 +248,31 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
     public List<DirectMessage> getMessagesBetweenTwo(int receiverId, int senderId) throws RemoteException {
         return directMessageDAO.getMessagesBetweenTwo(receiverId, senderId);
     }
+
+    @Override
+    public boolean insertDirectMessage(DirectMessage directMessage) {
+        try {
+            directMessageDAO.insertDirectMessage(directMessage);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
+
+    }
+
+    @Override
+    public void addGroupMessage(GroupMessage message) throws RemoteException {
+
+        try {
+            groupMessageDAO.addGroupMessage(message);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }

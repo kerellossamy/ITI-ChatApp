@@ -7,6 +7,7 @@ import shared.dto.UserConnection;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.sql.SQLException;
 import java.util.List;
 
 public interface UserInt extends Remote {
@@ -43,5 +44,8 @@ public interface UserInt extends Remote {
 
      List<ServerAnnouncement> getAllServerAnnouncements()throws RemoteException;
     List<DirectMessage> getMessagesBetweenTwo(int receiverId,int senderId) throws RemoteException;
+    boolean  insertDirectMessage(DirectMessage directMessage) throws RemoteException;
+    void addGroupMessage(GroupMessage message) throws RemoteException;
+
 
 }

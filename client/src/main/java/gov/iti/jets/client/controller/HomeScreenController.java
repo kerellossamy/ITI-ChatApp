@@ -10,6 +10,8 @@ import javafx.geometry.Pos;
 import javafx.scene.*;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -23,6 +25,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.rmi.RemoteException;
+import java.sql.Timestamp;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -54,7 +57,13 @@ public class HomeScreenController implements Initializable {
     ClientImpl c;
     List<Card> listOfContactCards;
     static User currentUser = null;
-    static boolean isBotEnabled = false;
+    //***************chat
+    static String Target_Type="group";
+    static int Target_ID=1;
+
+    static Boolean isBotEnabled=false;
+
+
 
     public void setCurrentUser(User currentUser) {
         System.out.println("setting the current user in the home page");
@@ -117,12 +126,90 @@ public class HomeScreenController implements Initializable {
     @FXML
     private Button Vediobtn;
     @FXML
+    private Button sendButton;
+    @FXML
     private Button musicbtn;
     @FXML
     private Button Imagebtn;
     @FXML
     private ListView<BaseMessage> chatListView;
     private ObservableList<BaseMessage> observableMessages= javafx.collections.FXCollections.observableArrayList();
+
+    public void handleSendButton(ActionEvent actionEvent)  {
+
+        String htmlString = messageField.getHtmlText();
+        String messageContent = htmlString.replaceAll("\\<.*?\\>", "").trim();
+        if (messageContent.isEmpty()) {
+            return;
+        }
+        else{
+                if(Target_Type.equals("user")){
+
+                    DirectMessage directMessage = new DirectMessage();
+                    directMessage.setMessageContent(messageContent);
+                    directMessage.setSenderId(currentUser.getUserId());
+                    directMessage.setReceiverId(Target_ID);
+                    directMessage.setFontStyle("Arial");
+                    directMessage.setFontColor("Black");
+                    directMessage.setTextBackground("White");
+                    directMessage.setFontSize(14);
+                    directMessage.setBold(false);
+                    directMessage.setItalic(false);
+                    directMessage.setUnderlined(false);
+                    directMessage.setTimestamp(new Timestamp(System.currentTimeMillis()));
+                    try {
+                        userInt.insertDirectMessage(directMessage);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                    observableMessages.add(directMessage);
+                    chatListView.refresh();
+                    messageField.setHtmlText("");
+
+
+                }
+                else if(Target_Type.equals("group")){
+
+                    GroupMessage groupMessage = new GroupMessage();
+                    groupMessage.setMessageContent(messageContent);
+                    groupMessage.setSenderId(currentUser.getUserId());
+                    groupMessage.setGroupId(Target_ID);
+                    groupMessage.setFontStyle("Arial");
+                    groupMessage.setFontColor("Black");
+                    groupMessage.setTextBackground("White");
+                    groupMessage.setFontSize(14);
+                    groupMessage.setBold(false);
+                    groupMessage.setItalic(false);
+                    groupMessage.setUnderlined(false);
+                    groupMessage.setTimestamp(new Timestamp(System.currentTimeMillis()));
+                    try {
+                        userInt.addGroupMessage(groupMessage);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                    observableMessages.add(groupMessage);
+                    chatListView.refresh();
+                    messageField.setHtmlText("");
+
+                }
+                else if(Target_Type.equals("announcement")){
+                    messageField.setHtmlText("");
+                }
+                else{
+                    System.out.println("Error in type");
+                }
+
+        }
+
+    }
+
+    public void handleEnterPress(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            handleSendButton(new ActionEvent());
+        }
+
+
+    }
 
     public enum colorEnum {
         RED("#d06f65"),
@@ -190,8 +277,8 @@ public class HomeScreenController implements Initializable {
 
             try {
                // populateChatListView("user",7);
+               // populateChatListView("announcement",0);
                 populateChatListView("group",1);
-                //populateChatListView("group",1);
                 System.out.println("sizeeeeee of the list="+observableMessages.size());
             } catch (RemoteException e) {
                 throw new RuntimeException(e);

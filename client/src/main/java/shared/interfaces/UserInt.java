@@ -30,6 +30,7 @@ public interface UserInt extends Remote {
     List<GroupMessage> getGroupMessages(int groupId) throws RemoteException;
     List<ServerAnnouncement> getAllServerAnnouncements()throws RemoteException;
     List<DirectMessage> getMessagesBetweenTwo(int receiverId,int senderId) throws RemoteException;
-
+    boolean  insertDirectMessage(DirectMessage directMessage) throws RemoteException;
+    void addGroupMessage(GroupMessage message) throws RemoteException;
 
 }
