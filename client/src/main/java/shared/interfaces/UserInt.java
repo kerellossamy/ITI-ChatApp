@@ -29,4 +29,6 @@ public interface UserInt extends Remote {
     boolean insertUserConnection(UserConnection userConnection)throws  RemoteException;
      boolean addInvitation(Invitation invitation)throws RemoteException;
     Invitation getInvitationBySenderAndReciever(int senderId, int receiverId) throws RemoteException;
+    String getCreatedGroupName(int groupId) throws RemoteException;
+
 }

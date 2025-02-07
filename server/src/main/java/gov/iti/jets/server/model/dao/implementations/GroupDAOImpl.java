@@ -1,6 +1,8 @@
 package gov.iti.jets.server.model.dao.implementations;
 
 import gov.iti.jets.server.model.dao.interfaces.GroupDAOInt;
+import shared.dto.Group;
+import shared.dto.User;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -90,4 +92,34 @@ public class GroupDAOImpl implements GroupDAOInt {
         }
         return null; // Return null if the group ID does not exist
     }
+
+    @Override
+    public User getCreatedGroup(int groupId) throws SQLException {
+        String query = "SELECT u.* FROM chatapp.group cg Join chatapp.user u ON cg.created_by = u.user_id where cg.group_id=?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, groupId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                User user = null;
+                if (rs.next()) {
+                    user = new User(
+                            rs.getInt("user_id"),
+                            rs.getString("phone_number"),
+                            rs.getString("display_name"),
+                            rs.getString("email"),
+                            rs.getString("password_hash"),
+                            rs.getString("profile_picture_path"),
+                            User.Gender.valueOf(rs.getString("gender")),
+                            rs.getString("country"),
+                            rs.getDate("date_of_birth"),
+                            rs.getString("bio"),
+                            User.Status.valueOf(rs.getString("status").toUpperCase()),
+                            rs.getTimestamp("last_seen")
+                    );
+                }
+                return user;
+            }
+        }
+    }
+
+
 }

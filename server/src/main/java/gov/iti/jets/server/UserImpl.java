@@ -84,12 +84,14 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
             Card card =  new Card();
             DirectMessage Message = directMessageDAO.getLastMessageForUser(user.getUserId() ,userConnection.getConnectedUserId());
 
-            System.out.println(Message.getTimestamp());
+            //System.out.println(Message.getTimestamp());
 
             User connecterUser = userDAO.getUserById(userConnection.getConnectedUserId());
 
             System.out.println(connecterUser.getUserId());
 
+            card.setId(connecterUser.getUserId());
+            card.setType(Card.Type.friend.toString());
             card.setSenderName(connecterUser.getDisplayName());
             card.setStatus(connecterUser.getStatus());
             card.setImagePath(connecterUser.getProfilePicturePath());
@@ -130,6 +132,8 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
             for (UserGroups group : groupsList) {
                 Card card = new Card();
                 GroupMessage groupMessage = groupMessageDAO.getLatestMessageInGroup(group.getGroupId());
+                card.setId(group.getGroupId());
+                card.setType(Card.Type.group.toString());
                 card.setMessageContent(groupMessage.getMessageContent());
                 card.setTimeStamp(groupMessage.getTimestamp());
                // User sender = userDAO.getUserById(groupMessage.getSenderId());
@@ -142,6 +146,8 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
             ServerAnnouncement serverAnnouncement = serverAnnouncementDAO.getLatestAnnouncement();
             if (serverAnnouncement != null) {
                 Card announcementCard = new Card();
+                announcementCard.setId(serverAnnouncement.getAnnouncementId());
+                announcementCard.setType(Card.Type.announcement.toString());
                 announcementCard.setTimeStamp(serverAnnouncement.getCreatedAt());
                 announcementCard.setMessageContent(serverAnnouncement.getMessage());
                 announcementCard.setSenderName("TAWASOL");
@@ -223,4 +229,19 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
     public Invitation getInvitationBySenderAndReciever(int senderId, int receiverId) throws RemoteException {
         return invitationDAO.getInvitationBySenderAndReciever(senderId, receiverId);
     }
+
+    @Override
+    public String getCreatedGroupName(int groupId) throws RemoteException
+    {
+        String name = null;
+        try {
+            name= groupDAO.getCreatedGroup(groupId).getDisplayName();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return name;
+    }
+
+
+
 }

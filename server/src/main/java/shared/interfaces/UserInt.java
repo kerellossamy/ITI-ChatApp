@@ -42,4 +42,6 @@ public interface UserInt extends Remote {
 
     Invitation getInvitationBySenderAndReciever(int senderId, int receiverId) throws RemoteException;
 
+    String getCreatedGroupName(int groupId) throws RemoteException;
+
 }

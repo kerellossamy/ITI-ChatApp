@@ -1,9 +1,9 @@
 module gov.iti.jets.client {
-    requires java.sql;
-    requires java.rmi;
-    requires javafx.fxml;
-    requires javafx.controls;
     //requires gov.iti.jets.shared;
+    requires javafx.fxml;
+    requires java.rmi;
+    requires java.sql;
+    requires javafx.controls;
     requires javafx.web;
 
     //chatbot requires
@@ -11,6 +11,7 @@ module gov.iti.jets.client {
     requires org.apache.httpcomponents.httpclient;
     requires org.apache.httpcomponents.httpcore;
     requires org.json;
+
     //**********************************
 
 

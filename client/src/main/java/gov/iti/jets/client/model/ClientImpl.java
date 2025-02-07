@@ -27,6 +27,7 @@ public class ClientImpl extends UnicastRemoteObject implements ClientInt {
    private StatisticsPieController statisticsPieController;
    private UserLoginController userLoginController;
    private UserSignupController userSignupController;
+   private GroupProfileController groupProfileController;
    private static ClientImpl theOnlyClient;
 
 
@@ -120,6 +121,9 @@ public class ClientImpl extends UnicastRemoteObject implements ClientInt {
         this.userSignupController = userSignupController;
     }
 
+    public void setGroupProfileController(GroupProfileController groupProfileController) {
+        this.groupProfileController = groupProfileController;
+    }
 //    @Override
 //     public  void test () throws RemoteException
 //     {

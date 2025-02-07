@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.web.*?>
 <?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
@@ -18,7 +26,7 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.web.HTMLEditor?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gov.iti.jets.client.controller.HomeScreenController">
+<BorderPane fx:id="MainBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gov.iti.jets.client.controller.HomeScreenController">
    
    <left>
       <HBox maxWidth="1.7976931348623157E308" minWidth="350.0" prefHeight="900.0" BorderPane.alignment="CENTER">
@@ -144,7 +152,7 @@
                   <Line endX="150.0" layoutX="124.0" layoutY="149.0" startX="-100.0" />
                   <ScrollPane layoutX="10.0" layoutY="161.0" prefHeight="438.0" prefWidth="270.0" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="161.0">
                      <content>
-                        <ListView fx:id="ContactList" prefHeight="833.0" prefWidth="268.0" />
+                        <ListView fx:id="ContactList" onMouseClicked="#handleSelectedCard" prefHeight="833.0" prefWidth="268.0" />
                      </content>
                   </ScrollPane>
                </children>
@@ -162,11 +170,11 @@
                         <Image url="@../img/man1.png" />
                      </image>
                   </ImageView>
-                  <Label fx:id="frinedName" layoutX="64.0" layoutY="14.0" prefHeight="10.0" prefWidth="23.0" text="Ali" textFill="#3ca9fd" AnchorPane.leftAnchor="80.0">
+                  <Text fx:id="friendName" fill="#3ca9fd" layoutX="86.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Ali">
                      <font>
-                        <Font name="System Bold" size="17.0" />
+                        <Font name="System Bold" size="18.0" />
                      </font>
-                  </Label>
+                  </Text>
                   <Button fx:id="blockbtn" layoutX="415.0" layoutY="12.0" mnemonicParsing="false" AnchorPane.rightAnchor="15.0">
                      <graphic>
                         <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -224,74 +232,5 @@
          </children>
       </VBox>
    </center>
-   <right>
-      <AnchorPane>
-         <children>
-            <ImageView fx:id="friendProfileImage" fitHeight="103.0" fitWidth="102.0" layoutX="88.0" layoutY="67.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="88.0" AnchorPane.rightAnchor="60.0">
-               <image>
-                  <Image url="@../img/man1.png" />
-               </image>
-            </ImageView>
-            <Label fx:id="friendNameProfile" layoutX="122.0" layoutY="179.0" text="Ali" textFill="#3ca9fd" AnchorPane.leftAnchor="122.0" AnchorPane.rightAnchor="103.0" AnchorPane.topAnchor="179.0">
-               <font>
-                  <Font name="System Bold" size="19.0" />
-               </font>
-            </Label>
-            <Label layoutX="40.0" layoutY="331.0" text="Attachment" AnchorPane.leftAnchor="35.0">
-               <font>
-                  <Font name="System Bold" size="16.0" />
-               </font>
-            </Label>
-            <Label layoutX="41.0" layoutY="291.0" text="Busy" AnchorPane.leftAnchor="35.0" />
-            <Label layoutX="41.0" layoutY="258.0" text="Bio" AnchorPane.leftAnchor="35.0">
-               <font>
-                  <Font name="System Bold" size="18.0" />
-               </font>
-            </Label>
-            <Label fx:id="friendPhone" layoutX="68.0" layoutY="209.0" text="+20 XXX XXX XXXX" textFill="#c9c5c5" AnchorPane.leftAnchor="68.0" AnchorPane.rightAnchor="43.0" AnchorPane.topAnchor="209.0">
-               <font>
-                  <Font name="System Bold" size="15.0" />
-               </font>
-            </Label>
-            <Line endX="100.0" layoutX="134.0" layoutY="244.0" startX="-100.0" />
-            <Line endX="100.0" layoutX="135.0" layoutY="322.0" startX="-100.0" />
-            <Button fx:id="PDFbtn" alignment="CENTER" layoutX="13.0" layoutY="392.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="50.0" styleClass="dark-blue" stylesheets="@../cssStyles/Home.css" AnchorPane.leftAnchor="13.0">
-               <graphic>
-                  <ImageView fitHeight="31.0" fitWidth="31.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../img/pdf.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-            <Button fx:id="Vediobtn" alignment="CENTER" layoutX="71.0" layoutY="391.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="50.0" styleClass="dark-blue" stylesheets="@../cssStyles/Home.css" AnchorPane.leftAnchor="71.0">
-               <graphic>
-                  <ImageView fitHeight="31.0" fitWidth="31.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../img/clapperboard.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-            <Button fx:id="musicbtn" alignment="CENTER" layoutX="128.0" layoutY="392.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="50.0" styleClass="dark-blue" stylesheets="@../cssStyles/Home.css" AnchorPane.leftAnchor="128.0">
-               <graphic>
-                  <ImageView fitHeight="31.0" fitWidth="31.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../img/music.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </Button>
-            <Button fx:id="Imagebtn" alignment="CENTER" layoutX="186.0" layoutY="391.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="50.0" styleClass="dark-blue" stylesheets="@../cssStyles/Home.css">
-               <graphic>
-                  <ImageView fitHeight="31.0" fitWidth="31.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../img/insert-picture-icon.png" />
-                     </image></ImageView>
-               </graphic>
-            </Button>
-         </children>
-      </AnchorPane>
-   </right>
 
 </BorderPane>
