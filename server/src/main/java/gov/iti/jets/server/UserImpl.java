@@ -3,9 +3,6 @@ package gov.iti.jets.server;
 
 
 import gov.iti.jets.server.model.dao.implementations.*;
-import shared.dto.Invitation;
-import shared.dto.User;
-import shared.dto.UserConnection;
 import gov.iti.jets.server.model.dao.interfaces.DirectMessageDAOInt;
 import shared.dto.*;
 import shared.interfaces.ClientInt;
@@ -20,6 +17,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class UserImpl extends UnicastRemoteObject implements UserInt {
 
@@ -125,6 +123,7 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
         }
 */
         try {
+            /* 
 
             List<UserGroups> groupsList = userGroupsDAO.getGroupsByUserId(user.getUserId());
             for (UserGroups group : groupsList) {
@@ -138,6 +137,7 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
                 card.setImagePath("src/main/resources/img/people.png");
                 cardList.add(card);
             }
+                */
 
             ServerAnnouncement serverAnnouncement = serverAnnouncementDAO.getLatestAnnouncement();
             if (serverAnnouncement != null) {
@@ -161,10 +161,10 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
         return cardList;
     }
 
-    // List<UserConnection> getAllConnectionsForUser(int userId);
+   
     @Override
     public  List<UserConnection> getUserConncectionById(int userId) throws RemoteException
-    {      System.out.println("hello");
+    {      
           return userConnectionDAO.getAllConnectionsForUser(userId);
     }
 
@@ -223,4 +223,66 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
     public Invitation getInvitationBySenderAndReciever(int senderId, int receiverId) throws RemoteException {
         return invitationDAO.getInvitationBySenderAndReciever(senderId, receiverId);
     }
+
+    @Override
+    public int createGroup(String groupName, int createdBy)
+    {  
+        try 
+        {
+        return groupDAO.createGroupWithId(groupName,  createdBy); 
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+    @Override
+    public void addUserToGroup(int userId, int groupId)
+    {   
+        try 
+        {
+        userGroupsDAO.addUserToGroup( userId,  groupId);
+        }
+        catch (Exception e)
+        { 
+            e.printStackTrace();
+
+        }
+    }
+
+    @Override
+    public  List<Invitation> getAllInvitationsById(int userId)
+    {
+       return invitationDAO.getAllInvitationsByReceiverId(userId);
+    }
+    @Override
+    public boolean addUserConnection(UserConnection userConnection)
+    {
+        return userConnectionDAO.insertUserConnection(userConnection);
+    }
+
+    @Override
+    public  void deleteInvitation(int invitationId)
+    {
+          invitationDAO.deleteInvitation(invitationId);
+    }
+
+    @Override 
+    public boolean isUserConnection(int userId, int connectedUserId)
+    {
+        UserConnection userConnection = userConnectionDAO.getUserConnection(userId, connectedUserId);
+        if(userConnection==null)
+        {
+            return false;
+
+        }
+        else
+        {
+            return true;
+        }
+
+
+    }
+    
 }

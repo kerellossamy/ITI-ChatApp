@@ -32,7 +32,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.scene.web.HTMLEditor;
 import shared.dto.Card;
@@ -134,7 +133,7 @@ public class HomeScreenController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-//        System.out.println("currentUser is: " + currentUser);
+        System.out.println("---------hello in home--------- ");
 
         Platform.runLater(() -> {
             userNameText.setText(currentUser.getDisplayName());
@@ -168,8 +167,10 @@ public class HomeScreenController implements Initializable {
 
 
             try {
+                System.out.println("hello");
+                System.out.println(currentUser);
                 listOfContactCards = userInt.getCards(currentUser);
-//            userInt.getUserConncectionById(1);
+
             } catch (RemoteException e) {
                 throw new RuntimeException(e);
 
@@ -316,9 +317,10 @@ public class HomeScreenController implements Initializable {
             CreateGroupController createGroupController = loader.getController();
             createGroupController.setAdminInt(ClientMain.adminInt);
             createGroupController.setUserInt(ClientMain.userInt);
+            createGroupController.setCurrentUser(currentUser);
 
             Stage createGroupStage = new Stage();
-            createGroupStage.setTitle("Add Contact");
+            createGroupStage.setTitle("Create Group");
 
             // Set the scene for the small window
             createGroupStage.setScene(new Scene(root));
@@ -377,15 +379,17 @@ public class HomeScreenController implements Initializable {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/InvitationWindow.fxml"));
             Parent root = loader.load();
-            if (root == null) {
+            if ( ClientMain.userInt== null) {
                 System.out.println("nullllllllllllllllllllllllllllllllllllll");
             }
             InvitationListWindowController invitationListWindowController = loader.getController();
             invitationListWindowController.setAdminInt(ClientMain.adminInt);
             invitationListWindowController.setUserInt(ClientMain.userInt);
+            invitationListWindowController.setCurrentUser(currentUser);
+
 
             Stage addContactStage = new Stage();
-            addContactStage.setTitle("Invitaion List");
+            addContactStage.setTitle("Invitation List");
 
             // Set the scene for the small window
             addContactStage.setScene(new Scene(root));

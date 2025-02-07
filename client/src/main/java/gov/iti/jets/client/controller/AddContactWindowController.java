@@ -53,10 +53,13 @@ public class AddContactWindowController  {
      {
          Invitation invitation=null;
          User user = userInt.getUserByPhoneNumber( numberTextField.getText());
+         boolean isUserConnection=false;
+        
          if(user!=null) {
               invitation = userInt.getInvitationBySenderAndReciever(HomeScreenController.currentUser.getUserId(), user.getUserId());
+              userInt.isUserConnection(HomeScreenController.currentUser.getUserId(), user.getUserId());
          }
-         if(user!=null && user.getUserId()!=HomeScreenController.currentUser.getUserId() && invitation==null)
+         if(user!=null && user.getUserId()!=HomeScreenController.currentUser.getUserId() && invitation==null &&!isUserConnection)
          {
 
              Invitation new_invitation=new Invitation();
