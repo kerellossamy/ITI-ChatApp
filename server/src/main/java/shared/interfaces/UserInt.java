@@ -47,5 +47,7 @@ public interface UserInt extends Remote {
     boolean  insertDirectMessage(DirectMessage directMessage) throws RemoteException;
     void addGroupMessage(GroupMessage message) throws RemoteException;
     UserConnection getUserConnection(int userId, int connectedUserId) throws RemoteException;
+    UserBlockedConnection getBlockedConnection(int blockerUserId, int blockedUserId) throws RemoteException;
+
 
 }

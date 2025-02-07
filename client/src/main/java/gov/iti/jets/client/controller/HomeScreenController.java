@@ -9,6 +9,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.*;
 import javafx.scene.Group;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -35,12 +36,6 @@ import java.util.logging.Logger;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
@@ -58,8 +53,8 @@ public class HomeScreenController implements Initializable {
     List<Card> listOfContactCards;
     static User currentUser = null;
     //***************chat
-    static String Target_Type="group";
-    static int Target_ID=1;
+    static String Target_Type="user";
+    static int Target_ID=7;
 
     static Boolean isBotEnabled=false;
 
@@ -145,26 +140,41 @@ public class HomeScreenController implements Initializable {
         else{
                 if(Target_Type.equals("user")){
 
-                    DirectMessage directMessage = new DirectMessage();
-                    directMessage.setMessageContent(messageContent);
-                    directMessage.setSenderId(currentUser.getUserId());
-                    directMessage.setReceiverId(Target_ID);
-                    directMessage.setFontStyle("Arial");
-                    directMessage.setFontColor("Black");
-                    directMessage.setTextBackground("White");
-                    directMessage.setFontSize(14);
-                    directMessage.setBold(false);
-                    directMessage.setItalic(false);
-                    directMessage.setUnderlined(false);
-                    directMessage.setTimestamp(new Timestamp(System.currentTimeMillis()));
+                    UserBlockedConnection  userBlockedConnection =null;
                     try {
-                        userInt.insertDirectMessage(directMessage);
+                         userBlockedConnection = userInt.getBlockedConnection(currentUser.getUserId(),Target_ID);
+
                     } catch (RemoteException e) {
                         e.printStackTrace();
+
                     }
-                    observableMessages.add(directMessage);
-                    chatListView.refresh();
-                    messageField.setHtmlText("");
+                    if(userBlockedConnection==null){
+                        DirectMessage directMessage = new DirectMessage();
+                        directMessage.setMessageContent(messageContent);
+                        directMessage.setSenderId(currentUser.getUserId());
+                        directMessage.setReceiverId(Target_ID);
+                        directMessage.setFontStyle("Arial");
+                        directMessage.setFontColor("Black");
+                        directMessage.setTextBackground("White");
+                        directMessage.setFontSize(14);
+                        directMessage.setBold(false);
+                        directMessage.setItalic(false);
+                        directMessage.setUnderlined(false);
+                        directMessage.setTimestamp(new Timestamp(System.currentTimeMillis()));
+                        try {
+                            userInt.insertDirectMessage(directMessage);
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+                        observableMessages.add(directMessage);
+                        chatListView.refresh();
+                        messageField.setHtmlText("");
+                    }
+                    else{
+                        showErrorAlert("Error","You can't send message to this user");
+                        messageField.setHtmlText("");
+
+                    }
 
 
                 }
@@ -276,9 +286,9 @@ public class HomeScreenController implements Initializable {
 
 
             try {
-               // populateChatListView("user",7);
+                populateChatListView("user",7);
                // populateChatListView("announcement",0);
-                populateChatListView("group",1);
+                //populateChatListView("group",1);
                 System.out.println("sizeeeeee of the list="+observableMessages.size());
             } catch (RemoteException e) {
                 throw new RuntimeException(e);
@@ -661,7 +671,13 @@ public class HomeScreenController implements Initializable {
 
     }
 
-
+    private void showErrorAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
 
 
 

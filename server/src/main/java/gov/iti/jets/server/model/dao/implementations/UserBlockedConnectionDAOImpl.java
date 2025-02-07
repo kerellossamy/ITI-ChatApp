@@ -76,12 +76,16 @@ public class UserBlockedConnectionDAOImpl implements UserBlockedConnectionDAOInt
     public UserBlockedConnection getBlockedConnection(int blockerUserId, int blockedUserId) {
 
         UserBlockedConnection userBlockedConnection = null;
-        String sql = "SELECT * FROM user_blocked_connection WHERE blocker_user_id = ? AND blocked_user_id = ?";
+        String sql = "SELECT * FROM user_blocked_connection " +
+                "WHERE (blocker_user_id = ? AND blocked_user_id = ?) " +
+                "   OR (blocker_user_id = ? AND blocked_user_id = ?)";
         try (Connection conn = DB_UtilityClass.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, blockerUserId);
             pstmt.setInt(2, blockedUserId);
+            pstmt.setInt(3, blockedUserId);
+            pstmt.setInt(4, blockerUserId);
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
