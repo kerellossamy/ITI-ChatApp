@@ -156,4 +156,32 @@ public class InvitationDAOImpl implements InvitationDAOInt {
         }
 
     }
+
+    public List<Invitation> getAllInvitationsByReceiverId(int receiverId) {
+        List<Invitation> invitations = new ArrayList<>();
+        Invitation invitation = null;
+        String query = "SELECT * FROM invitation WHERE receiver_id = ?";
+
+        try (Connection connection = DB_UtilityClass.getConnection();
+        PreparedStatement statement = connection.prepareStatement(query)) {
+       statement.setInt(1, receiverId);
+       try (ResultSet resultSet = statement.executeQuery()) {
+           while (resultSet.next()) {
+               invitation = new Invitation(
+                       resultSet.getInt("invitation_id"),
+                       resultSet.getInt("sender_id"),
+                       resultSet.getInt("receiver_id"),
+                       Invitation.Status.valueOf(resultSet.getString("status").toUpperCase())
+
+               );
+               invitations.add(invitation);
+           }
+
+               
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return invitations;
+    }
 }

@@ -6,6 +6,7 @@ import java.util.Map;
 
 public interface GroupDAOInt {
     void createGroup(String groupName, int createdBy) throws SQLException;
+    int createGroupWithId(String groupName, int createdBy) throws SQLException;
     List<Map<String, Object>> getAllGroups() throws SQLException;
     void updateGroupName(int groupId, String groupName) throws SQLException;
     void deleteGroup(int groupId) throws SQLException;

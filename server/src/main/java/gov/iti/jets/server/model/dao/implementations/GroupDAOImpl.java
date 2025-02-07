@@ -24,6 +24,24 @@ public class GroupDAOImpl implements GroupDAOInt {
         }
     }
 
+    public int createGroupWithId(String groupName, int createdBy) throws SQLException {
+        String query = "INSERT INTO `group` (group_name, created_by) VALUES (?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setString(1, groupName);
+            stmt.setInt(2, createdBy);
+            stmt.executeUpdate();
+    
+            // Retrieve the auto-generated key (group ID)
+            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getInt(1); // Return the generated group ID
+                } else {
+                     return 0;
+                }
+            }
+        }
+    }
+
     public List<Map<String, Object>> getAllGroups() throws SQLException {
         String query = "SELECT * FROM `group`";
         try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(query)) {

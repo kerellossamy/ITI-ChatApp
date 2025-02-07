@@ -41,6 +41,12 @@ import java.util.logging.Logger;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
@@ -238,7 +244,6 @@ public class HomeScreenController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-
 //        System.out.println("currentUser is: " + currentUser);
 
         Platform.runLater(() -> {
@@ -659,9 +664,10 @@ public class HomeScreenController implements Initializable {
             CreateGroupController createGroupController = loader.getController();
             createGroupController.setAdminInt(ClientMain.adminInt);
             createGroupController.setUserInt(ClientMain.userInt);
+            createGroupController.setCurrentUser(currentUser);
 
             Stage createGroupStage = new Stage();
-            createGroupStage.setTitle("Add Contact");
+            createGroupStage.setTitle("Create Group");
 
             // Set the scene for the small window
             createGroupStage.setScene(new Scene(root));
@@ -720,15 +726,17 @@ public class HomeScreenController implements Initializable {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/InvitationWindow.fxml"));
             Parent root = loader.load();
-            if (root == null) {
+            if ( ClientMain.userInt== null) {
                 System.out.println("nullllllllllllllllllllllllllllllllllllll");
             }
             InvitationListWindowController invitationListWindowController = loader.getController();
             invitationListWindowController.setAdminInt(ClientMain.adminInt);
             invitationListWindowController.setUserInt(ClientMain.userInt);
+            invitationListWindowController.setCurrentUser(currentUser);
+
 
             Stage addContactStage = new Stage();
-            addContactStage.setTitle("Invitaion List");
+            addContactStage.setTitle("Invitation List");
 
             // Set the scene for the small window
             addContactStage.setScene(new Scene(root));

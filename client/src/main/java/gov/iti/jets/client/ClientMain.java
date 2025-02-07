@@ -35,6 +35,10 @@ public class ClientMain extends Application {
         Parent root = null;
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/UserLoginPage.fxml"));
+
+        //    FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/InvitationListCard.fxml"));
+        
+             
             root = loader.load();
             UserLoginController userLoginController = loader.getController();
 
@@ -43,8 +47,10 @@ public class ClientMain extends Application {
             } else {
                 userLoginController.setUserInt(userInt);
                 userLoginController.setAdminInt(adminInt);
+                
             }
-        } catch (IOException e) {
+                
+        } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Could not load the UserLoginPage.fxml file.");
         }

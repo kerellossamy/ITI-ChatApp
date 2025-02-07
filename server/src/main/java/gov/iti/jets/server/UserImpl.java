@@ -20,6 +20,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class UserImpl extends UnicastRemoteObject implements UserInt {
 
@@ -284,5 +285,67 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
         return userBlockedConnectionDAO.getBlockedConnection(blockerUserId, blockedUserId);
     }
 
+
+
+    @Override
+    public int createGroup(String groupName, int createdBy)
+    {
+        try
+        {
+        return groupDAO.createGroupWithId(groupName,  createdBy);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+    @Override
+    public void addUserToGroup(int userId, int groupId)
+    {
+        try
+        {
+        userGroupsDAO.addUserToGroup( userId,  groupId);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+
+        }
+    }
+
+    @Override
+    public  List<Invitation> getAllInvitationsById(int userId)
+    {
+       return invitationDAO.getAllInvitationsByReceiverId(userId);
+    }
+    @Override
+    public boolean addUserConnection(UserConnection userConnection)
+    {
+        return userConnectionDAO.insertUserConnection(userConnection);
+    }
+
+    @Override
+    public  void deleteInvitation(int invitationId)
+    {
+          invitationDAO.deleteInvitation(invitationId);
+    }
+
+    @Override
+    public boolean isUserConnection(int userId, int connectedUserId)
+    {
+        UserConnection userConnection = userConnectionDAO.getUserConnection(userId, connectedUserId);
+        if(userConnection==null)
+        {
+            return false;
+
+        }
+        else
+        {
+            return true;
+        }
+
+
+    }
 
 }

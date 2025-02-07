@@ -10,4 +10,5 @@ public interface InvitationDAOInt {
     void updateInvitationStatus(int invitationId, Invitation.Status newStatus);
     void deleteInvitation(int invitationId);
     List<Invitation> getAllInvitations();
+    List<Invitation> getAllInvitationsByReceiverId(int receiverId);
 }
