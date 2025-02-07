@@ -1,5 +1,7 @@
 package gov.iti.jets.server.model.dao.interfaces;
 
+import shared.dto.User;
+
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
@@ -12,5 +14,6 @@ public interface GroupDAOInt {
     void deleteGroup(int groupId) throws SQLException;
     List<Map<String, Object>> getGroupsByUser(int userId) throws SQLException;
     String getGroupNameById(int groupId) throws SQLException ;
+    public User getCreatedGroup(int groupId) throws SQLException ;
 
     }

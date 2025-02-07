@@ -3,13 +3,22 @@ package shared.dto;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
+
+
 public class Card implements Serializable {
 
+    private int id;
+    private String type;
     private String senderName;
     private String messageContent;
     private Timestamp timestamp;
     private User.Status status;
     private String imagePath;
+    public enum Type{
+        friend , group , announcement
+
+    }
+
 
 
     public Timestamp getTimestamp() {
@@ -36,6 +45,18 @@ public class Card implements Serializable {
         this.imagePath = imagePath;
     }
 
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getType() {
+        return type;
+    }
+
     public String getSenderName() {
         return senderName;
     }
@@ -51,5 +72,10 @@ public class Card implements Serializable {
     public String  getImagePath() {
         return imagePath;
     }
+
+    public int getId() {
+        return id;
+    }
+
 
 }

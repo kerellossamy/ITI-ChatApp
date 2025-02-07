@@ -63,4 +63,6 @@ public interface UserInt extends Remote {
 
     boolean isUserConnection(int userId, int connectedUserId) throws RemoteException;
 
+    String getCreatedGroupName(int groupId) throws RemoteException;
+
 }

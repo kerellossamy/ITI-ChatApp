@@ -5,11 +5,17 @@ import java.sql.Timestamp;
 
 public class Card implements Serializable {
 
+    private int id;
+    private String type;
     private String senderName;
     private String messageContent;
     private Timestamp timestamp;
     private User.Status status;
     private String imagePath;
+    public enum Type{
+        friend , group , announcement
+
+    }
 
 
     public Timestamp getTimestamp() {
@@ -52,4 +58,20 @@ public class Card implements Serializable {
         return imagePath;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 }
+

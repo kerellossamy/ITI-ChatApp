@@ -89,6 +89,9 @@ public class HomeScreenController implements Initializable {
         this.adminInt = adminInt;
     }
 
+
+    @FXML
+    private BorderPane MainBorderPane;
     @FXML
     private Button notificationbtn;
     @FXML
@@ -110,11 +113,11 @@ public class HomeScreenController implements Initializable {
     @FXML
     private TextField searchTextField;
     @FXML
-    private ListView<HBox> ContactList;
+    private ListView ContactList;
     @FXML
     private ImageView friendImage;
     @FXML
-    private Label frinedName;
+    private Text friendName;
     @FXML
     private Button blockbtn;
     @FXML
@@ -281,13 +284,18 @@ public class HomeScreenController implements Initializable {
                 listOfContactCards = userInt.getCards(currentUser);
 //            userInt.getUserConncectionById(1);
             } catch (RemoteException e) {
-                throw new RuntimeException(e);
-
+                //throw new RuntimeException(e);
+                e.printStackTrace();
             }
 
             fullListView(ContactList);
             populateCard(ContactList);
 
+            ContactList.getSelectionModel().selectFirst();
+            //ContactList.getSelectionModel().
+            System.out.println(ContactList.isMouseTransparent());
+
+        });
 
             try {
                 populateChatListView("group", 1);
@@ -549,7 +557,7 @@ public class HomeScreenController implements Initializable {
         }
     }
 
-    void populateCard(ListView<HBox> chatList) {
+    void populateCard(ListView<HBox> ContactList) {
         for (Card c : listOfContactCards) {
             HBox card = new HBox();
             Group g1 = new Group();
@@ -583,7 +591,7 @@ public class HomeScreenController implements Initializable {
 
             card.getChildren().addAll(g1, v1, v2);
 
-            chatList.getItems().add(card); // Add card to chatList
+            ContactList.getItems().add(card); // Add card to chatList
         }
     }
 
@@ -610,17 +618,91 @@ public class HomeScreenController implements Initializable {
                                 Logger.getLogger(HomeScreenController.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         }
-                    } else {
-//                        System.out.println("empty");
+                    }
+                    else
+                    {
+                       // System.out.println("empty");
                         return;
                     }
                 }
             };
-
             return cell;
         });
-
     }
+
+
+    @FXML
+    void handleSelectedCard()
+    {
+
+        int index = ContactList.getSelectionModel().getSelectedIndex();
+        Card c = listOfContactCards.get(index);
+        System.out.println("index "  + index + " Name " + c.getSenderName() + " Type " + c.getType() + " id " + c.getId());
+        File file = new File(c.getImagePath());
+        friendImage.setImage(new Image(file.toURI().toString()));
+        friendName.setText(c.getSenderName());
+
+        if(c.getType().equals("friend"))
+        {
+            System.out.println("friend");
+            AnchorPane anchorPane = null;
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FriendProfile.fxml"));
+                anchorPane = loader.load();
+                FriendProfileController controller = loader.getController();
+                User user= userInt.getUserById(c.getId());
+                System.out.println(user.getDisplayName());
+                controller.setInfo(new Image(file.toURI().toString()) , user.getDisplayName() , user.getPhoneNumber() , user.getBio());
+            } catch (IOException e) {
+                System.out.println("failed");
+                e.printStackTrace();
+            }
+            MainBorderPane.setRight(anchorPane);
+
+
+
+        }
+        else if(c.getType().equals("group"))
+        {
+
+            System.out.println("group");
+
+            AnchorPane anchorPane = null;
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/GroupProfile.fxml"));
+                anchorPane = loader.load();
+                GroupProfileController controller = loader.getController();
+                String createdGroup = userInt.getCreatedGroupName(c.getId());
+                System.out.println(createdGroup);
+
+
+                controller.setInfo(new Image(file.toURI().toString()) , c.getSenderName() , createdGroup);
+
+
+        } catch (IOException e) {
+                System.out.println("failed");
+            e.printStackTrace();
+        }
+            MainBorderPane.setRight(anchorPane);
+
+
+        }
+        else if(c.getType().equals("announcement"))
+        {
+            System.out.println("announcement");
+            AnchorPane anchorPane = null;
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AnnouncementProfile.fxml"));
+                anchorPane = loader.load();
+
+            } catch (IOException e) {
+                System.out.println("failed");
+                e.printStackTrace();
+            }
+            MainBorderPane.setRight(anchorPane);
+        }
+    }
+
 
     @FXML
     void handleAddContact(ActionEvent event) {
