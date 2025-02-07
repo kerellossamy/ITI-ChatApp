@@ -51,12 +51,16 @@ public class AddContactWindowController  {
     @FXML
     public void handleAddContactButton(ActionEvent event) throws IOException
      {
+         UserConnection userConnection=null;
          Invitation invitation=null;
          User user = userInt.getUserByPhoneNumber( numberTextField.getText());
          if(user!=null) {
               invitation = userInt.getInvitationBySenderAndReciever(HomeScreenController.currentUser.getUserId(), user.getUserId());
+              userConnection=userInt.getUserConnection(HomeScreenController.currentUser.getUserId(),user.getUserId());
+
          }
-         if(user!=null && user.getUserId()!=HomeScreenController.currentUser.getUserId() && invitation==null)
+
+         if(user!=null && user.getUserId()!=HomeScreenController.currentUser.getUserId() && (invitation==null||invitation.getStatus()!=Invitation.Status.PENDING) && userConnection==null )
          {
 
              Invitation new_invitation=new Invitation();
@@ -71,7 +75,20 @@ public class AddContactWindowController  {
          }
          else
          {
-            showErrorAlert("Error", "Sorry..... can't send invitation");
+             if (user == null) {
+                 showErrorAlert("Error", "User is not found");
+             } else if (user.getUserId()==HomeScreenController.currentUser.getUserId()) {
+                 showErrorAlert("Error", " can't send invitation to yourself");
+             }
+             else if (userConnection!=null){
+                    showErrorAlert("Error", "User is already in your contacts");
+             } else if (invitation.getStatus()==Invitation.Status.PENDING){
+                    showErrorAlert("Error", "Invitation already sent");
+             }
+             else{
+                    showErrorAlert("Error", "Unknown error");
+             }
+
          }
 
     }

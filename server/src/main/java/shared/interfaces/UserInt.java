@@ -46,6 +46,6 @@ public interface UserInt extends Remote {
     List<DirectMessage> getMessagesBetweenTwo(int receiverId,int senderId) throws RemoteException;
     boolean  insertDirectMessage(DirectMessage directMessage) throws RemoteException;
     void addGroupMessage(GroupMessage message) throws RemoteException;
-
+    UserConnection getUserConnection(int userId, int connectedUserId) throws RemoteException;
 
 }

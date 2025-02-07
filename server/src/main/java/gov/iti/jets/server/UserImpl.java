@@ -274,5 +274,10 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
         }
     }
 
+    @Override
+    public UserConnection getUserConnection(int userId, int connectedUserId) throws RemoteException {
+        return userConnectionDAO.getUserConnection(userId, connectedUserId);
+    }
+
 
 }
