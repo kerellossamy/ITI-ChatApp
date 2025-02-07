@@ -72,7 +72,9 @@ public class AdminLoginController {
             // Load the UserLoginPage.fxml
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/UserLoginPage.fxml"));
             Parent userLoginRoot = loader.load();
-
+            UserLoginController userLoginController = loader.getController();
+            userLoginController.setUserInt(ClientMain.userInt);
+            userLoginController.setAdminInt(ClientMain.adminInt);
 
 
             // Get the current stage

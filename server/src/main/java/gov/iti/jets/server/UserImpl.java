@@ -126,19 +126,20 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
         }
 */
         try {
+            //TODO: needs to be updated to create group
 
             List<UserGroups> groupsList = userGroupsDAO.getGroupsByUserId(user.getUserId());
-            for (UserGroups group : groupsList) {
-                Card card = new Card();
-                GroupMessage groupMessage = groupMessageDAO.getLatestMessageInGroup(group.getGroupId());
-                card.setMessageContent(groupMessage.getMessageContent());
-                card.setTimeStamp(groupMessage.getTimestamp());
-               // User sender = userDAO.getUserById(groupMessage.getSenderId());
-                card.setStatus(User.Status.AVAILABLE);
-                card.setSenderName(groupDAO.getGroupNameById(group.getGroupId()));
-                card.setImagePath("src/main/resources/img/people.png");
-                cardList.add(card);
-            }
+//            for (UserGroups group : groupsList) {
+//                Card card = new Card();
+//                GroupMessage groupMessage = groupMessageDAO.getLatestMessageInGroup(group.getGroupId());
+//                card.setMessageContent(groupMessage.getMessageContent());
+//                card.setTimeStamp(groupMessage.getTimestamp());
+//               // User sender = userDAO.getUserById(groupMessage.getSenderId());
+//                card.setStatus(User.Status.AVAILABLE);
+//                card.setSenderName(groupDAO.getGroupNameById(group.getGroupId()));
+//                card.setImagePath("src/main/resources/img/people.png");
+//                cardList.add(card);
+//            }
 
             ServerAnnouncement serverAnnouncement = serverAnnouncementDAO.getLatestAnnouncement();
             if (serverAnnouncement != null) {

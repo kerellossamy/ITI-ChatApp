@@ -166,7 +166,7 @@ public class UserLoginController {
             // Load the AdminLoginPage.fxml
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AdminLoginPage.fxml"));
             Parent adminLoginRoot = loader.load();
-            AdminLoginController adminLoginController = new AdminLoginController();
+            AdminLoginController adminLoginController = loader.getController();
             adminLoginController.setUserInt(ClientMain.userInt);
             adminLoginController.setAdminInt(ClientMain.adminInt);
 
