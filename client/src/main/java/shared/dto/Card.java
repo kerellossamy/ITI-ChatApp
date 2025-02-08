@@ -13,7 +13,7 @@ public class Card implements Serializable {
     private User.Status status;
     private String imagePath;
     public enum Type{
-        friend , group , announcement
+        user , group , announcement
 
     }
 

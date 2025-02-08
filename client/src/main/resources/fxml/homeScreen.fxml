@@ -163,7 +163,7 @@
    <center>
       <VBox minWidth="540.0" prefHeight="600.0" prefWidth="570.0" BorderPane.alignment="CENTER">
          <children>
-            <AnchorPane>
+            <AnchorPane maxWidth="590.0" prefHeight="54.0" prefWidth="583.0">
                <children>
                   <ImageView fx:id="friendImage" fitHeight="56.0" fitWidth="54.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="20.0">
                      <image>
@@ -189,7 +189,7 @@
                   <Insets top="20.0" />
                </VBox.margin>
             </AnchorPane>
-            <ScrollPane fx:id="chatMessageScrollPane" prefHeight="860.0" prefWidth="200.0">
+            <ScrollPane fx:id="chatMessageScrollPane" maxWidth="590.0" prefHeight="860.0" prefWidth="200.0">
                <VBox.margin>
                   <Insets top="15.0" />
                </VBox.margin>
@@ -197,9 +197,9 @@
                   <ListView fx:id="chatListView" prefHeight="309.0" prefWidth="588.0" />
                </content>
             </ScrollPane>
-            <AnchorPane minWidth="400.0" prefHeight="132.0" prefWidth="400.0">
+            <AnchorPane maxWidth="590.0" minWidth="400.0" prefHeight="132.0" prefWidth="400.0">
                <children>
-                  <HTMLEditor fx:id="messageField" htmlText="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body contenteditable=&quot;true&quot;&gt;&lt;/body&gt;&lt;/html&gt;" minWidth="400.0" onKeyPressed="#handleEnterPress" prefHeight="200.0" prefWidth="400.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                  <HTMLEditor fx:id="messageField" htmlText="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body contenteditable=&quot;true&quot;&gt;&lt;/body&gt;&lt;/html&gt;" minWidth="400.0" onKeyPressed="#handleEnterPress" prefHeight="200.0" prefWidth="590.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                   <Button fx:id="sendButton" layoutX="588.0" layoutY="121.0" mnemonicParsing="false" onAction="#handleSendButton" prefHeight="34.0" prefWidth="30.0" AnchorPane.rightAnchor="20.0">
                      <graphic>
                         <ImageView fitHeight="30.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">

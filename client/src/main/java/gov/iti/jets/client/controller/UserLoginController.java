@@ -107,6 +107,7 @@ public class UserLoginController {
             HomeScreenController homeScreenController = loader.getController();
             homeScreenController.setUserInt(ClientMain.userInt);
             homeScreenController.setAdminInt(ClientMain.adminInt);
+            System.out.println("Current User");
             homeScreenController.setCurrentUser(currentUser);
 
 

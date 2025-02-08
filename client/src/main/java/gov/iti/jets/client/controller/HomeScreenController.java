@@ -125,21 +125,7 @@ public class HomeScreenController implements Initializable {
     @FXML
     private HTMLEditor messageField;
     @FXML
-    private ImageView friendProfileImage;
-    @FXML
-    private Label friendNameProfile;
-    @FXML
-    private Label friendPhone;
-    @FXML
-    private Button PDFbtn;
-    @FXML
-    private Button Vediobtn;
-    @FXML
     private Button sendButton;
-    @FXML
-    private Button musicbtn;
-    @FXML
-    private Button Imagebtn;
     @FXML
     private ListView<BaseMessage> chatListView;
     private ObservableList<BaseMessage> observableMessages = javafx.collections.FXCollections.observableArrayList();
@@ -282,6 +268,7 @@ public class HomeScreenController implements Initializable {
 
             try {
                 listOfContactCards = userInt.getCards(currentUser);
+                //populateChatListView("group", 1);
 //            userInt.getUserConncectionById(1);
             } catch (RemoteException e) {
                 //throw new RuntimeException(e);
@@ -291,26 +278,17 @@ public class HomeScreenController implements Initializable {
             fullListView(ContactList);
             populateCard(ContactList);
 
-            ContactList.getSelectionModel().selectFirst();
+
+            //ContactList.getSelectionModel().selectFirst();
             //ContactList.getSelectionModel().
             System.out.println(ContactList.isMouseTransparent());
 
         });
 
-            try {
-                populateChatListView("group", 1);
-                // populateChatListView("announcement",0);
-                //populateChatListView("group",1);
-                System.out.println("sizeeeeee of the list=" + observableMessages.size());
-            } catch (RemoteException e) {
-                throw new RuntimeException(e);
-            }
 
-        });
 
         c = ClientImpl.getInstance();
         c.setHomeScreenController(this);
-
 
         //********************************************chatlistview*************************************************
 
@@ -362,15 +340,18 @@ public class HomeScreenController implements Initializable {
 
 
                     // If sender is not 1, prepend (senderName): to message content
-                    //String displayMessage = (msg.getSenderID2() != currentUser.getUserId() ? senderName+" : " : "") + msg.getMessageContent2();
-                    //Text messageText = new Text(displayMessage);
+//                    String displayMessage = (msg.getSenderID2() != currentUser.getUserId() ? senderName+" : " : "") + msg.getMessageContent2();
+//                    Text messageText = new Text(displayMessage);
 
                     // Extract plain text from HTML for storage
                     //String plainText = extractPlainText(msg.getMessageContent2());
 
+
+                    //Commmmentttttt
                     Text username = new Text();
                     if (msg.getSenderID2() != currentUser.getUserId()) {
                         try {
+                            System.out.println("msggggg " + msg.getSenderID2()  + "   " + senderName);
                             username = new Text(userInt.getUserById(msg.getSenderID2()).getDisplayName());
                             username.setStyle("-fx-font-weight: bold;");
                         } catch (RemoteException e) {
@@ -468,6 +449,7 @@ public class HomeScreenController implements Initializable {
 //        int endIndex = style.indexOf(";", startIndex);
 //        return (endIndex == -1) ? style.substring(startIndex) : style.substring(startIndex, endIndex);
 //    }
+
 
     private TextFlow createStyledTextFlow(String html) {
         Document doc = Jsoup.parse(html);
@@ -642,9 +624,22 @@ public class HomeScreenController implements Initializable {
         friendImage.setImage(new Image(file.toURI().toString()));
         friendName.setText(c.getSenderName());
 
-        if(c.getType().equals("friend"))
+        Target_ID = c.getId();
+        Target_Type = c.getType();
+
+        Platform.runLater(() -> {
+            try {
+                populateChatListView(Target_Type, Target_ID);
+               // fillChatListView();
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        });
+
+
+        if(c.getType().equals("user"))
         {
-            System.out.println("friend");
+            System.out.println("user");
             AnchorPane anchorPane = null;
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FriendProfile.fxml"));
@@ -674,8 +669,6 @@ public class HomeScreenController implements Initializable {
                 GroupProfileController controller = loader.getController();
                 String createdGroup = userInt.getCreatedGroupName(c.getId());
                 System.out.println(createdGroup);
-
-
                 controller.setInfo(new Image(file.toURI().toString()) , c.getSenderName() , createdGroup);
 
 

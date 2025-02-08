@@ -92,7 +92,7 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
             System.out.println(connecterUser.getUserId());
 
             card.setId(connecterUser.getUserId());
-            card.setType(Card.Type.friend.toString());
+            card.setType(Card.Type.user.toString());
             card.setSenderName(connecterUser.getDisplayName());
             card.setStatus(connecterUser.getStatus());
             card.setImagePath(connecterUser.getProfilePicturePath());
@@ -131,19 +131,22 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
             //TODO: needs to be updated to create group
 
             List<UserGroups> groupsList = userGroupsDAO.getGroupsByUserId(user.getUserId());
-//            for (UserGroups group : groupsList) {
-//                Card card = new Card();
-//                GroupMessage groupMessage = groupMessageDAO.getLatestMessageInGroup(group.getGroupId());
-//                card.setId(group.getGroupId());
-//                card.setType(Card.Type.group.toString());
-//                card.setMessageContent(groupMessage.getMessageContent());
-//                card.setTimeStamp(groupMessage.getTimestamp());
-//               // User sender = userDAO.getUserById(groupMessage.getSenderId());
-//                card.setStatus(User.Status.AVAILABLE);
-//                card.setSenderName(groupDAO.getGroupNameById(group.getGroupId()));
-//                card.setImagePath("src/main/resources/img/people.png");
-//                cardList.add(card);
-//            }
+            for (UserGroups group : groupsList) {
+                Card card = new Card();
+                System.out.println(group.getGroupId());
+                GroupMessage groupMessage = groupMessageDAO.getLatestMessageInGroup(group.getGroupId());
+                if(groupMessage != null) {
+                    card.setId(group.getGroupId());
+                    card.setType(Card.Type.group.toString());
+                    card.setMessageContent(groupMessage.getMessageContent());
+                    card.setTimeStamp(groupMessage.getTimestamp());
+                    // User sender = userDAO.getUserById(groupMessage.getSenderId());
+                    card.setStatus(User.Status.AVAILABLE);
+                    card.setSenderName(groupDAO.getGroupNameById(group.getGroupId()));
+                    card.setImagePath("src/main/resources/img/people.png");
+                    cardList.add(card);
+                }
+            }
 
             ServerAnnouncement serverAnnouncement = serverAnnouncementDAO.getLatestAnnouncement();
             if (serverAnnouncement != null) {
