@@ -18,6 +18,7 @@
     -fx-underline: true;
 }
 
+
 /* Font Size Classes */
 .font-small {
     -fx-font-size: 12px;
@@ -28,7 +29,11 @@
 }
 
 .font-large {
-    -fx-font-size: 20px;
+    -fx-font-size: 24px; /* Add explicit 24px */
+}
+
+.font-extra-large {
+    -fx-font-size: 48px; /* Fix 36pt to correct px */
 }
 
 /* Font Colors */

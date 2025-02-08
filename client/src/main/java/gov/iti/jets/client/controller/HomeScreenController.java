@@ -17,6 +17,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Font;
 import javafx.scene.text.TextFlow;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
@@ -37,6 +38,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -247,6 +250,23 @@ public class HomeScreenController implements Initializable {
 //        System.out.println("currentUser is: " + currentUser);
 
         Platform.runLater(() -> {
+
+
+            messageField.lookupAll(".tool-bar").forEach(node -> {
+                if (node instanceof ToolBar toolBar) {
+                    List<Node> items = toolBar.getItems();
+                    items.removeIf(item ->
+                            item.toString().contains("indent") ||
+                                    item.toString().contains("outdent") ||
+                                    item.toString().contains("align") ||
+                                    item.toString().contains("bullets") ||
+                                    item.toString().contains("numbers") ||
+                                    item.toString().contains("hr")   // Horizontal Rule
+                    );
+                }
+            });
+
+
             userNameText.setText(currentUser.getDisplayName());
 //            userProfileImage.setImage(new Image(getClass().getResource(currentUser.getProfilePicturePath()).toExternalForm()));
 
@@ -461,11 +481,52 @@ public class HomeScreenController implements Initializable {
 //        return (endIndex == -1) ? style.substring(startIndex) : style.substring(startIndex, endIndex);
 //    }
 
+
+    //using wrapper
+//    private TextFlow createStyledTextFlow(String html) {
+//        Document doc = Jsoup.parse(html);
+//        TextFlow textFlow = new TextFlow();
+//
+//        for (Element element : doc.select("body *")) {
+//            String textContent = element.ownText();
+//            if (!textContent.isEmpty()) {
+//                Text textNode = new Text(textContent);
+//                Label wrapper = new Label(); // Wrapper for background color
+//
+//                // Extract styles from the 'style' attribute
+//                String style = element.attr("style");
+//                StringBuilder fxStyle = new StringBuilder();
+//
+//                // Apply text styles
+//                if (style.contains("font-weight: bold")) fxStyle.append("-fx-font-weight: bold;");
+//                if (style.contains("font-style: italic")) fxStyle.append("-fx-font-style: italic;");
+//                if (style.contains("text-decoration: underline")) textNode.setUnderline(true);
+//                if (style.contains("font-size:")) fxStyle.append("-fx-font-size: ").append(extractStyleValue(style, "font-size")).append(";");
+//                if (style.contains("color:")) fxStyle.append("-fx-fill: ").append(extractStyleValue(style, "color")).append(";");
+//
+//                // Apply styles to text
+//                textNode.setStyle(fxStyle.toString());
+//
+//                // Handle background color dynamically
+//                if (style.contains("background-color:")) {
+//                    String bgColor = extractStyleValue(style, "background-color");
+//                    wrapper.setStyle("-fx-background-color: " + bgColor + "; -fx-padding: 2px; -fx-border-radius: 3px;");
+//                }
+//
+//                wrapper.setGraphic(textNode); // Place Text inside Label
+//                textFlow.getChildren().add(wrapper); // Add wrapped text to TextFlow
+//            }
+//        }
+//        return textFlow;
+//    }
+//
+
+
     private TextFlow createStyledTextFlow(String html) {
         Document doc = Jsoup.parse(html);
         TextFlow textFlow = new TextFlow();
 
-        for (Element element : doc.select("body *")) { // Select all elements inside <body>
+        for (Element element : doc.select("body *")) {
             String textContent = element.ownText();
             if (!textContent.isEmpty()) {
                 Text textNode = new Text(textContent);
@@ -485,9 +546,15 @@ public class HomeScreenController implements Initializable {
                     fxStyle.append("-fx-font-style: italic;");
                 }
 
-                // Apply underline
-                if (style.contains("text-decoration: underline")) {
-                    textNode.setUnderline(true);
+                // Extract text decorations
+                if (style.contains("text-decoration:")) {
+                    String textDecoration = extractStyleValue(style, "text-decoration");
+                    if (textDecoration.contains("underline")) {
+                        textNode.setUnderline(true);
+                    }
+                    if (textDecoration.contains("line-through")) {
+                        textNode.setStrikethrough(true);
+                    }
                 }
 
                 // Extract and apply font size
@@ -523,9 +590,6 @@ public class HomeScreenController implements Initializable {
         return textFlow;
     }
 
-    /**
-     * Extracts a specific style property from an inline CSS string.
-     */
     private String extractStyleValue(String style, String property) {
         int startIndex = style.indexOf(property);
         if (startIndex == -1) return "";
@@ -533,7 +597,6 @@ public class HomeScreenController implements Initializable {
         int endIndex = style.indexOf(";", startIndex);
         return (endIndex == -1) ? style.substring(startIndex).trim() : style.substring(startIndex, endIndex).trim();
     }
-
 
 
     public void updateUI() {
@@ -726,7 +789,7 @@ public class HomeScreenController implements Initializable {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/InvitationWindow.fxml"));
             Parent root = loader.load();
-            if ( ClientMain.userInt== null) {
+            if (ClientMain.userInt == null) {
                 System.out.println("nullllllllllllllllllllllllllllllllllllll");
             }
             InvitationListWindowController invitationListWindowController = loader.getController();
