@@ -167,6 +167,7 @@ public class HomeScreenController implements Initializable {
                     }
                     observableMessages.add(directMessage);
                     chatListView.refresh();
+                    chatListView.scrollTo(observableMessages.size());
                     messageField.setHtmlText("");
                 } else {
                     showErrorAlert("Error", "You can't send message to this user");
@@ -196,6 +197,7 @@ public class HomeScreenController implements Initializable {
                 }
                 observableMessages.add(groupMessage);
                 chatListView.refresh();
+                chatListView.scrollTo(observableMessages.size());
                 messageField.setHtmlText("");
 
             } else if (Target_Type.equals("announcement")) {
@@ -658,7 +660,7 @@ public class HomeScreenController implements Initializable {
         Platform.runLater(() -> {
             try {
                 populateChatListView(Target_Type, Target_ID);
-               // fillChatListView();
+                // fillChatListView();
             } catch (RemoteException e) {
                 e.printStackTrace();
             }

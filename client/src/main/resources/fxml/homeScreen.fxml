@@ -152,7 +152,7 @@
                   <Line endX="150.0" layoutX="124.0" layoutY="149.0" startX="-100.0" />
                   <ScrollPane layoutX="10.0" layoutY="161.0" prefHeight="438.0" prefWidth="270.0" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="161.0">
                      <content>
-                        <ListView fx:id="ContactList" onMouseClicked="#handleSelectedCard" prefHeight="833.0" prefWidth="268.0" />
+                        <ListView fx:id="ContactList" onMouseClicked="#handleSelectedCard" prefHeight="833.0" prefWidth="280.0" />
                      </content>
                   </ScrollPane>
                </children>
