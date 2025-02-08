@@ -1,9 +1,11 @@
 package gov.iti.jets.client.controller;
 
 import gov.iti.jets.client.ClientMain;
+import gov.iti.jets.client.model.ChatbotService;
 import gov.iti.jets.client.model.ClientImpl;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.concurrent.Worker;
 import javafx.event.*;
 import javafx.geometry.Insets;
@@ -65,10 +67,9 @@ public class HomeScreenController implements Initializable {
     List<Card> listOfContactCards;
     static User currentUser = null;
     //***************chat
-    static String Target_Type = "group";
-    static int Target_ID = 1;
+    static String Target_Type = "user";
+    static int Target_ID =7;
 
-    static Boolean isBotEnabled = false;
 
 
     public void setCurrentUser(User currentUser) {
@@ -133,7 +134,7 @@ public class HomeScreenController implements Initializable {
     public void handleSendButton(ActionEvent actionEvent) {
 
         String htmlString = messageField.getHtmlText();
-//        String messageContent = htmlString.replaceAll("\\<.*?\\>", "").trim();
+
         if (htmlString.isEmpty()) {
             return;
         } else {
@@ -165,11 +166,71 @@ public class HomeScreenController implements Initializable {
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
+
                     observableMessages.add(directMessage);
                     chatListView.refresh();
                     chatListView.scrollTo(observableMessages.size());
                     messageField.setHtmlText("");
-                } else {
+
+                    //I will put here the chatbot service work***********************************************************
+
+                    boolean isChatbotEnabledForReciever=false;
+                    try {
+                        isChatbotEnabledForReciever = userInt.isChatbotEnabled(Target_ID);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+
+                    if(isChatbotEnabledForReciever) {
+
+                        Runnable r1 = new Runnable() {
+                            @Override
+                            public void run() {
+
+                                try {
+                                  Thread.sleep(60000);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                String messageContent = htmlString.replaceAll("\\<.*?\\>", "").trim();
+                                String response = ChatbotService.getChatbotResponse(messageContent);
+                                String htmlResponse = "<html dir=\"ltr\"><head></head><body contenteditable=\"true\"><p><span style=\"font-family: &quot;&quot;;\">" + response + "</span></p></body></html>";
+                                DirectMessage botMessage = new DirectMessage();
+                                botMessage.setMessageContent(htmlResponse);
+                                botMessage.setSenderId(Target_ID);
+                                botMessage.setReceiverId(HomeScreenController.currentUser.getUserId());
+                                botMessage.setFontStyle("Arial");
+                                botMessage.setFontColor("Black");
+                                botMessage.setTextBackground("White");
+                                botMessage.setFontSize(14);
+                                botMessage.setBold(false);
+                                botMessage.setItalic(false);
+                                botMessage.setUnderlined(false);
+                                botMessage.setTimestamp(new Timestamp(System.currentTimeMillis()));
+                                try {
+                                    userInt.insertDirectMessage(botMessage);
+                                } catch (RemoteException e) {
+                                    e.printStackTrace();
+                                }
+                                javafx.application.Platform.runLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        observableMessages.add(botMessage);
+                                        chatListView.refresh();
+                                        chatListView.scrollTo(observableMessages.size());
+                                    }
+                                });
+
+                            }
+
+
+                        };
+                        Thread t1 = new Thread(r1);
+                        t1.start();
+
+                    }
+                }
+                else {
                     showErrorAlert("Error", "You can't send message to this user");
                     messageField.setHtmlText("");
 
@@ -210,6 +271,9 @@ public class HomeScreenController implements Initializable {
 
     }
 
+
+
+
     public void handleEnterPress(KeyEvent keyEvent) {
         if (keyEvent.getCode() == KeyCode.ENTER) {
             handleSendButton(new ActionEvent());
@@ -235,9 +299,27 @@ public class HomeScreenController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-//        System.out.println("currentUser is: " + currentUser);
+
+//        System.out.println("currentUse  is: " + currentUser);
 
         Platform.runLater(() -> {
+
+            //adding chatBot to the user
+
+            try {
+                Chatbot chatbot=userInt.getChatbotById(HomeScreenController.currentUser.getUserId());
+                if(chatbot==null){
+                    userInt.addChatbotByUserID(HomeScreenController.currentUser.getUserId());
+
+                }
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
+
+
+
+
+
             userNameText.setText(currentUser.getDisplayName());
 //            userProfileImage.setImage(new Image(getClass().getResource(currentUser.getProfilePicturePath()).toExternalForm()));
 
@@ -898,6 +980,8 @@ public class HomeScreenController implements Initializable {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ChatbotWindow.fxml"));
             Parent root = loader.load();
+            ChatbotWindowController chatbotWindowController = loader.getController();
+            chatbotWindowController.setUserInt(ClientMain.userInt);
             if (root == null) {
                 System.out.println("nullllllllllllllllllllllllllllllllllllll");
             }
@@ -959,6 +1043,15 @@ public class HomeScreenController implements Initializable {
         chatListView.setItems(observableMessages);
         chatListView.refresh();
     }
+
+
+
+    private String convertToHtml(String text) {
+        // Add simple HTML tags around the message content if needed
+        // You can expand this method to include more complex formatting if necessary
+        return "<html><body>" + text.replaceAll("\n", "<br>") + "</body></html>";
+    }
+
 //********************************************************************************************************************
 
    /* public void fullListView(ListView<Friend> contListView , ScrollPane scrollPane)

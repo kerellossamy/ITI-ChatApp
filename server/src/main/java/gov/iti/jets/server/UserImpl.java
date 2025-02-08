@@ -247,8 +247,57 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
         return name;
     }
 
+    @Override
+    public void addChatbot(Chatbot chatbot) throws RemoteException {
+        try {
+            chatbotDAO.addChatbot(chatbot);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
+    @Override
+    public boolean isChatbotEnabled(int userID) throws RemoteException {
+        try {
+            return chatbotDAO.isChatbotEnabled(userID);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
+    @Override
+    public void enableChatBot(int userID) throws RemoteException {
+        try {
+            chatbotDAO.enableChatBot(userID);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void disableChatBot(int userID) throws RemoteException {
+        try {
+            chatbotDAO.DisableChatBot(userID);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void addChatbotByUserID(int userID) throws RemoteException {
+        chatbotDAO.addChatbotByUserID(userID);
+    }
+
+    @Override
+    public Chatbot getChatbotById(int userID) throws RemoteException {
+        try {
+            return chatbotDAO.getChatbotByUserId(userID);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     @Override
     public List<GroupMessage> getGroupMessages(int groupId) throws RemoteException {

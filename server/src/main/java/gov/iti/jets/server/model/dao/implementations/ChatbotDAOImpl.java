@@ -91,4 +91,85 @@ public class ChatbotDAOImpl implements ChatbotDAOInt {
             stmt.executeUpdate();
         }
     }
+
+    public void enableChatBot(int userID) throws SQLException {
+        String sql = "UPDATE chatbot SET is_enabled = ? WHERE user_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setBoolean(1,true);
+            stmt.setInt(2, userID);
+            stmt.executeUpdate();
+        }
+    }
+
+    public void DisableChatBot(int userID) throws SQLException {
+        String sql = "UPDATE chatbot SET is_enabled = ? WHERE user_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setBoolean(1,false);
+            stmt.setInt(2, userID);
+            stmt.executeUpdate();
+        }
+    }
+
+    public boolean isChatbotEnabled(int userID) throws SQLException {
+        String sql = "SELECT is_enabled FROM chatbot WHERE user_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, userID);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getBoolean("is_enabled");
+                }
+            }
+        }
+        return false;
+    }
+
+    public void addChatbotByUserID(int userID) {
+        String sql = "INSERT INTO chatbot (user_id, is_enabled, chatbot_type) VALUES (?, ?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, userID);
+            stmt.setBoolean(2, false);
+            stmt.setString(3, "pandorabots");
+            stmt.executeUpdate();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+    public Chatbot getChatbotByUserId(int userID) throws SQLException {
+        String sql = "SELECT * FROM chatbot WHERE user_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, userID);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new Chatbot(
+                            rs.getInt("chatbot_id"),
+                            rs.getInt("user_id"),
+                            rs.getBoolean("is_enabled"),
+                            Chatbot.ChatbotType.valueOf(rs.getString("chatbot_type"))
+                    );
+                }
+            }
+        }
+        return null;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

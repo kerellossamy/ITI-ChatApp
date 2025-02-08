@@ -1,6 +1,7 @@
 package gov.iti.jets.client.controller;
 
 import java.net.URL;
+import java.rmi.RemoteException;
 import java.util.ResourceBundle;
 
 import javafx.application.Platform;
@@ -11,11 +12,12 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import shared.interfaces.UserInt;
 
 
 public class ChatbotWindowController {
 
-    boolean toggleState ;
+    private UserInt userInt;
     Stage stage;
 
     @FXML
@@ -39,13 +41,22 @@ public class ChatbotWindowController {
     @FXML
     void chatbotEnableMethod(ActionEvent event) {
 
-        //if the toggle button is selected then the flag would be true else it would be false
-        toggleState = chatbotEnableButton.isSelected();
-
+        try {
+            if (chatbotEnableButton.isSelected()) {
+                userInt.enableChatBot(HomeScreenController.currentUser.getUserId());
+            } else {
+                userInt.disableChatBot(HomeScreenController.currentUser.getUserId());
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
 
     }
+        }
 
-//    @FXML
+    public void setUserInt(UserInt userInt) {
+        this.userInt = userInt;
+    }
+    //    @FXML
 //    void initialize() {
 //        assert pane != null : "fx:id=\"pane\" was not injected: check your FXML file 'ChatbotWindow.fxml'.";
 //        assert vBox != null : "fx:id=\"vBox\" was not injected: check your FXML file 'ChatbotWindow.fxml'.";
@@ -57,21 +68,21 @@ public class ChatbotWindowController {
     @FXML
     private void initialize() {
 
-
-        if (HomeScreenController.isBotEnabled) {
-            chatbotEnableButton.setSelected(true);
-            toggleState=true;
-        }
-
-        System.out.println("boot state: "+chatbotEnableButton.isSelected());
-
         Platform.runLater(() -> {
-            stage = (Stage) chatbotEnableButton.getScene().getWindow();
-            stage.setOnCloseRequest(event -> {
-                toggleState = chatbotEnableButton.isSelected();
-                HomeScreenController.isBotEnabled = toggleState;
-            });
+            try {
+                if (userInt.isChatbotEnabled(HomeScreenController.currentUser.getUserId())) {
+                    chatbotEnableButton.setSelected(true);
+                }
+                else{
+                    chatbotEnableButton.setSelected(false);
+
+                }
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         });
+
+
     }
 
 

@@ -8,6 +8,7 @@ import shared.dto.UserConnection;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.sql.SQLException;
 import java.util.List;
 
 public interface UserInt extends Remote {
@@ -44,5 +45,13 @@ public interface UserInt extends Remote {
     void deleteInvitation(int invitationId) throws RemoteException;
     boolean isUserConnection(int userId, int connectedUserId) throws RemoteException;
     String getCreatedGroupName(int groupId) throws RemoteException;
+    public void addChatbot(Chatbot chatbot) throws RemoteException;
+    boolean isChatbotEnabled(int userID) throws RemoteException;
+    public void enableChatBot(int userID) throws RemoteException;
+    public void disableChatBot(int userID) throws RemoteException;
+    void addChatbotByUserID(int userID) throws RemoteException;
+    public Chatbot getChatbotById(int userID) throws RemoteException;
+
+
 
 }
