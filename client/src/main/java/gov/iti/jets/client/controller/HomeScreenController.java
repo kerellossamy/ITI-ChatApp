@@ -547,8 +547,36 @@ public class HomeScreenController implements Initializable {
             VBox v2 = new VBox();
 
             //ImageView imageView = new ImageView(new Image(getClass().getResourceAsStream("/img/girl.png")));
-            File file = new File(c.getImagePath());
-            ImageView imageView = new ImageView(new Image(file.toURI().toString()));
+           // File file = new File(c.getImagePath());
+
+            ImageView imageView = new ImageView();
+
+
+            String profilePicturePath = c.getImagePath();
+            if (profilePicturePath != null && !profilePicturePath.isEmpty()) {
+                try {
+                    Image profileImage;
+
+                    if (Paths.get(profilePicturePath).isAbsolute()) {
+                        File file = new File(profilePicturePath);
+                        if (file.exists() && file.canRead()) {
+                            profileImage = new Image(file.toURI().toString());
+                        } else {
+                            System.out.println("Error: File does not exist or cannot be read.");
+                            return;
+                        }
+                    } else {
+                        profileImage = new Image(getClass().getResource(profilePicturePath).toExternalForm());
+                    }
+
+                    imageView.setImage(profileImage);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    System.out.println("Error loading profile image: " + e.getMessage());
+                }
+            }
+
             Circle status = new Circle();
             //System.out.println("status : " + c.getStatus().toString().equals("AVAILABLE"));
             if (c.getStatus().toString().equals("AVAILABLE"))
