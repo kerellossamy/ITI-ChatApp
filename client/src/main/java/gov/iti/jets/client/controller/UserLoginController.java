@@ -117,7 +117,7 @@ public class UserLoginController {
 
             // Set the scene with the admin login page
             Scene scene = new Scene(homeRoot);
-            scene.getStylesheets().add(getClass().getResource("/cssStyles/message.css").toExternalForm());
+            //scene.getStylesheets().add(getClass().getResource("/cssStyles/message.css").toExternalForm());
             stage.setScene(scene);
             stage.setWidth(width);
             stage.setHeight(height);

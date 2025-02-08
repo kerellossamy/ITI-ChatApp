@@ -17,8 +17,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.text.Font;
-import javafx.scene.text.TextFlow;
+import javafx.scene.text.*;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.*;
@@ -52,7 +51,6 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import javafx.scene.text.Text;
 import javafx.scene.web.HTMLEditor;
 import netscape.javascript.JSObject;
 import shared.dto.*;
@@ -68,8 +66,8 @@ public class HomeScreenController implements Initializable {
     List<Card> listOfContactCards;
     static User currentUser = null;
     //***************chat
-    static String Target_Type = "group";
-    static int Target_ID = 1;
+    static String Target_Type = "user";
+    static int Target_ID = 64;
 
     static Boolean isBotEnabled = false;
 
@@ -310,7 +308,7 @@ public class HomeScreenController implements Initializable {
 
 
             try {
-                populateChatListView("group", 1);
+                populateChatListView("user", 64);
                 // populateChatListView("announcement",0);
                 //populateChatListView("group",1);
                 System.out.println("sizeeeeee of the list=" + observableMessages.size());
@@ -392,15 +390,15 @@ public class HomeScreenController implements Initializable {
 
 
                     // Convert HTML content into JavaFX TextFlow
-                    TextFlow messageTextFlow = createStyledTextFlow(msg.getMessageContent2());
+                    TextFlow messageText = createStyledTextFlow(msg.getMessageContent2());
 
                     Text timestampText = new Text(formattedTime);
                     timestampText.setStyle("-fx-font-size: 10px; -fx-fill: gray;");
 
                     if (username.getText().isEmpty()) {
-                        bubble.getChildren().addAll(messageTextFlow, timestampText);
+                        bubble.getChildren().addAll(messageText, timestampText);
                     } else {
-                        bubble.getChildren().addAll(username, messageTextFlow, timestampText);
+                        bubble.getChildren().addAll(username, messageText, timestampText);
                     }
 
 
@@ -521,7 +519,7 @@ public class HomeScreenController implements Initializable {
 //    }
 //
 
-
+//*********************** the best version *******************************
     private TextFlow createStyledTextFlow(String html) {
         Document doc = Jsoup.parse(html);
         TextFlow textFlow = new TextFlow();
@@ -597,6 +595,99 @@ public class HomeScreenController implements Initializable {
         int endIndex = style.indexOf(";", startIndex);
         return (endIndex == -1) ? style.substring(startIndex).trim() : style.substring(startIndex, endIndex).trim();
     }
+
+
+    //dynamic and seperate the two words
+//    private TextFlow createStyledTextFlow(String html) {
+//        Document doc = Jsoup.parse(html);
+//        TextFlow textFlow = new TextFlow();
+//        // Ensure the container is transparent so any parent's background shows through.
+//        textFlow.setStyle("-fx-background-color: transparent;");
+//
+//        // Iterate over all elements inside the <body>
+//        for (Element element : doc.select("body *")) {
+//            String textContent = element.ownText();
+//            if (!textContent.isEmpty()) {
+//                String style = element.attr("style");
+//                boolean hasBg = style.contains("background-color:");
+//                // Default text color is black
+//                String fontColor = "black";
+//                if (style.contains("color:")) {
+//                    fontColor = extractStyleValue(style, "color");
+//                }
+//
+//                // Build a style string for font-related properties
+//                StringBuilder inlineStyle = new StringBuilder();
+//                if (style.contains("font-weight: bold")) {
+//                    inlineStyle.append("-fx-font-weight: bold;");
+//                }
+//                if (style.contains("font-style: italic")) {
+//                    inlineStyle.append("-fx-font-style: italic;");
+//                }
+//                if (style.contains("font-size:")) {
+//                    String fontSize = extractStyleValue(style, "font-size");
+//                    // (Assume the value is something like "36pt" or "24pt". If in pt, you may want to convert it.)
+//                    inlineStyle.append("-fx-font-size: ").append(fontSize).append(";");
+//                }
+//                if (style.contains("font-family:")) {
+//                    String fontFamily = extractStyleValue(style, "font-family");
+//                    inlineStyle.append("-fx-font-family: ").append(fontFamily).append(";");
+//                }
+//                // Note: Underline and strikethrough we apply via the Text node properties.
+//                boolean underline = false;
+//                boolean strikethrough = false;
+//                if (style.contains("text-decoration:")) {
+//                    String textDecoration = extractStyleValue(style, "text-decoration");
+//                    if (textDecoration.contains("underline")) {
+//                        underline = true;
+//                    }
+//                    if (textDecoration.contains("line-through")) {
+//                        strikethrough = true;
+//                    }
+//                }
+//
+//                // If no font color was specified, default to black.
+//                inlineStyle.append("-fx-fill: ").append(fontColor).append(";");
+//
+//                if (hasBg) {
+//                    // If a background color exists, extract it:
+//                    String bgColor = extractStyleValue(style, "background-color");
+//                    // Create a Label so that background color works properly.
+//                    Label labelWrapper = new Label(textContent);
+//                    // Set the Label's text-fill to the chosen font color
+//                    labelWrapper.setTextFill(Color.web(fontColor));
+//                    // Apply the font styles that we built (note that Label does not support underline or strikethrough)
+//                    labelWrapper.setStyle(
+//                            inlineStyle.toString() +
+//                                    " -fx-background-color: " + bgColor + ";" +
+//                                    " -fx-padding: 2px 5px;"  // some padding for legibility
+//                    );
+//                    // Optionally, you can force the label to size to its content:
+//                    labelWrapper.setMinWidth(Region.USE_PREF_SIZE);
+//                    labelWrapper.setMaxWidth(Region.USE_PREF_SIZE);
+//                    // Add the label to the TextFlow
+//                    textFlow.getChildren().add(labelWrapper);
+//                } else {
+//                    // No background color—use a Text node so we can show underline and strikethrough
+//                    Text textNode = new Text(textContent);
+//                    textNode.setStyle(inlineStyle.toString());
+//                    textNode.setUnderline(underline);
+//                    textNode.setStrikethrough(strikethrough);
+//                    textFlow.getChildren().add(textNode);
+//                }
+//            }
+//        }
+//        return textFlow;
+//    }
+
+//    private String extractStyleValue(String style, String property) {
+//        int startIndex = style.indexOf(property);
+//        if (startIndex == -1) return "";
+//        startIndex += property.length() + 2; // Skip property name and colon (and space)
+//        int endIndex = style.indexOf(";", startIndex);
+//        return (endIndex == -1) ? style.substring(startIndex).trim() : style.substring(startIndex, endIndex).trim();
+//    }
+
 
 
     public void updateUI() {
