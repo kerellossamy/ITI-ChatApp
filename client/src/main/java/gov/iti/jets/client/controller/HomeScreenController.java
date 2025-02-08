@@ -63,6 +63,7 @@ public class HomeScreenController implements Initializable {
     private AdminInt adminInt;
     ClientImpl c;
     List<Card> listOfContactCards;
+    private ObservableList<Card> ObservaleCards = javafx.collections.FXCollections.observableArrayList();
     static User currentUser = null;
     //***************chat
     static String Target_Type = "group";
@@ -270,6 +271,7 @@ public class HomeScreenController implements Initializable {
 
             try {
                 listOfContactCards = userInt.getCards(currentUser);
+                ObservaleCards.addAll(listOfContactCards);
                 //populateChatListView("group", 1);
 //            userInt.getUserConncectionById(1);
             } catch (RemoteException e) {
@@ -277,7 +279,7 @@ public class HomeScreenController implements Initializable {
                 e.printStackTrace();
             }
 
-            fullListView(ContactList);
+            //fullListView(ContactList);
             populateCard(ContactList);
 
 
@@ -291,6 +293,44 @@ public class HomeScreenController implements Initializable {
 
         c = ClientImpl.getInstance();
         c.setHomeScreenController(this);
+
+        //*******************************************Cardlistview************************************************
+
+        ContactList.setCellFactory((param) -> {
+
+            ListCell<HBox> cell = new ListCell<>() {
+                @Override
+                protected void updateItem(HBox item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (!empty) {
+                        if (item != null) {
+                            try {
+                                FXMLLoader Cardloader = new FXMLLoader(getClass().getResource("/fxml/Card.fxml"));
+                                Node n = Cardloader.load(); // must load before getController
+                                CardController card = Cardloader.getController();
+                                card.setCard(item);
+                                //System.out.println("name :" + card.getName());
+                                //System.out.println("Message :" + card.getMessage());
+                                setGraphic(n);
+
+                            } catch (IOException ex) {
+                                Logger.getLogger(HomeScreenController.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // System.out.println("empty");
+                        return;
+                    }
+                }
+            };
+            return cell;
+        });
+
+
+
+
 
         //********************************************chatlistview*************************************************
 
@@ -608,7 +648,7 @@ public class HomeScreenController implements Initializable {
     }
 
 
-    public void fullListView(ListView<HBox> friendListView) {
+   /* public void fullListView(ListView<HBox> friendListView) {
         friendListView.setCellFactory((param) -> {
 
             ListCell<HBox> cell = new ListCell<>() {
@@ -641,7 +681,7 @@ public class HomeScreenController implements Initializable {
             return cell;
         });
     }
-
+*/
 
     @FXML
     void handleSelectedCard()

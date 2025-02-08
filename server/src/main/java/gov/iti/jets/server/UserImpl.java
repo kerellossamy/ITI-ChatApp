@@ -16,7 +16,10 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -80,6 +83,20 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
 
         List<UserConnection> listofConnections = userConnectionDAO.getAllConnectionsForUser(user.getUserId());
         System.out.println(listofConnections.size());
+
+        // Get the current date and time
+        LocalDateTime now = LocalDateTime.now();
+
+        // Define the format
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        // Format the current date and time
+        String formattedNow = now.format(formatter);
+
+        // Print the formatted date and time
+        System.out.println("Current Timestamp:" + formattedNow);
+
+
         for(UserConnection userConnection : listofConnections)
         {
             Card card =  new Card();
@@ -101,7 +118,7 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
            if(Message.getMessageContent() == null)
             {
                 card.setMessageContent("");
-                card.setTimeStamp(connecterUser.getLastSeen());
+                card.setTimeStamp(Timestamp.valueOf(formattedNow));
             }
             else
             {
@@ -131,22 +148,34 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
             //TODO: needs to be updated to create group
 
             List<UserGroups> groupsList = userGroupsDAO.getGroupsByUserId(user.getUserId());
-//            for (UserGroups group : groupsList) {
-//                Card card = new Card();
-//                //System.out.println(group.getGroupId());
-//                GroupMessage groupMessage = groupMessageDAO.getLatestMessageInGroup(group.getGroupId());
-//                if(groupMessage != null) {
-//                    card.setId(group.getGroupId());
-//                    card.setType(Card.Type.group.toString());
-//                    card.setMessageContent(groupMessage.getMessageContent());
-//                    card.setTimeStamp(groupMessage.getTimestamp());
-//                    // User sender = userDAO.getUserById(groupMessage.getSenderId());
-//                    card.setStatus(User.Status.AVAILABLE);
-//                    card.setSenderName(groupDAO.getGroupNameById(group.getGroupId()));
-//                    card.setImagePath("D:\\ITI\\EWD\\Project\\Git\\V-7.0 Conflicts\\ITI-ChatApp\\client\\src\\main\\resources\\img\\people.png");
-//                    cardList.add(card);
-//                }
-//            }
+            for (UserGroups group : groupsList) {
+                Card card = new Card();
+                //System.out.println(group.getGroupId());
+                GroupMessage groupMessage = groupMessageDAO.getLatestMessageInGroup(group.getGroupId());
+                if(groupMessage != null) {
+                    card.setId(group.getGroupId());
+                    card.setType(Card.Type.group.toString());
+                    // User sender = userDAO.getUserById(groupMessage.getSenderId());
+                    card.setStatus(User.Status.AVAILABLE);
+                    card.setSenderName(groupDAO.getGroupNameById(group.getGroupId()));
+                    card.setImagePath("D:\\ITI\\EWD\\Project\\Git\\V-7.0 Conflicts\\ITI-ChatApp\\client\\src\\main\\resources\\img\\people.png");
+                    card.setMessageContent(groupMessage.getMessageContent());
+                    card.setTimeStamp(groupMessage.getTimestamp());
+                }
+                else
+                {
+                    card.setId(group.getGroupId());
+                    card.setType(Card.Type.group.toString());
+                    card.setMessageContent("");
+                    card.setTimeStamp(Timestamp.valueOf(formattedNow));
+                    // User sender = userDAO.getUserById(groupMessage.getSenderId());
+                    card.setStatus(User.Status.AVAILABLE);
+                    card.setSenderName(groupDAO.getGroupNameById(group.getGroupId()));
+                    card.setImagePath("D:\\ITI\\EWD\\Project\\Git\\V-7.0 Conflicts\\ITI-ChatApp\\client\\src\\main\\resources\\img\\people.png");
+                }
+                cardList.add(card);
+
+            }
 
             ServerAnnouncement serverAnnouncement = serverAnnouncementDAO.getLatestAnnouncement();
             if (serverAnnouncement != null) {
