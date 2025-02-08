@@ -422,4 +422,21 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
 
     }
 
+    @Override
+    public void pushSound(String phoneNumber)  {
+        for (ClientInt client : OnlineClintsList) {
+            try {
+                if(client.getPhoneNumber().equals(phoneNumber)) {
+                    try {
+                        client.playNotificationSound();
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
 }

@@ -3,6 +3,10 @@ package gov.iti.jets.client.model;
 import gov.iti.jets.client.controller.*;
 import shared.interfaces.ClientInt;
 
+import javax.sound.sampled.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
@@ -29,6 +33,7 @@ public class ClientImpl extends UnicastRemoteObject implements ClientInt {
    private UserSignupController userSignupController;
    private GroupProfileController groupProfileController;
    private static ClientImpl theOnlyClient;
+   private static String phoneNumber;
 
 
     private ClientImpl() throws RemoteException {
@@ -124,10 +129,37 @@ public class ClientImpl extends UnicastRemoteObject implements ClientInt {
     public void setGroupProfileController(GroupProfileController groupProfileController) {
         this.groupProfileController = groupProfileController;
     }
-//    @Override
-//     public  void test () throws RemoteException
-//     {
-//        System.out.println("hello from client");
-//     }
+
+
+    @Override
+    public void playNotificationSound() {
+        try {
+            InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("notification.wav");
+
+            if (inputStream == null) {
+                System.err.println("Audio file not found in resources.");
+                return;
+            }
+
+            AudioInputStream audioStream = AudioSystem.getAudioInputStream(inputStream);
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioStream);
+            clip.start();
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public String getPhoneNumber()  {
+        return phoneNumber;
+    }
+
+    @Override
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 
 }
+
+

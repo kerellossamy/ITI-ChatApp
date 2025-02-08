@@ -74,6 +74,7 @@ public class AddContactWindowController  {
 
             if(userInt.addInvitation(new_invitation)){
                 showInfoMessage("Done!", "Invitation sent successfully");
+                userInt.pushSound(user.getPhoneNumber());
             }
 
          }

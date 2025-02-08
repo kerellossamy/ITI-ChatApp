@@ -304,8 +304,19 @@ public class HomeScreenController implements Initializable {
 
         Platform.runLater(() -> {
 
-            //adding chatBot to the user
+            //register the client in the online list
 
+            c = ClientImpl.getInstance();
+            c.setHomeScreenController(this);
+            c.setPhoneNumber(HomeScreenController.currentUser.getPhoneNumber());
+            try {
+                userInt.register(c);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+
+
+            //adding chatBot to the user
             try {
                 Chatbot chatbot=userInt.getChatbotById(HomeScreenController.currentUser.getUserId());
                 if(chatbot==null){
@@ -371,8 +382,7 @@ public class HomeScreenController implements Initializable {
 
 
 
-        c = ClientImpl.getInstance();
-        c.setHomeScreenController(this);
+
 
         //********************************************chatlistview*************************************************
 

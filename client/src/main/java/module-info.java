@@ -14,6 +14,7 @@ module gov.iti.jets.client {
     requires org.json;
     requires jdk.jsobject;
     requires org.jsoup;
+    requires java.desktop;
     //**********************************
 
 
@@ -23,6 +24,11 @@ module gov.iti.jets.client {
     opens gov.iti.jets.client.controller to javafx.fxml;
     exports gov.iti.jets.client;
     exports gov.iti.jets.client.model;
+
+    //call back
+    exports shared.interfaces to java.rmi;
+
+
     opens gov.iti.jets.client.model to javafx.fxml;
 
     //exports shared.utils;
