@@ -4,7 +4,7 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-
+import javafx.scene.paint.Color;
 import gov.iti.jets.client.ClientMain;
 import gov.iti.jets.client.model.ClientImpl;
 import javafx.fxml.FXML;
@@ -16,7 +16,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import shared.dto.*;
@@ -59,7 +62,7 @@ public class NotificationCardController {
     private Circle personalImg;
 
     @FXML
-    private Text friendNameText;
+    private TextFlow friendNameText;
 
     User cardUser;
     Invitation cardInvitation;
@@ -76,7 +79,23 @@ public class NotificationCardController {
         String name = cardUser.getDisplayName();
         String imgPath = cardUser.getProfilePicturePath();
 
-        friendNameText.setText(name +" accepted your invitation");
+        // Create bold text
+        Text boldText = new Text(name);
+
+        boldText.setFill(Color.web("#3C8FC7F5")); 
+        boldText.setFont(Font.font("Arial", FontWeight.BOLD, 12));
+
+
+        // Create regular text
+        Text regularText = new Text(" accepted your invitation ");
+        regularText.setFill(Color.web("#3C8FC7F5")); 
+
+ 
+
+        // Add the text nodes to the TextFlow
+        friendNameText.getChildren().addAll(boldText,regularText);
+
+       
 
         if (imgPath != null && !imgPath.isEmpty()) {
             try {

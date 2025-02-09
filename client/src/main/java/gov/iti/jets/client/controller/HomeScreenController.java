@@ -245,11 +245,13 @@ public class HomeScreenController implements Initializable {
 
 
             String profilePicturePath = currentUser.getProfilePicturePath();
+          
             if (profilePicturePath != null && !profilePicturePath.isEmpty()) {
                 try {
                     Image profileImage;
-
+                   
                     if (Paths.get(profilePicturePath).isAbsolute()) {
+                        System.out.println("photo1 "+profilePicturePath);
                         File file = new File(profilePicturePath);
                         if (file.exists() && file.canRead()) {
                             profileImage = new Image(file.toURI().toString());
@@ -258,6 +260,7 @@ public class HomeScreenController implements Initializable {
                             return;
                         }
                     } else {
+                        System.out.println("photo2 "+profilePicturePath);
                         profileImage = new Image(getClass().getResource(profilePicturePath).toExternalForm());
                     }
 
