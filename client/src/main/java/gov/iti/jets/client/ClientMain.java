@@ -62,7 +62,9 @@ public class ClientMain extends Application {
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.setTitle("Chat Application");
-        stage.setResizable(false);
+        stage.setResizable(true);
+        stage.setMinWidth(1200);
+        stage.setMinHeight(600);
         stage.show();
     }
 
