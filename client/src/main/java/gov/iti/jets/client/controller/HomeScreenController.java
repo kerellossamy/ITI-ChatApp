@@ -140,15 +140,15 @@ public class HomeScreenController implements Initializable {
         } else {
             if (Target_Type.equals("user")) {
 
-                UserBlockedConnection userBlockedConnection = null;
-                try {
-                    userBlockedConnection = userInt.getBlockedConnection(currentUser.getUserId(), Target_ID);
-
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-
-                }
-                if (userBlockedConnection == null) {
+//                UserBlockedConnection userBlockedConnection = null;
+//                try {
+//                    userBlockedConnection = userInt.getBlockedConnection(currentUser.getUserId(), Target_ID);
+//
+//                } catch (RemoteException e) {
+//                    e.printStackTrace();
+//
+//                }
+//                if (userBlockedConnection == null) {
                     DirectMessage directMessage = new DirectMessage();
                     directMessage.setMessageContent(htmlString);
                     directMessage.setSenderId(currentUser.getUserId());
@@ -166,11 +166,19 @@ public class HomeScreenController implements Initializable {
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
-
                     observableMessages.add(directMessage);
                     chatListView.refresh();
-                    chatListView.scrollTo(observableMessages.size());
+                    chatListView.scrollTo(observableMessages.size()+3);
                     messageField.setHtmlText("");
+
+                    try {
+
+                        userInt.reload(userInt.getUserById(Target_ID).getPhoneNumber(),directMessage);
+                        userInt.pushSound(userInt.getUserById(Target_ID).getPhoneNumber());
+
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
 
                     //I will put here the chatbot service work***********************************************************
 
@@ -187,11 +195,11 @@ public class HomeScreenController implements Initializable {
                             @Override
                             public void run() {
 
-                                try {
-                                  Thread.sleep(60000);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
+//                                try {
+//                                  Thread.sleep(60000);
+//                                } catch (InterruptedException e) {
+//                                    e.printStackTrace();
+//                                }
                                 String messageContent = htmlString.replaceAll("\\<.*?\\>", "").trim();
                                 String response = ChatbotService.getChatbotResponse(messageContent);
                                 String htmlResponse = "<html dir=\"ltr\"><head></head><body contenteditable=\"true\"><p><span style=\"font-family: &quot;&quot;;\">" + response + "</span></p></body></html>";
@@ -215,9 +223,19 @@ public class HomeScreenController implements Initializable {
                                 javafx.application.Platform.runLater(new Runnable() {
                                     @Override
                                     public void run() {
+
+
                                         observableMessages.add(botMessage);
                                         chatListView.refresh();
                                         chatListView.scrollTo(observableMessages.size());
+                                        try {
+                                            userInt.reload(userInt.getUserById(Target_ID).getPhoneNumber(),botMessage);
+                                            userInt.pushSound(userInt.getUserById(Target_ID).getPhoneNumber());
+                                        } catch (RemoteException e) {
+                                            e.printStackTrace();
+                                        }
+
+
                                     }
                                 });
 
@@ -228,13 +246,14 @@ public class HomeScreenController implements Initializable {
                         Thread t1 = new Thread(r1);
                         t1.start();
 
-                    }
-                }
-                else {
-                    showErrorAlert("Error", "You can't send message to this user");
-                    messageField.setHtmlText("");
 
-                }
+                    }
+//                }
+//                else {
+//                    showErrorAlert("Error", "You can't send message to this user");
+//                    messageField.setHtmlText("");
+//
+//                }
 
 
             } else if (Target_Type.equals("group")) {
@@ -260,6 +279,17 @@ public class HomeScreenController implements Initializable {
                 chatListView.refresh();
                 chatListView.scrollTo(observableMessages.size());
                 messageField.setHtmlText("");
+
+                try {
+                    List<Integer>l=userInt.getUsersByGroupId(Target_ID);
+                    for(Integer id :l){
+                        userInt.reload(userInt.getUserById(id).getPhoneNumber(),groupMessage);
+                        userInt.pushSound(userInt.getUserById(id).getPhoneNumber());
+                    }
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
+                }
+
 
             } else if (Target_Type.equals("announcement")) {
                 messageField.setHtmlText("");
@@ -307,7 +337,8 @@ public class HomeScreenController implements Initializable {
             //register the client in the online list
 
             c = ClientImpl.getInstance();
-            c.setHomeScreenController(this);
+           // c.setHomeScreenController(this);
+            c.homeScreenController=this;
             c.setPhoneNumber(HomeScreenController.currentUser.getPhoneNumber());
             try {
                 userInt.register(c);
@@ -908,6 +939,8 @@ public class HomeScreenController implements Initializable {
             stage.setWidth(width);
             stage.setHeight(height);
 
+            userInt.unregister(c);
+
             // Set the scene with the user login page
 
 
@@ -1055,11 +1088,18 @@ public class HomeScreenController implements Initializable {
     }
 
 
+    public void refreshChatList(BaseMessage message){
+        Platform.runLater(() -> {
+            try {
+                observableMessages.add(message);
+                chatListView.refresh();
+                chatListView.scrollTo(observableMessages.size());
+                ContactList.refresh();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-    private String convertToHtml(String text) {
-        // Add simple HTML tags around the message content if needed
-        // You can expand this method to include more complex formatting if necessary
-        return "<html><body>" + text.replaceAll("\n", "<br>") + "</body></html>";
+        });
     }
 
 //********************************************************************************************************************

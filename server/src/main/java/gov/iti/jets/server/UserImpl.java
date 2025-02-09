@@ -3,6 +3,7 @@ package gov.iti.jets.server;
 
 
 import gov.iti.jets.server.model.dao.implementations.*;
+import javafx.application.Platform;
 import shared.dto.Invitation;
 import shared.dto.User;
 import shared.dto.UserConnection;
@@ -182,6 +183,7 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
     @Override
     public  User getUserById(int userId) throws RemoteException
     {
+
           return userDAO.getUserById(userId);
     }
 
@@ -438,5 +440,74 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
             }
         }
     }
+
+    @Override
+    public void reload(String phoneNumber,BaseMessage message) throws RemoteException {
+        for (ClientInt client : OnlineClintsList) {
+            try {
+                if(client.getPhoneNumber().equals(phoneNumber)) {
+                                client.refreshChatList(message);
+                }
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public List<Integer> getUsersByGroupId(int groupId) throws RemoteException {
+        try {
+            return userGroupsDAO.getUsersByGroupId(groupId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public void reloadInvitationList(String phoneNumber) throws RemoteException {
+        for (ClientInt client : OnlineClintsList) {
+            try {
+                if(client.getPhoneNumber().equals(phoneNumber)) {
+                    client.refreshInvitationList();
+                }
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    @Override
+    public void reloadContactList(String phoneNumber) throws RemoteException {
+
+        for (ClientInt client : OnlineClintsList) {
+            try {
+                if(client.getPhoneNumber().equals(phoneNumber)) {
+                    client.refreshContactList();
+                }
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+    }
+
+    @Override
+    public void reloadNotificationList(String phoneNumber) throws RemoteException {
+
+        for (ClientInt client : OnlineClintsList) {
+            try {
+                if(client.getPhoneNumber().equals(phoneNumber)) {
+                    client.refreshNotificationList();
+                }
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
 
 }

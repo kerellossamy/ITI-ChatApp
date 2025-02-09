@@ -1,6 +1,7 @@
 package gov.iti.jets.client.model;
 
 import gov.iti.jets.client.controller.*;
+import shared.dto.BaseMessage;
 import shared.interfaces.ClientInt;
 
 import javax.sound.sampled.*;
@@ -24,8 +25,8 @@ public class ClientImpl extends UnicastRemoteObject implements ClientInt {
    private EditWindowController editWindowController;
    private GenderPieController genderPieController;
    private GeneralStatisticsController generalStatisticsController;
-   private HomeScreenController homeScreenController;
-   private InvitationListWindowController invitationListWindowController;
+    public   static HomeScreenController homeScreenController;
+   private  InvitationListWindowController invitationListWindowController;
    private  ServerHomePageController serverHomePageController;
    private ServerStatusController serverStatusController;
    private StatisticsPieController statisticsPieController;
@@ -159,6 +160,33 @@ public class ClientImpl extends UnicastRemoteObject implements ClientInt {
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
+
+    @Override
+    public void refreshChatList(BaseMessage message) throws RemoteException {
+
+        homeScreenController.refreshChatList(message);
+
+    }
+
+    @Override
+    public void refreshInvitationList() throws RemoteException {
+
+            //put implementation here
+
+
+    }
+
+    @Override
+    public void refreshNotificationList() throws RemoteException {
+        //put implementation here
+    }
+
+    @Override
+    public void refreshContactList() throws RemoteException {
+
+        //put implementation here
+    }
+
 
 }
 

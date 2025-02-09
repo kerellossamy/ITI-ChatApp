@@ -12,7 +12,7 @@ public interface UserGroupsDAOInt {
 
     List<UserGroups> getGroupsByUserId(int userId) throws SQLException;
 
-    List<UserGroups> getUsersByGroupId(int groupId) throws SQLException;
+    List<Integer> getUsersByGroupId(int groupId) throws SQLException;
 
     boolean removeUserFromGroup(int userId, int groupId) throws SQLException;
 
