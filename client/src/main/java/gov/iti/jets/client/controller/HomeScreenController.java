@@ -255,13 +255,11 @@ public class HomeScreenController implements Initializable {
     }
 
 
-    private ImageView SetImage(String imagePath)
-    {
+    private ImageView SetImage(String imagePath) {
         ImageView imageView = new ImageView();
 
 
-
-            userNameText.setText(currentUser.getDisplayName());
+        userNameText.setText(currentUser.getDisplayName());
 //            userProfileImage.setImage(new Image(getClass().getResource(currentUser.getProfilePicturePath()).toExternalForm()));
 
         String profilePicturePath = imagePath;
@@ -301,20 +299,18 @@ public class HomeScreenController implements Initializable {
         Platform.runLater(() -> {
 
             messageField.lookupAll(".tool-bar").forEach(node -> {
-                        if (node instanceof ToolBar toolBar) {
-                            List<Node> items = toolBar.getItems();
-                            items.removeIf(item ->
-                                    item.toString().contains("indent") ||
-                                            item.toString().contains("outdent") ||
-                                            item.toString().contains("align") ||
-                                            item.toString().contains("bullets") ||
-                                            item.toString().contains("numbers") ||
-                                            item.toString().contains("hr")   // Horizontal Rule
-                            );
-                        }
-                    });
-
-
+                if (node instanceof ToolBar toolBar) {
+                    List<Node> items = toolBar.getItems();
+                    items.removeIf(item ->
+                            item.toString().contains("indent") ||
+                                    item.toString().contains("outdent") ||
+                                    item.toString().contains("align") ||
+                                    item.toString().contains("bullets") ||
+                                    item.toString().contains("numbers") ||
+                                    item.toString().contains("hr")   // Horizontal Rule
+                    );
+                }
+            });
 
 
             userNameText.setText(currentUser.getDisplayName());
@@ -344,7 +340,6 @@ public class HomeScreenController implements Initializable {
         });
 
 
-
         c = ClientImpl.getInstance();
         c.setHomeScreenController(this);
 
@@ -371,9 +366,7 @@ public class HomeScreenController implements Initializable {
                                 Logger.getLogger(HomeScreenController.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         }
-                    }
-                    else
-                    {
+                    } else {
                         // System.out.println("empty");
                         return;
                     }
@@ -381,9 +374,6 @@ public class HomeScreenController implements Initializable {
             };
             return cell;
         });
-
-
-
 
 
         //********************************************chatlistview*************************************************
@@ -446,24 +436,39 @@ public class HomeScreenController implements Initializable {
                     Text username = new Text();
                     if (msg.getSenderID2() != currentUser.getUserId()) {
                         try {
-                            username = new Text(userInt.getUserById(msg.getSenderID2()).getDisplayName());
-                            username.setStyle("-fx-font-weight: bold;");
+                            if (!Target_Type.equals("announcement")) {
+                                username = new Text(userInt.getUserById(msg.getSenderID2()).getDisplayName());
+                                username.setStyle("-fx-font-weight: bold;");
+                            } else {
+                                username = new Text("TAWASOL");
+                                username.setStyle("-fx-font-weight: bold;");
+                            }
+
                         } catch (RemoteException e) {
                             throw new RuntimeException(e);
                         }
                     }
 
+                    if (!Target_Type.equals("announcement")) {
+                        // Convert HTML content into JavaFX TextFlow
+                        TextFlow messageText = createStyledTextFlow(msg.getMessageContent2());
 
-                    // Convert HTML content into JavaFX TextFlow
-                    TextFlow messageText = createStyledTextFlow(msg.getMessageContent2());
+                        Text timestampText = new Text(formattedTime);
+                        timestampText.setStyle("-fx-font-size: 10px; -fx-fill: gray;");
 
-                    Text timestampText = new Text(formattedTime);
-                    timestampText.setStyle("-fx-font-size: 10px; -fx-fill: gray;");
-
-                    if (username.getText().isEmpty()) {
-                        bubble.getChildren().addAll(messageText, timestampText);
+                        if (username.getText().isEmpty()) {
+                            bubble.getChildren().addAll(messageText, timestampText);
+                        } else {
+                            bubble.getChildren().addAll(username, messageText, timestampText);
+                        }
                     } else {
-                        bubble.getChildren().addAll(username, messageText, timestampText);
+                        String htmlResponse = "<html dir=\"ltr\"><head></head><body contenteditable=\"true\"><p><span style=\"font-family: &quot;&quot;;\">" + msg.getMessageContent2() + "</span></p></body></html>";
+                        TextFlow messageTextFlow = createStyledTextFlow(htmlResponse);
+
+                        Text timestampText = new Text(formattedTime);
+                        timestampText.setStyle("-fx-font-size: 10px; -fx-fill: gray;");
+
+                        bubble.getChildren().addAll(username, messageTextFlow, timestampText);
                     }
 
 
@@ -584,7 +589,7 @@ public class HomeScreenController implements Initializable {
 //    }
 //
 
-//*********************** the best version *******************************
+    //*********************** the best version *******************************
     private TextFlow createStyledTextFlow(String html) {
         Document doc = Jsoup.parse(html);
         TextFlow textFlow = new TextFlow();
@@ -757,7 +762,6 @@ public class HomeScreenController implements Initializable {
 //    }
 
 
-
     public void updateUI() {
         userNameText.setText(currentUser.getDisplayName());
         //userProfileImage.setImage(new Image(getClass().getResource(currentUser.getProfilePicturePath()).toString()));
@@ -771,7 +775,7 @@ public class HomeScreenController implements Initializable {
         }
     }
 
-    void populateCard(ObservableList<HBox>cardObservableList) {
+    void populateCard(ObservableList<HBox> cardObservableList) {
         for (Card c : listOfContactCards) {
             HBox card = new HBox();
             Group g1 = new Group();
@@ -779,7 +783,7 @@ public class HomeScreenController implements Initializable {
             VBox v2 = new VBox();
 
             //ImageView imageView = new ImageView(new Image(getClass().getResourceAsStream("/img/girl.png")));
-           // File file = new File(c.getImagePath());
+            // File file = new File(c.getImagePath());
 
             ImageView imageView = SetImage(c.getImagePath());
 
@@ -811,8 +815,8 @@ public class HomeScreenController implements Initializable {
         }
     }
 
-    void CreateCard(int id ,  String ImagePath , String Status , String Name , Timestamp timestamp , String Type) {
-        Card c =new Card();
+    void CreateCard(int id, String ImagePath, String Status, String Name, Timestamp timestamp, String Type) {
+        Card c = new Card();
         c.setId(id);
         c.setType(Type);
 
@@ -833,17 +837,14 @@ public class HomeScreenController implements Initializable {
         if (Status.equals("AVAILABLE")) {
             circle.setFill(Color.valueOf(colorEnum.GREEN.getColor()));
             c.setStatus(User.Status.AVAILABLE);
-        }
-        else if (Status.equals("BUSY")) {
+        } else if (Status.equals("BUSY")) {
             circle.setFill(Color.valueOf(colorEnum.RED.getColor()));
             c.setStatus(User.Status.BUSY);
-        }
-        else if (Status.equals("AWAY")) {
+        } else if (Status.equals("AWAY")) {
             circle.setFill(Color.valueOf(colorEnum.YELLOW.getColor()));
             c.setStatus(User.Status.AWAY);
 
-        }
-        else {
+        } else {
             circle.setFill(Color.valueOf(colorEnum.GRAY.getColor()));
             c.setStatus(User.Status.OFFLINE);
 
@@ -881,62 +882,59 @@ public class HomeScreenController implements Initializable {
     }
 
 
+    /* public void fullListView(ListView<HBox> friendListView) {
+         friendListView.setCellFactory((param) -> {
 
-   /* public void fullListView(ListView<HBox> friendListView) {
-        friendListView.setCellFactory((param) -> {
+             ListCell<HBox> cell = new ListCell<>() {
+                 @Override
+                 protected void updateItem(HBox item, boolean empty) {
+                     super.updateItem(item, empty);
+                     if (!empty) {
+                         if (item != null) {
+                             try {
+                                 FXMLLoader Cardloader = new FXMLLoader(getClass().getResource("/fxml/Card.fxml"));
+                                 Node n = Cardloader.load(); // must load before getController
+                                 CardController card = Cardloader.getController();
+                                 card.setCard(item);
+                                 //System.out.println("name :" + card.getName());
+                                 //System.out.println("Message :" + card.getMessage());
+                                 setGraphic(n);
 
-            ListCell<HBox> cell = new ListCell<>() {
-                @Override
-                protected void updateItem(HBox item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (!empty) {
-                        if (item != null) {
-                            try {
-                                FXMLLoader Cardloader = new FXMLLoader(getClass().getResource("/fxml/Card.fxml"));
-                                Node n = Cardloader.load(); // must load before getController
-                                CardController card = Cardloader.getController();
-                                card.setCard(item);
-                                //System.out.println("name :" + card.getName());
-                                //System.out.println("Message :" + card.getMessage());
-                                setGraphic(n);
+                             } catch (IOException ex) {
+                                 Logger.getLogger(HomeScreenController.class.getName()).log(Level.SEVERE, null, ex);
+                             }
+                         }
+                     }
+                     else
+                     {
+                        // System.out.println("empty");
+                         return;
+                     }
+                 }
+             };
+             return cell;
+         });
+     }
+ */
+    public String GetCard(HBox item) {
 
-                            } catch (IOException ex) {
-                                Logger.getLogger(HomeScreenController.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                        }
-                    }
-                    else
-                    {
-                       // System.out.println("empty");
-                        return;
-                    }
-                }
-            };
-            return cell;
-        });
+        Group group1 = (Group) item.getChildren().get(0);
+        ImageView image = (ImageView) group1.getChildren().get(0);
+        Circle status = (Circle) group1.getChildren().get(1);
+        //new Image(getClass().getResourceAsStream("/images/user.png"))
+
+        VBox vbox1 = (VBox) item.getChildren().get(1);
+        Text name = (Text) vbox1.getChildren().get(0);
+        Text message = (Text) vbox1.getChildren().get(1);
+
+        return name.toString();
     }
-*/
-   public String GetCard(HBox item)
-   {
-
-       Group group1 = (Group) item.getChildren().get(0);
-       ImageView image = (ImageView)group1.getChildren().get(0);
-       Circle status = (Circle)group1.getChildren().get(1);
-       //new Image(getClass().getResourceAsStream("/images/user.png"))
-
-       VBox vbox1 =  (VBox) item.getChildren().get(1);
-       Text name = (Text)vbox1.getChildren().get(0);
-       Text message = (Text)vbox1.getChildren().get(1);
-
-       return name.toString();
-   }
 
     @FXML
-    void handleSelectedCard()
-    {
+    void handleSelectedCard() {
         int index = ContactList.getSelectionModel().getSelectedIndex();
         Card c = listOfContactCards.get(index);
-        System.out.println("index "  + index + " Name " + c.getSenderName() + " Type " + c.getType() + " id " + c.getId());
+        System.out.println("index " + index + " Name " + c.getSenderName() + " Type " + c.getType() + " id " + c.getId());
         System.out.println("image " + c.getImagePath());
         ImageView imageView = SetImage(c.getImagePath());
         friendImage.setImage(imageView.getImage());
@@ -955,17 +953,16 @@ public class HomeScreenController implements Initializable {
         });
 
 
-        if(c.getType().equals("user"))
-        {
+        if (c.getType().equals("user")) {
             System.out.println("user");
             AnchorPane anchorPane = null;
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FriendProfile.fxml"));
                 anchorPane = loader.load();
                 FriendProfileController controller = loader.getController();
-                User user= userInt.getUserById(c.getId());
+                User user = userInt.getUserById(c.getId());
                 System.out.println(user.getDisplayName());
-                controller.setInfo(friendImage.getImage(), user.getDisplayName() , user.getPhoneNumber() , user.getBio());
+                controller.setInfo(friendImage.getImage(), user.getDisplayName(), user.getPhoneNumber(), user.getBio());
             } catch (IOException e) {
                 System.out.println("failed");
                 e.printStackTrace();
@@ -973,10 +970,7 @@ public class HomeScreenController implements Initializable {
             MainBorderPane.setRight(anchorPane);
 
 
-
-        }
-        else if(c.getType().equals("group"))
-        {
+        } else if (c.getType().equals("group")) {
 
             System.out.println("group");
 
@@ -988,19 +982,17 @@ public class HomeScreenController implements Initializable {
                 System.out.println(c.getId());
                 String createdGroup = userInt.getCreatedGroupName(c.getId());
                 System.out.println(createdGroup);
-                controller.setInfo(friendImage.getImage(), c.getSenderName() , createdGroup);
+                controller.setInfo(friendImage.getImage(), c.getSenderName(), createdGroup);
 
 
-        } catch (IOException e) {
+            } catch (IOException e) {
                 System.out.println("failed");
-            e.printStackTrace();
-        }
+                e.printStackTrace();
+            }
             MainBorderPane.setRight(anchorPane);
 
 
-        }
-        else if(c.getType().equals("announcement"))
-        {
+        } else if (c.getType().equals("announcement")) {
             System.out.println("announcement");
             AnchorPane anchorPane = null;
             try {
