@@ -26,7 +26,7 @@
             <VBox prefHeight="600.0" prefWidth="0.0" />
             <VBox alignment="CENTER" maxWidth="70.0" minWidth="70.0" prefHeight="600.0" prefWidth="70.0" spacing="12.0" styleClass="light-blue" stylesheets="@../cssStyles/Home.css">
                <children>
-                  <Button fx:id="notificationbtn" mnemonicParsing="false" style="-fx-background-color: #67BCFE;">
+                  <Button fx:id="notificationbtn" mnemonicParsing="false" style="-fx-background-color: #67BCFE;" onAction="#handleNotificationButton">
                      <graphic>
                         <ImageView fitHeight="30.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                            <image>

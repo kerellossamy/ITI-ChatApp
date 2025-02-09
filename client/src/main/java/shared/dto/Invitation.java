@@ -11,7 +11,8 @@ public class Invitation implements Serializable {
     private  Status status;
 
     public enum Status {
-        PENDING, ACCEPTED, REJECTED, BLOCKED
+       // PENDING, ACCEPTED, REJECTED, BLOCKED
+       pending, accepted, rejected,blocked
     }
 
     public Invitation() {}

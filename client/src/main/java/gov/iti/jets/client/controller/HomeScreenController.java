@@ -41,14 +41,7 @@ import java.util.logging.Logger;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.scene.web.HTMLEditor;
 import netscape.javascript.JSObject;
@@ -279,7 +272,7 @@ public class HomeScreenController implements Initializable {
 
             try {
                 listOfContactCards = userInt.getCards(currentUser);
-//            userInt.getUserConncectionById(1);
+
             } catch (RemoteException e) {
                 throw new RuntimeException(e);
 
@@ -634,6 +627,8 @@ public class HomeScreenController implements Initializable {
             AddContactWindowController addContactWindowController = loader.getController();
             addContactWindowController.setAdminInt(ClientMain.adminInt);
             addContactWindowController.setUserInt(ClientMain.userInt);
+            addContactWindowController.setCurrentUser(currentUser);
+            addContactWindowController.setHomeScreenController(this);
 
             Stage addContactStage = new Stage();
             addContactStage.setTitle("Add Contact");
@@ -665,6 +660,7 @@ public class HomeScreenController implements Initializable {
             createGroupController.setAdminInt(ClientMain.adminInt);
             createGroupController.setUserInt(ClientMain.userInt);
             createGroupController.setCurrentUser(currentUser);
+            createGroupController.setHomeScreenController(this);
 
             Stage createGroupStage = new Stage();
             createGroupStage.setTitle("Create Group");
@@ -733,6 +729,7 @@ public class HomeScreenController implements Initializable {
             invitationListWindowController.setAdminInt(ClientMain.adminInt);
             invitationListWindowController.setUserInt(ClientMain.userInt);
             invitationListWindowController.setCurrentUser(currentUser);
+            invitationListWindowController.setHomeScreenController(this);
 
 
             Stage addContactStage = new Stage();
@@ -787,6 +784,42 @@ public class HomeScreenController implements Initializable {
         }
 
     }
+
+    @FXML
+   public void handleNotificationButton() {
+    System.out.println("notification window pressed");
+    try {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/NotificationWindow.fxml"));
+        Parent root = loader.load();
+        if ( ClientMain.userInt== null) {
+            System.out.println("nullllllllllllllllllllllllllllllllllllll");
+        }
+        NotificationWindowController notificationWindowController = loader.getController();
+        notificationWindowController.setAdminInt(ClientMain.adminInt);
+        notificationWindowController.setUserInt(ClientMain.userInt);
+        notificationWindowController.setCurrentUser(currentUser);
+        notificationWindowController.setHomeScreenController(this);
+
+
+        Stage notificationStage = new Stage();
+        notificationStage.setTitle("Notifications");
+
+        // Set the scene for the small window
+        notificationStage.setScene(new Scene(root));
+
+        // Optional: Set modality to block the main window
+        notificationStage.initModality(Modality.APPLICATION_MODAL);
+        notificationStage.setResizable(false);
+
+
+        // Show the small window
+        notificationStage.showAndWait(); // Use show() for a non-blocking window
+
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+   }
 
     public void handleBotButton(ActionEvent actionEvent) {
 
@@ -854,6 +887,8 @@ public class HomeScreenController implements Initializable {
         chatListView.setItems(observableMessages);
         chatListView.refresh();
     }
+
+   
 //********************************************************************************************************************
 
    /* public void fullListView(ListView<Friend> contListView , ScrollPane scrollPane)
@@ -904,6 +939,11 @@ public class HomeScreenController implements Initializable {
         }
                     
     }*/
+
+    // Method to get the Stage
+    public Stage getStage() {
+        return (Stage)  groupbtn.getScene().getWindow();
+    }
 
 
 }

@@ -1,14 +1,17 @@
 package gov.iti.jets.client.controller;
 
+import gov.iti.jets.client.ClientMain;
 import gov.iti.jets.client.model.ClientImpl;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
 import javafx.event.*;
 
 import java.io.*;
 
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.paint.*;
 import javafx.scene.shape.*;
@@ -16,26 +19,20 @@ import javafx.scene.image.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 
-
 //io
 
 //stage
 import javafx.stage.*;
-
-
-import javafx.stage.Stage;
 import shared.dto.SocialNetwork;
 import shared.dto.User;
 import shared.interfaces.AdminInt;
 import shared.interfaces.UserInt;
 
-import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ResourceBundle;
-
 
 public class EditWindowController {
 
@@ -59,7 +56,6 @@ public class EditWindowController {
     public User getCurrentUser() {
         return currentUser;
     }
-
 
     public void setUserInt(UserInt userInt) {
         this.userInt = userInt;
@@ -90,45 +86,44 @@ public class EditWindowController {
     @FXML
     public void initialize() {
         Platform.runLater(() -> {
-//
+            //
 
-//            String profilePicturePath = currentUser.getProfilePicturePath();
-//            File file = Paths.get(profilePicturePath).toAbsolutePath().toFile();
-//            Image defaultPhoto = new Image(file.toURI().toString());
-//            photoCircle.setFill(new ImagePattern(defaultPhoto));
+            // String profilePicturePath = currentUser.getProfilePicturePath();
+            // File file = Paths.get(profilePicturePath).toAbsolutePath().toFile();
+            // Image defaultPhoto = new Image(file.toURI().toString());
+            // photoCircle.setFill(new ImagePattern(defaultPhoto));
             if (currentUser != null) {
                 loadUserDetails();
             }
         });
 
-
         c = ClientImpl.getInstance();
         c.setEditWindowController(this);
 
-//        statusComboBox.getItems().addAll(
-//                "OFFLINE",
-//                "BUSY",
-//                "AVAILABLE",
-//                "AWAY");
+        // statusComboBox.getItems().addAll(
+        // "OFFLINE",
+        // "BUSY",
+        // "AVAILABLE",
+        // "AWAY");
         statusComboBox.getItems().addAll(
                 User.Status.values());
 
-//        statusComboBox.setCellFactory(lv ->
-//        {
-//            return new ListCell<String>() {
-//                @Override
-//                protected void updateItem(String item, boolean empty) {
-//                    super.updateItem(item, empty);
-//                    if (empty || item == null) {
-//                        setText(null);
-//                        setStyle(""); // Clear style for empty cells
-//                    } else {
-//                        setText(item);
-//                        setStyle("-fx-background-color: #4399FF;"); // Center-align the text
-//                    }
-//                }
-//            };
-//        });
+        // statusComboBox.setCellFactory(lv ->
+        // {
+        // return new ListCell<String>() {
+        // @Override
+        // protected void updateItem(String item, boolean empty) {
+        // super.updateItem(item, empty);
+        // if (empty || item == null) {
+        // setText(null);
+        // setStyle(""); // Clear style for empty cells
+        // } else {
+        // setText(item);
+        // setStyle("-fx-background-color: #4399FF;"); // Center-align the text
+        // }
+        // }
+        // };
+        // });
 
         statusComboBox.setCellFactory(lv -> {
             return new ListCell<User.Status>() {
@@ -149,23 +144,25 @@ public class EditWindowController {
     }
 
     private void loadUserDetails() {
-        if (currentUser == null) return;
+        if (currentUser == null)
+            return;
 
         nameTextField.setText(currentUser.getDisplayName());
         bioTextField.setText(currentUser.getBio());
         statusComboBox.setValue(currentUser.getStatus());
 
-        //working for only relative path
-//        String profilePicturePath = currentUser.getProfilePicturePath();
-//        if (profilePicturePath != null && !profilePicturePath.isEmpty()) {
-//            try {
-//                Image profileImage = new Image(getClass().getResource(profilePicturePath).toExternalForm());
-//                photoCircle.setFill(new ImagePattern(profileImage));
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//                System.out.println("Error loading profile image: " + e.getMessage());
-//            }
-//        }
+        // working for only relative path
+        // String profilePicturePath = currentUser.getProfilePicturePath();
+        // if (profilePicturePath != null && !profilePicturePath.isEmpty()) {
+        // try {
+        // Image profileImage = new
+        // Image(getClass().getResource(profilePicturePath).toExternalForm());
+        // photoCircle.setFill(new ImagePattern(profileImage));
+        // } catch (Exception e) {
+        // e.printStackTrace();
+        // System.out.println("Error loading profile image: " + e.getMessage());
+        // }
+        // }
 
         String profilePicturePath = currentUser.getProfilePicturePath();
         if (profilePicturePath != null && !profilePicturePath.isEmpty()) {
@@ -199,7 +196,8 @@ public class EditWindowController {
     public void changePhotoEvent(MouseEvent event) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Choose an Image");
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
+        fileChooser.getExtensionFilters()
+                .add(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg"));
         Stage stage = (Stage) applyButton.getScene().getWindow();
 
         File selectedFile = fileChooser.showOpenDialog(stage);
@@ -215,7 +213,8 @@ public class EditWindowController {
 
     private String saveProfileImage(File sourceFile, int userId) {
         File userDir = new File(USER_IMAGE_DIR + "user_" + userId);
-        if (!userDir.exists()) userDir.mkdirs();
+        if (!userDir.exists())
+            userDir.mkdirs();
 
         File destFile = new File(userDir, "profile.jpg");
         try {
@@ -230,32 +229,62 @@ public class EditWindowController {
     @FXML
     public void handleApplyButton() {
         try {
-            String newPicPath = currentUser.getProfilePicturePath();
-            String newDisplayName = nameTextField.getText();
-            String newBio = bioTextField.getText();
-            User.Status newStatus = statusComboBox.getValue();
+            if (adminInt.getServerStatus() == true) {
+                
+                    String newPicPath = currentUser.getProfilePicturePath();
+                    String newDisplayName = nameTextField.getText();
+                    String newBio = bioTextField.getText();
+                    User.Status newStatus = statusComboBox.getValue();
 
-            boolean isUpdated = userInt.editUserShownInfo(currentUser.getUserId(), newDisplayName, newStatus, newPicPath, newBio);
+                    boolean isUpdated = userInt.editUserShownInfo(currentUser.getUserId(), newDisplayName, newStatus,
+                            newPicPath, newBio);
 
-            if (!isUpdated) {
-                System.out.println("Failed to update user information.");
-                return;
+                    if (!isUpdated) {
+                        System.out.println("Failed to update user information.");
+                        return;
+                    }
+
+                    currentUser.setDisplayName(newDisplayName);
+                    currentUser.setStatus(newStatus);
+                    currentUser.setBio(newBio);
+
+                    if (homeScreenController != null) {
+                        homeScreenController.setCurrentUser(currentUser);
+                        homeScreenController.updateUI();
+                    }
+
+                    Stage stage = (Stage) applyButton.getScene().getWindow();
+                    stage.close();
+             
             }
+            else 
+            {
+                System.out.println("server is off");
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ServerUnavailable.fxml"));
+        
+                Parent root = loader.load();
+                ServerUnavailableController serverUnavailableController = loader.getController();
+                serverUnavailableController.setAdminInt(ClientMain.adminInt);
+                serverUnavailableController.setUserInt(ClientMain.userInt);
+                serverUnavailableController.setCurrentUser(currentUser);
+    
+                Stage stage = homeScreenController.getStage();
+                Stage editWindowStage = (Stage)  applyButton.getScene().getWindow();
 
-            currentUser.setDisplayName(newDisplayName);
-            currentUser.setStatus(newStatus);
-            currentUser.setBio(newBio);
 
-            if (homeScreenController != null) {
-                homeScreenController.setCurrentUser(currentUser);
-                homeScreenController.updateUI();
+                  editWindowStage.close();
+            
+    
+                // Set the scene with the admin login page
+                Scene scene = new Scene(root);
+                stage.setScene(scene);
+             
             }
-
-            Stage stage = (Stage) applyButton.getScene().getWindow();
-            stage.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+
+    
 }

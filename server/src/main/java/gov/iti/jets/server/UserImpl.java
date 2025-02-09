@@ -3,9 +3,6 @@ package gov.iti.jets.server;
 
 
 import gov.iti.jets.server.model.dao.implementations.*;
-import shared.dto.Invitation;
-import shared.dto.User;
-import shared.dto.UserConnection;
 import gov.iti.jets.server.model.dao.interfaces.DirectMessageDAOInt;
 import shared.dto.*;
 import shared.interfaces.ClientInt;
@@ -40,6 +37,8 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
     private final UserDAOImpl userDAO;
     private final UserGroupsDAOImpl userGroupsDAO;
     private Connection connection = DB_UtilityClass.getConnection();
+
+    
 
     protected UserImpl() throws RemoteException {
 
@@ -348,5 +347,23 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
 
 
     }
+
+    @Override
+    public List<Invitation> getAllAcceptedInvitationsBySenderId(int senderId)
+    {
+        return invitationDAO.getAllAcceptedInvitationsBySenderId(senderId);
+    }
+  
+    @Override
+   public List<Invitation> getAllPendingInvitationsByReceiverId(int receiverId)
+    {
+        return invitationDAO.getAllPendingInvitationsByReceiverId(receiverId);
+    }
+    @Override 
+    public void updateInvitationStatusById(int invitationId, Invitation.Status newStatus)
+    {
+        invitationDAO.updateInvitationStatusById(invitationId, newStatus); 
+    }
+
 
 }

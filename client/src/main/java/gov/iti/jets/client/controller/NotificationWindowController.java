@@ -30,7 +30,7 @@ import java.util.*;
 
 //stage
 
-public class InvitationListWindowController {
+public class NotificationWindowController {
 
     private UserInt userInt;
     private AdminInt adminInt;
@@ -74,10 +74,11 @@ public class InvitationListWindowController {
         Platform.runLater(() -> {
 
             // Initialize any necessary data or settings here
-            System.out.println("invitationListWindowController initialized!");
+            System.out.println("initialized!");
             pane.getStylesheets().add(getClass().getResource("/cssStyles/InvitationList.css").toExternalForm());
 
             vBox.setSpacing(2);
+        
 
             try {
                 registry = LocateRegistry.getRegistry("localhost", 8554);
@@ -87,7 +88,7 @@ public class InvitationListWindowController {
                 }
                 try {
 
-                    invitationsList = userInt.getAllPendingInvitationsByReceiverId(currentUser.getUserId());
+                    invitationsList = userInt.getAllAcceptedInvitationsBySenderId(currentUser.getUserId());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -95,21 +96,22 @@ public class InvitationListWindowController {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            Collections.reverse(invitationsList);
            
 
             for (Invitation invitation : invitationsList) {
                 try {
                      User user=userInt.getUserById(invitation.getSenderId());
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/InvitationListCard.fxml"));
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/NotificationCard.fxml"));
                     Parent card = loader.load();
 
-                    InvitationListCardController invitationListCardController = loader.getController();
-                    invitationListCardController.setAdminInt(ClientMain.adminInt);
-                    invitationListCardController.setUserInt(ClientMain.userInt);
-                    invitationListCardController.setCurrentUser(currentUser);
-                    invitationListCardController.setInvitationData(invitation);
-                    invitationListCardController.setInvitationListController(this);
-                    invitationListCardController.setHomeScreenController(homeScreenController);
+                    NotificationCardController notificationCardController = loader.getController();
+                    notificationCardController.setAdminInt(ClientMain.adminInt);
+                    notificationCardController.setUserInt(ClientMain.userInt);
+                    notificationCardController.setCurrentUser(currentUser);
+                    notificationCardController.setNotificationData(invitation);
+                   // notificationCardController.setNotificationController(this);
+                    notificationCardController.setHomeScreenController(homeScreenController);
                     System.out.println("hello");
                     vBox.getChildren().add(card);
 
@@ -117,10 +119,11 @@ public class InvitationListWindowController {
                     e.printStackTrace();
                 }
             }
+            
 
         });
-        c = ClientImpl.getInstance();
-        c.setInvitationListWindowController(this);
+      //  c = ClientImpl.getInstance();
+       // c.NotificationWindowController(this);
 
     }
 

@@ -36,11 +36,11 @@ public class ClientMain extends Application {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/UserLoginPage.fxml"));
 
-        //    FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/InvitationListCard.fxml"));
+           // FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ServerUnavailable.fxml"));
         
-             
+              
             root = loader.load();
-            UserLoginController userLoginController = loader.getController();
+             UserLoginController userLoginController = loader.getController();
 
             if (userLoginController == null) {
                 System.out.println("Controller is NULL! Check FXML setup.");
@@ -49,6 +49,7 @@ public class ClientMain extends Application {
                 userLoginController.setAdminInt(adminInt);
                 
             }
+                
                 
         } catch (Exception e) {
             e.printStackTrace();
@@ -66,7 +67,12 @@ public class ClientMain extends Application {
 
         launch(args);
     }
+
+  
+    
 }
+
+
 
 
 //package gov.iti.jets.client.controller;

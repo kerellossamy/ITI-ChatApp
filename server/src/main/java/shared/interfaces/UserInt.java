@@ -2,10 +2,6 @@ package shared.interfaces;
 
 import shared.dto.*;
 
-import shared.dto.Invitation;
-import shared.dto.User;
-import shared.dto.UserConnection;
-
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
@@ -43,13 +39,17 @@ public interface UserInt extends Remote {
 
     List<GroupMessage> getGroupMessages(int groupId) throws RemoteException;
 
-     List<ServerAnnouncement> getAllServerAnnouncements()throws RemoteException;
-    List<DirectMessage> getMessagesBetweenTwo(int receiverId,int senderId) throws RemoteException;
-    boolean  insertDirectMessage(DirectMessage directMessage) throws RemoteException;
-    void addGroupMessage(GroupMessage message) throws RemoteException;
-    UserConnection getUserConnection(int userId, int connectedUserId) throws RemoteException;
-    UserBlockedConnection getBlockedConnection(int blockerUserId, int blockedUserId) throws RemoteException;
+    List<ServerAnnouncement> getAllServerAnnouncements()throws RemoteException;
 
+    List<DirectMessage> getMessagesBetweenTwo(int receiverId,int senderId) throws RemoteException;
+
+    boolean  insertDirectMessage(DirectMessage directMessage) throws RemoteException;
+
+    void addGroupMessage(GroupMessage message) throws RemoteException;
+
+    UserConnection getUserConnection(int userId, int connectedUserId) throws RemoteException;
+
+    UserBlockedConnection getBlockedConnection(int blockerUserId, int blockedUserId) throws RemoteException;
 
     int createGroup(String groupName, int createdBy) throws RemoteException;
 
@@ -62,5 +62,12 @@ public interface UserInt extends Remote {
     void deleteInvitation(int invitationId) throws RemoteException;
 
     boolean isUserConnection(int userId, int connectedUserId) throws RemoteException;
+
+    List<Invitation> getAllAcceptedInvitationsBySenderId(int senderId) throws RemoteException;
+
+    List<Invitation> getAllPendingInvitationsByReceiverId(int receiverId) throws RemoteException;
+
+    void updateInvitationStatusById(int invitationId, Invitation.Status newStatus) throws RemoteException;
+
 
 }

@@ -2,10 +2,6 @@ package shared.interfaces;
 
 import shared.dto.*;
 
-import shared.dto.Invitation;
-import shared.dto.User;
-import shared.dto.UserConnection;
-
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -43,4 +39,10 @@ public interface UserInt extends Remote {
     boolean addUserConnection(UserConnection userConnection) throws RemoteException;
     void deleteInvitation(int invitationId) throws RemoteException;
     boolean isUserConnection(int userId, int connectedUserId) throws RemoteException;
+
+    List<Invitation> getAllAcceptedInvitationsBySenderId(int senderId) throws RemoteException;
+
+    List<Invitation> getAllPendingInvitationsByReceiverId(int receiverId) throws RemoteException;
+
+    void updateInvitationStatusById(int invitationId, Invitation.Status newStatus) throws RemoteException;
 }

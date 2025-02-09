@@ -31,16 +31,20 @@ public class InvitationListCardController {
     ClientImpl c;
     Registry registry = null;
 
+    private HomeScreenController homeScreenController;
+
+    public void setHomeScreenController(HomeScreenController homeScreenController) {
+        this.homeScreenController = homeScreenController;
+    }
+
     private InvitationListWindowController invitationListWindowController;
 
     public void setInvitationListController(InvitationListWindowController invitationListController) {
         this.invitationListWindowController = invitationListController;
     }
 
-
     public void setCurrentUser(User currentUser) {
-        System.out.println("setting the current user in the  invitation window page");
-        System.out.println(currentUser);
+   
         this.currentUser = currentUser;
     }
 
@@ -74,123 +78,167 @@ public class InvitationListCardController {
     Invitation cardInvitation;
 
     public void setInvitationData(Invitation invitation) {
-      
-        try 
-        {
-        User user=userInt.getUserById(invitation.getSenderId());
-        this.cardInvitation=invitation;
-        this.cardUser=user;
-        }
-        catch(Exception e)
-        {
+
+        try {
+            User user = userInt.getUserById(invitation.getSenderId());
+            this.cardInvitation = invitation;
+            this.cardUser = user;
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        String name=cardUser.getDisplayName();
-        String imgPath=cardUser.getProfilePicturePath();
-       
+        String name = cardUser.getDisplayName();
+        String imgPath = cardUser.getProfilePicturePath();
+
         friendNameText.setText(name);
 
-        if (imgPath!= null && !imgPath.isEmpty()) {
-           try {
-               Image profileImage;
+        if (imgPath != null && !imgPath.isEmpty()) {
+            try {
+                Image profileImage;
 
-               if (Paths.get(imgPath).isAbsolute()) {
-                   File file = new File(imgPath);
-                   if (file.exists() && file.canRead()) {
-                       profileImage = new Image(file.toURI().toString());
-                   } else {
-                       System.out.println("Error: File does not exist or cannot be read.");
-                       return;
-                   }
-               } else {
-                   profileImage = new Image(getClass().getResource(imgPath).toExternalForm());
-               }
+                if (Paths.get(imgPath).isAbsolute()) {
+                    File file = new File(imgPath);
+                    if (file.exists() && file.canRead()) {
+                        profileImage = new Image(file.toURI().toString());
+                    } else {
+                        System.out.println("Error: File does not exist or cannot be read.");
+                        return;
+                    }
+                } else {
+                    profileImage = new Image(getClass().getResource(imgPath).toExternalForm());
+                }
 
-               personalImg.setFill(new ImagePattern(profileImage) );
+                personalImg.setFill(new ImagePattern(profileImage));
 
-            
-
-           } catch (Exception e) {
-               e.printStackTrace();
-               System.out.println("Error loading profile image: " + e.getMessage());
-           }
-       }
-
-           
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("Error loading profile image: " + e.getMessage());
+            }
+        }
 
     }
 
     @FXML
     public void initialize() {
-       
-        acceptIcon.setFill(new ImagePattern(new Image(getClass().getResourceAsStream("/img/accept.png"))) );
-        deleteIcon.setFill(new ImagePattern(new Image(getClass().getResourceAsStream("/img/delete.png"))) );
 
-                    try {
-                registry = LocateRegistry.getRegistry("localhost", 8554);
-                userInt = (UserInt) registry.lookup("UserServices");
-                if (userInt == null) {
-                    System.out.println("null");
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+        acceptIcon.setFill(new ImagePattern(new Image(getClass().getResourceAsStream("/img/accept.png"))));
+        deleteIcon.setFill(new ImagePattern(new Image(getClass().getResourceAsStream("/img/delete.png"))));
+
+        try {
+            registry = LocateRegistry.getRegistry("localhost", 8554);
+            userInt = (UserInt) registry.lookup("UserServices");
+            if (userInt == null) {
+                System.out.println("null");
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     void handleAcceptIcon() {
 
-        System.out.println("accept");
-       
         try {
+            if (adminInt.getServerStatus() == true) {
 
-            userInt.deleteInvitation(cardInvitation.getInvitationId());
-            UserConnection userConnection1=new UserConnection(currentUser.getUserId(),cardUser.getUserId(),"friend");
-            UserConnection userConnection2=new UserConnection(cardUser.getUserId(),currentUser.getUserId(),"friend");
+                System.out.println("accept");
 
-            Invitation invitation =userInt.getInvitationBySenderAndReciever(currentUser.getUserId(),cardUser.getUserId());
-            if(invitation!=null)
-            {
-                //delete this invitation
-                userInt.deleteInvitation(invitation.getInvitationId());
+                try {
+
+                  //  userInt.deleteInvitation(cardInvitation.getInvitationId());
+                    userInt.updateInvitationStatusById(cardInvitation.getInvitationId(), Invitation.Status.accepted);
+                    UserConnection userConnection1 = new UserConnection(currentUser.getUserId(), cardUser.getUserId(),
+                            "friend");
+                    UserConnection userConnection2 = new UserConnection(cardUser.getUserId(), currentUser.getUserId(),
+                            "friend");
+
+                    Invitation invitation = userInt.getInvitationBySenderAndReciever(currentUser.getUserId(),
+                            cardUser.getUserId());
+                    if (invitation != null) {
+                        // delete this invitation
+                        userInt.updateInvitationStatusById(invitation.getInvitationId(), Invitation.Status.accepted);
+                       /// userInt.deleteInvitation(invitation.getInvitationId());
+
+                    }
+                    userInt.addUserConnection(userConnection1);
+                    userInt.addUserConnection(userConnection2);
+                    
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                if (invitationListWindowController != null) {
+                    invitationListWindowController.setCurrentUser(currentUser);
+                    invitationListWindowController.updateUI(hbox);
+                }
+            } else {
+                System.out.println("server is off");
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ServerUnavailable.fxml"));
+
+                Parent root = loader.load();
+                ServerUnavailableController serverUnavailableController = loader.getController();
+                serverUnavailableController.setAdminInt(ClientMain.adminInt);
+                serverUnavailableController.setUserInt(ClientMain.userInt);
+                serverUnavailableController.setCurrentUser(currentUser);
+
+                Stage stage = homeScreenController.getStage();
+                Stage addContactWindowStage = (Stage) acceptIcon.getScene().getWindow();
+
+                addContactWindowStage.close();
+
+                // Set the scene with the admin login page
+                Scene scene = new Scene(root);
+                stage.setScene(scene);
 
             }
-            userInt.addUserConnection(userConnection1);
-            userInt.addUserConnection(userConnection2);
-            System.out.println("deleted");
-        
-       } catch (Exception e) {
-           e.printStackTrace();
-       }
-
-       if (invitationListWindowController != null) {
-        invitationListWindowController.setCurrentUser(currentUser);
-        invitationListWindowController.updateUI(hbox);
-    }
-
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
     @FXML
     void handleDeleteIcon() {
+
         try {
+            if (adminInt.getServerStatus() == true) {
+                try {
 
-            userInt.deleteInvitation(cardInvitation.getInvitationId());
-            System.out.println("deleted");
-        
-       } catch (Exception e) {
-           e.printStackTrace();
-       }
+                    userInt.deleteInvitation(cardInvitation.getInvitationId());
+                    System.out.println("deleted");
 
-      
-       if (invitationListWindowController != null) {
-        invitationListWindowController.setCurrentUser(currentUser);
-        invitationListWindowController.updateUI(hbox);
-    }
- 
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
-          
+                if (invitationListWindowController != null) {
+                    invitationListWindowController.setCurrentUser(currentUser);
+                    invitationListWindowController.updateUI(hbox);
+                }
 
+            } else {
+                System.out.println("server is off");
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ServerUnavailable.fxml"));
+
+                Parent root = loader.load();
+                ServerUnavailableController serverUnavailableController = loader.getController();
+                serverUnavailableController.setAdminInt(ClientMain.adminInt);
+                serverUnavailableController.setUserInt(ClientMain.userInt);
+                serverUnavailableController.setCurrentUser(currentUser);
+
+                Stage stage = homeScreenController.getStage();
+                Stage addContactWindowStage = (Stage) acceptIcon.getScene().getWindow();
+
+                addContactWindowStage.close();
+
+                // Set the scene with the admin login page
+                Scene scene = new Scene(root);
+                stage.setScene(scene);
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
