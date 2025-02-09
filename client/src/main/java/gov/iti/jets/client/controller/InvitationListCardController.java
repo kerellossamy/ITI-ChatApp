@@ -4,6 +4,9 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import gov.iti.jets.client.ClientMain;
 import gov.iti.jets.client.model.ClientImpl;
@@ -32,6 +35,12 @@ public class InvitationListCardController {
     Registry registry = null;
 
     private InvitationListWindowController invitationListWindowController;
+    private HomeScreenController homeScreenController;
+
+    public void setHomeScreenController(HomeScreenController homeScreenController) {
+        this.homeScreenController = homeScreenController;
+    }
+
 
     public void setInvitationListController(InvitationListWindowController invitationListController) {
         this.invitationListWindowController = invitationListController;
@@ -144,10 +153,15 @@ public class InvitationListCardController {
        
         try {
 
+            // Get the current date and time
+            LocalDateTime now = LocalDateTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            String formattedNow = now.format(formatter);
+
             userInt.deleteInvitation(cardInvitation.getInvitationId());
             UserConnection userConnection1=new UserConnection(currentUser.getUserId(),cardUser.getUserId(),"friend");
             UserConnection userConnection2=new UserConnection(cardUser.getUserId(),currentUser.getUserId(),"friend");
-
+            homeScreenController.CreateCard(cardUser.getUserId() ,cardUser.getProfilePicturePath() , cardUser.getStatus().toString() , cardUser.getDisplayName() , Timestamp.valueOf(formattedNow) , "user");
             Invitation invitation =userInt.getInvitationBySenderAndReciever(currentUser.getUserId(),cardUser.getUserId());
             if(invitation!=null)
             {

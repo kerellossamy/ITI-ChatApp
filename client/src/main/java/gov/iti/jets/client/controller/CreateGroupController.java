@@ -33,6 +33,10 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class CreateGroupController {
@@ -193,6 +197,13 @@ public class CreateGroupController {
     // Event handler for the create button
     @FXML
     private void handleCreateButton() {
+        //set timestamp of card
+        // Get the current date and time
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formattedNow = now.format(formatter);
+
+
         // Implement logic for creating the group
         if (validContacts()) {
 
@@ -205,7 +216,8 @@ public class CreateGroupController {
                     // get id of the current user
                     int groupId = userInt.createGroup(nameTextField.getText().trim(), currentUser.getUserId());
                     userInt.addUserToGroup(currentUser.getUserId(), groupId);
-
+                    System.out.println("grooup id" + groupId);
+                    homeScreenController.CreateCard(groupId ,"/img/people.png" , "AVAILABLE" , nameTextField.getText().trim() , Timestamp.valueOf(formattedNow) ,  "group");
                     // add contactId to the group
                     for (Integer i : selectedContacts) {
                         userInt.addUserToGroup(i, groupId);

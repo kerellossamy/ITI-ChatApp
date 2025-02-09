@@ -7,6 +7,7 @@ public class ServerAnnouncement extends BaseMessage implements Serializable {
     private int announcementId;
     private String message;
     private Timestamp createdAt;
+    //private static int senderID2 = 1;
 
     public ServerAnnouncement() {
     }

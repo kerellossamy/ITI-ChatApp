@@ -39,6 +39,12 @@ public class InvitationListWindowController {
     Registry registry = null;
     List<Invitation> invitationsList = null;
 
+    private HomeScreenController homeScreenController;
+
+    public void setHomeScreenController(HomeScreenController homeScreenController) {
+        this.homeScreenController = homeScreenController;
+    }
+
     public void setCurrentUser(User currentUser) {
         System.out.println("setting the current user in the  invitation window page");
         System.out.println(currentUser);
@@ -104,6 +110,7 @@ public class InvitationListWindowController {
                     invitationListCardController.setCurrentUser(currentUser);
                     invitationListCardController.setInvitationData(invitation);
                     invitationListCardController.setInvitationListController(this);
+                    invitationListCardController.setHomeScreenController(homeScreenController);
                     System.out.println("hello");
                     vBox.getChildren().add(card);
 

@@ -15,6 +15,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
+import shared.dto.Card;
 import shared.interfaces.AdminInt;
 import shared.interfaces.UserInt;
 
@@ -78,6 +79,8 @@ public class CardController implements Initializable {
         friendMessageTimeText.setText(time.getText());
 
     }
+
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         c= ClientImpl.getInstance();

@@ -4,6 +4,8 @@ import gov.iti.jets.client.ClientMain;
 import gov.iti.jets.client.model.ClientImpl;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.concurrent.Worker;
 import javafx.event.*;
 import javafx.geometry.Insets;
@@ -31,8 +33,10 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.rmi.RemoteException;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -63,11 +67,11 @@ public class HomeScreenController implements Initializable {
     private AdminInt adminInt;
     ClientImpl c;
     List<Card> listOfContactCards;
-    private ObservableList<Card> ObservaleCards = javafx.collections.FXCollections.observableArrayList();
+    private ObservableList<HBox> cardObservableList = javafx.collections.FXCollections.observableArrayList();
     static User currentUser = null;
     //***************chat
-    static String Target_Type = "group";
-    static int Target_ID = 1;
+    static String Target_Type;
+    static int Target_ID;
 
     static Boolean isBotEnabled = false;
 
@@ -114,7 +118,7 @@ public class HomeScreenController implements Initializable {
     @FXML
     private TextField searchTextField;
     @FXML
-    private ListView ContactList;
+    private ListView<HBox> ContactList;
     @FXML
     private ImageView friendImage;
     @FXML
@@ -234,6 +238,40 @@ public class HomeScreenController implements Initializable {
         }
     }
 
+
+    private ImageView SetImage(String imagePath)
+    {
+        ImageView imageView = new ImageView();
+
+        String profilePicturePath = imagePath;
+        if (profilePicturePath != null && !profilePicturePath.isEmpty()) {
+            try {
+                Image profileImage;
+
+                if (Paths.get(profilePicturePath).isAbsolute()) {
+                    File file = new File(profilePicturePath);
+                    if (file.exists() && file.canRead()) {
+                        profileImage = new Image(file.toURI().toString());
+                        imageView.setImage(profileImage);
+
+                    } else {
+                        System.out.println("Error: File does not exist or cannot be read.");
+                    }
+                } else {
+                    System.out.println(profilePicturePath);
+                    profileImage = new Image(getClass().getResource(profilePicturePath).toExternalForm());
+                    imageView.setImage(profileImage);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("Error loading profile image: " + e.getMessage());
+            }
+        }
+        return imageView;
+    }
+
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 //        System.out.println("currentUser is: " + currentUser);
@@ -242,36 +280,10 @@ public class HomeScreenController implements Initializable {
             userNameText.setText(currentUser.getDisplayName());
 //            userProfileImage.setImage(new Image(getClass().getResource(currentUser.getProfilePicturePath()).toExternalForm()));
 
-
-            String profilePicturePath = currentUser.getProfilePicturePath();
-            if (profilePicturePath != null && !profilePicturePath.isEmpty()) {
-                try {
-                    Image profileImage;
-
-                    if (Paths.get(profilePicturePath).isAbsolute()) {
-                        File file = new File(profilePicturePath);
-                        if (file.exists() && file.canRead()) {
-                            profileImage = new Image(file.toURI().toString());
-                        } else {
-                            System.out.println("Error: File does not exist or cannot be read.");
-                            return;
-                        }
-                    } else {
-                        profileImage = new Image(getClass().getResource(profilePicturePath).toExternalForm());
-                    }
-
-                    userProfileImage.setImage(profileImage);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    System.out.println("Error loading profile image: " + e.getMessage());
-                }
-            }
-
+            userProfileImage = SetImage(currentUser.getProfilePicturePath().toString());
 
             try {
                 listOfContactCards = userInt.getCards(currentUser);
-                ObservaleCards.addAll(listOfContactCards);
                 //populateChatListView("group", 1);
 //            userInt.getUserConncectionById(1);
             } catch (RemoteException e) {
@@ -280,8 +292,8 @@ public class HomeScreenController implements Initializable {
             }
 
             //fullListView(ContactList);
-            populateCard(ContactList);
-
+            populateCard(cardObservableList);
+            ContactList.setItems(cardObservableList);
 
             //ContactList.getSelectionModel().selectFirst();
             //ContactList.getSelectionModel().
@@ -333,6 +345,7 @@ public class HomeScreenController implements Initializable {
 
 
         //********************************************chatlistview*************************************************
+
 
         chatListView.setCellFactory(listView -> new ListCell<BaseMessage>() {
 
@@ -581,7 +594,7 @@ public class HomeScreenController implements Initializable {
         }
     }
 
-    void populateCard(ListView<HBox> ContactList) {
+    void populateCard(ObservableList<HBox>cardObservableList) {
         for (Card c : listOfContactCards) {
             HBox card = new HBox();
             Group g1 = new Group();
@@ -591,33 +604,7 @@ public class HomeScreenController implements Initializable {
             //ImageView imageView = new ImageView(new Image(getClass().getResourceAsStream("/img/girl.png")));
            // File file = new File(c.getImagePath());
 
-            ImageView imageView = new ImageView();
-
-
-            String profilePicturePath = c.getImagePath();
-            if (profilePicturePath != null && !profilePicturePath.isEmpty()) {
-                try {
-                    Image profileImage;
-
-                    if (Paths.get(profilePicturePath).isAbsolute()) {
-                        File file = new File(profilePicturePath);
-                        if (file.exists() && file.canRead()) {
-                            profileImage = new Image(file.toURI().toString());
-                        } else {
-                            System.out.println("Error: File does not exist or cannot be read.");
-                            return;
-                        }
-                    } else {
-                        profileImage = new Image(getClass().getResource(profilePicturePath).toExternalForm());
-                    }
-
-                    imageView.setImage(profileImage);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    System.out.println("Error loading profile image: " + e.getMessage());
-                }
-            }
+            ImageView imageView = SetImage(c.getImagePath());
 
             Circle status = new Circle();
             //System.out.println("status : " + c.getStatus().toString().equals("AVAILABLE"));
@@ -643,9 +630,79 @@ public class HomeScreenController implements Initializable {
 
             card.getChildren().addAll(g1, v1, v2);
 
-            ContactList.getItems().add(card); // Add card to chatList
+            cardObservableList.add(card); // Add card to chatList
         }
     }
+
+    void CreateCard(int id ,  String ImagePath , String Status , String Name , Timestamp timestamp , String Type) {
+        Card c =new Card();
+        c.setId(id);
+        c.setType(Type);
+
+
+        HBox card = new HBox();
+        Group g1 = new Group();
+        VBox v1 = new VBox();
+        VBox v2 = new VBox();
+
+        //ImageView imageView = new ImageView(new Image(getClass().getResourceAsStream("/img/girl.png")));
+        // File file = new File(c.getImagePath());
+
+        ImageView imageView = SetImage(ImagePath);
+        c.setImagePath(ImagePath);
+
+        Circle circle = new Circle();
+        //System.out.println("status : " + c.getStatus().toString().equals("AVAILABLE"));
+        if (Status.equals("AVAILABLE")) {
+            circle.setFill(Color.valueOf(colorEnum.GREEN.getColor()));
+            c.setStatus(User.Status.AVAILABLE);
+        }
+        else if (Status.equals("BUSY")) {
+            circle.setFill(Color.valueOf(colorEnum.RED.getColor()));
+            c.setStatus(User.Status.BUSY);
+        }
+        else if (Status.equals("AWAY")) {
+            circle.setFill(Color.valueOf(colorEnum.YELLOW.getColor()));
+            c.setStatus(User.Status.AWAY);
+
+        }
+        else {
+            circle.setFill(Color.valueOf(colorEnum.GRAY.getColor()));
+            c.setStatus(User.Status.OFFLINE);
+
+        }
+
+        g1.getChildren().addAll(imageView, circle);
+
+        Text name = new Text(Name);
+        c.setSenderName(Name);
+        Text message = new Text("");
+        c.setMessageContent("");
+        v1.getChildren().addAll(name, message);
+        //System.out.println("time : " + c.getTimestamp().toString().substring(11 , 16));
+
+        String messageTime = timestamp.toString().substring(11, 16);
+        Text time = new Text(messageTime);
+        c.setTimeStamp(timestamp);
+        v2.getChildren().addAll(time);
+
+        card.getChildren().addAll(g1, v1, v2);
+
+//            ObservableList<HBox> buffer = javafx.collections.FXCollections.observableArrayList();
+//            buffer.addFirst(card);
+//            buffer.addAll(cardObservableList);
+//            cardObservableList.clear();
+//            cardObservableList.addAll(buffer);
+//            ContactList.getItems().clear();
+//            ContactList.setItems(cardObservableList);
+
+
+        cardObservableList.addFirst(card);
+        listOfContactCards.addFirst(c);
+        ContactList.refresh();
+
+    }
+
 
 
    /* public void fullListView(ListView<HBox> friendListView) {
@@ -682,16 +739,30 @@ public class HomeScreenController implements Initializable {
         });
     }
 */
+   public String GetCard(HBox item)
+   {
+
+       Group group1 = (Group) item.getChildren().get(0);
+       ImageView image = (ImageView)group1.getChildren().get(0);
+       Circle status = (Circle)group1.getChildren().get(1);
+       //new Image(getClass().getResourceAsStream("/images/user.png"))
+
+       VBox vbox1 =  (VBox) item.getChildren().get(1);
+       Text name = (Text)vbox1.getChildren().get(0);
+       Text message = (Text)vbox1.getChildren().get(1);
+
+       return name.toString();
+   }
 
     @FXML
     void handleSelectedCard()
     {
-
         int index = ContactList.getSelectionModel().getSelectedIndex();
         Card c = listOfContactCards.get(index);
         System.out.println("index "  + index + " Name " + c.getSenderName() + " Type " + c.getType() + " id " + c.getId());
-        File file = new File(c.getImagePath());
-        friendImage.setImage(new Image(file.toURI().toString()));
+        System.out.println("image " + c.getImagePath());
+        ImageView imageView = SetImage(c.getImagePath());
+        friendImage.setImage(imageView.getImage());
         friendName.setText(c.getSenderName());
 
         Target_ID = c.getId();
@@ -717,7 +788,7 @@ public class HomeScreenController implements Initializable {
                 FriendProfileController controller = loader.getController();
                 User user= userInt.getUserById(c.getId());
                 System.out.println(user.getDisplayName());
-                controller.setInfo(new Image(file.toURI().toString()) , user.getDisplayName() , user.getPhoneNumber() , user.getBio());
+                controller.setInfo(friendImage.getImage(), user.getDisplayName() , user.getPhoneNumber() , user.getBio());
             } catch (IOException e) {
                 System.out.println("failed");
                 e.printStackTrace();
@@ -737,9 +808,10 @@ public class HomeScreenController implements Initializable {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/GroupProfile.fxml"));
                 anchorPane = loader.load();
                 GroupProfileController controller = loader.getController();
+                System.out.println(c.getId());
                 String createdGroup = userInt.getCreatedGroupName(c.getId());
                 System.out.println(createdGroup);
-                controller.setInfo(new Image(file.toURI().toString()) , c.getSenderName() , createdGroup);
+                controller.setInfo(friendImage.getImage(), c.getSenderName() , createdGroup);
 
 
         } catch (IOException e) {
@@ -807,6 +879,7 @@ public class HomeScreenController implements Initializable {
 
             Parent root = loader.load();
             CreateGroupController createGroupController = loader.getController();
+            createGroupController.setHomeScreenController(this);
             createGroupController.setAdminInt(ClientMain.adminInt);
             createGroupController.setUserInt(ClientMain.userInt);
             createGroupController.setCurrentUser(currentUser);
@@ -878,6 +951,7 @@ public class HomeScreenController implements Initializable {
             invitationListWindowController.setAdminInt(ClientMain.adminInt);
             invitationListWindowController.setUserInt(ClientMain.userInt);
             invitationListWindowController.setCurrentUser(currentUser);
+            invitationListWindowController.setHomeScreenController(this);
 
 
             Stage addContactStage = new Stage();

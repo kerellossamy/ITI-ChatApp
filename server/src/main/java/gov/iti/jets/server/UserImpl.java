@@ -86,16 +86,8 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
 
         // Get the current date and time
         LocalDateTime now = LocalDateTime.now();
-
-        // Define the format
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
-        // Format the current date and time
         String formattedNow = now.format(formatter);
-
-        // Print the formatted date and time
-        System.out.println("Current Timestamp:" + formattedNow);
-
 
         for(UserConnection userConnection : listofConnections)
         {
@@ -158,7 +150,7 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
                     // User sender = userDAO.getUserById(groupMessage.getSenderId());
                     card.setStatus(User.Status.AVAILABLE);
                     card.setSenderName(groupDAO.getGroupNameById(group.getGroupId()));
-                    card.setImagePath("D:\\ITI\\EWD\\Project\\Git\\V-7.0 Conflicts\\ITI-ChatApp\\client\\src\\main\\resources\\img\\people.png");
+                    card.setImagePath("/img/people.png");
                     card.setMessageContent(groupMessage.getMessageContent());
                     card.setTimeStamp(groupMessage.getTimestamp());
                 }
@@ -171,7 +163,7 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
                     // User sender = userDAO.getUserById(groupMessage.getSenderId());
                     card.setStatus(User.Status.AVAILABLE);
                     card.setSenderName(groupDAO.getGroupNameById(group.getGroupId()));
-                    card.setImagePath("D:\\ITI\\EWD\\Project\\Git\\V-7.0 Conflicts\\ITI-ChatApp\\client\\src\\main\\resources\\img\\people.png");
+                    card.setImagePath("/img/people.png");
                 }
                 cardList.add(card);
 
@@ -186,7 +178,7 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
                 announcementCard.setMessageContent(serverAnnouncement.getMessage());
                 announcementCard.setSenderName("TAWASOL");
                 announcementCard.setStatus(User.Status.AVAILABLE);
-                announcementCard.setImagePath("D:\\ITI\\EWD\\Project\\Git\\V-7.0 Conflicts\\ITI-ChatApp\\client\\src\\main\\resources\\img\\setting.png");
+                announcementCard.setImagePath("/img/setting.png");
                 cardList.add(announcementCard);
             }
 

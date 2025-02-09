@@ -16,7 +16,7 @@
             <Image url="@../img/man1.png" />
          </image>
       </ImageView>
-      <Text fx:id="friendProfileName" fill="#3ca9fd" layoutX="101.0" layoutY="201.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Ali" AnchorPane.leftAnchor="101.0">
+      <Text fx:id="friendProfileName" fill="#3ca9fd" layoutX="1.0" layoutY="195.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Ali" textAlignment="CENTER" wrappingWidth="250.12060546875" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="1.0">
          <font>
             <Font name="System Bold" size="19.0" />
          </font>

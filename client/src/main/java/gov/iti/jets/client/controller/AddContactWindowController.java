@@ -63,8 +63,8 @@ public class AddContactWindowController  {
               userInt.isUserConnection(HomeScreenController.currentUser.getUserId(), user.getUserId());
          }
 
-//         if(user!=null && user.getUserId()!=HomeScreenController.currentUser.getUserId() && (invitation==null||invitation.getStatus()!=Invitation.Status.PENDING) && userConnection==null )
-         if(user!=null && user.getUserId()!=HomeScreenController.currentUser.getUserId() && invitation==null &&!isUserConnection)
+        //if(user!=null && user.getUserId()!=HomeScreenController.currentUser.getUserId() && (invitation==null||invitation.getStatus()!=Invitation.Status.PENDING) && userConnection==null )
+         if(user!=null && user.getUserId()!=HomeScreenController.currentUser.getUserId() && invitation==null &&!isUserConnection && userConnection == null)
          {
 
              Invitation new_invitation=new Invitation();
