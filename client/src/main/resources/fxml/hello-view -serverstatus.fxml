@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="childBorderpanethree" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="740.0" stylesheets="../cssStyles/buttons.css" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gov.iti.jets.client.controller.ServerStatusController">
+<BorderPane fx:id="childBorderpanethree" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="740.0" stylesheets="../cssStyles/buttons.css" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gov.iti.jets.client.controller.ServerStatusController">
    <top>
       <VBox prefHeight="137.0" prefWidth="740.0" BorderPane.alignment="TOP_LEFT">
          <BorderPane.margin>
@@ -52,12 +52,6 @@
                      <font>
                         <Font name="System Bold Italic" size="35.0" />
                      </font>
-                     <padding>
-                        <Insets left="10.0" />
-                     </padding>
-                     <VBox.margin>
-                        <Insets left="50.0" />
-                     </VBox.margin>
                   </Button>
                   <Pane prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
                </children>

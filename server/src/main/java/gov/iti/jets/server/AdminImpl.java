@@ -133,6 +133,20 @@ public class AdminImpl extends UnicastRemoteObject implements AdminInt {
          isServerAvailabe=false;
     }
 
+    @Override
+    public boolean getServerStatus()
+    {   AdminImpl a=null; 
+        try 
+        {
+         a=new AdminImpl();
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+        return a.isServerAvailabe;
+    }
+
 
 }
 

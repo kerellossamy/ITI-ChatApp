@@ -45,7 +45,7 @@ public class InvitationDAOImpl implements InvitationDAOInt {
                             resultSet.getInt("invitation_id"),
                             resultSet.getInt("sender_id"),
                             resultSet.getInt("receiver_id"),
-                            Invitation.Status.valueOf(resultSet.getString("status").toUpperCase())
+                            Invitation.Status.valueOf(resultSet.getString("status"))
 
                     );
                 }
@@ -70,25 +70,38 @@ public class InvitationDAOImpl implements InvitationDAOInt {
         }
     }
 
-    private void handleStatusChange(int invitationId, Invitation.Status newStatus) {
+    public void updateInvitationStatusById(int invitationId, Invitation.Status newStatus) {
+        String query = "UPDATE invitation SET status = ? WHERE invitation_id = ?";
+        try (Connection connection = DB_UtilityClass.getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setString(1, newStatus.toString());
+            statement.setInt(2, invitationId);
+            statement.executeUpdate();
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void handleStatusChange(int invitationId, Invitation.Status newStatus) {
         InvitationDAOInt invitationDAO = new InvitationDAOImpl();
         switch (newStatus) {
-            case ACCEPTED -> {
+            case accepted -> {
                 Invitation invitation = invitationDAO.getInvitationById(invitationId);
                 UserConnection userConnection = new UserConnection(invitation.getReceiverId(), invitation.getSenderId(), "Family");
                 new UserConnectionDAOImpl().insertUserConnection(userConnection);
                 invitationDAO.deleteInvitation(invitationId);
             }
-            case REJECTED -> {
+            case rejected -> {
                 invitationDAO.deleteInvitation(invitationId);
             }
-            case BLOCKED -> {
+            case blocked -> {
                 Invitation invitation = invitationDAO.getInvitationById(invitationId);
                 UserBlockedConnection userBlockedConnection = new UserBlockedConnection(invitation.getReceiverId(), invitation.getSenderId());
                 new UserBlockedConnectionDAOImpl().insertBlockedConnection(userBlockedConnection);
                 invitationDAO.deleteInvitation(invitationId);
             }
-            case PENDING -> {
+            case pending -> {
 
             }
         }
@@ -118,7 +131,7 @@ public class InvitationDAOImpl implements InvitationDAOInt {
                         resultSet.getInt("invitation_id"),
                         resultSet.getInt("sender_id"),
                         resultSet.getInt("receiver_id"),
-                        Invitation.Status.valueOf(resultSet.getString("status").toUpperCase())
+                        Invitation.Status.valueOf(resultSet.getString("status"))
                 ));
                 invitations.add(invitation);
             }
@@ -144,7 +157,7 @@ public class InvitationDAOImpl implements InvitationDAOInt {
                                 resultSet.getInt("invitation_id"),
                                 resultSet.getInt("sender_id"),
                                 resultSet.getInt("receiver_id"),
-                                Invitation.Status.valueOf(resultSet.getString("status").toUpperCase())
+                                Invitation.Status.valueOf(resultSet.getString("status"))
 
                         );
                     }
@@ -171,7 +184,65 @@ public class InvitationDAOImpl implements InvitationDAOInt {
                        resultSet.getInt("invitation_id"),
                        resultSet.getInt("sender_id"),
                        resultSet.getInt("receiver_id"),
-                       Invitation.Status.valueOf(resultSet.getString("status").toUpperCase())
+                       Invitation.Status.valueOf(resultSet.getString("status"))
+
+               );
+               invitations.add(invitation);
+           }
+
+               
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return invitations;
+    }
+
+    public List<Invitation> getAllAcceptedInvitationsBySenderId(int senderId) {
+        List<Invitation> invitations = new ArrayList<>();
+        Invitation invitation = null;
+        String query = "SELECT * FROM invitation WHERE sender_id = ? AND status = 'accepted'";
+
+        try (Connection connection = DB_UtilityClass.getConnection();
+        PreparedStatement statement = connection.prepareStatement(query)) {
+       statement.setInt(1, senderId);
+
+       try (ResultSet resultSet = statement.executeQuery()) {
+           while (resultSet.next()) {
+               invitation = new Invitation(
+                       resultSet.getInt("invitation_id"),
+                       resultSet.getInt("sender_id"),
+                       resultSet.getInt("receiver_id"),
+                       Invitation.Status.valueOf(resultSet.getString("status"))
+
+               );
+               invitations.add(invitation);
+           }
+
+               
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return invitations;
+    }
+
+    public List<Invitation> getAllPendingInvitationsByReceiverId(int receiverId) {
+        List<Invitation> invitations = new ArrayList<>();
+        Invitation invitation = null;
+        String query = "SELECT * FROM invitation WHERE receiver_id = ? AND status = 'pending'";
+
+        try (Connection connection = DB_UtilityClass.getConnection();
+        PreparedStatement statement = connection.prepareStatement(query)) {
+       statement.setInt(1, receiverId);
+
+       try (ResultSet resultSet = statement.executeQuery()) {
+           while (resultSet.next()) {
+               invitation = new Invitation(
+                       resultSet.getInt("invitation_id"),
+                       resultSet.getInt("sender_id"),
+                       resultSet.getInt("receiver_id"),
+                       Invitation.Status.valueOf(resultSet.getString("status"))
 
                );
                invitations.add(invitation);

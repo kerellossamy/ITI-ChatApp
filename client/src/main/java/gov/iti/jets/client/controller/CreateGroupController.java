@@ -1,5 +1,6 @@
 package gov.iti.jets.client.controller;
 
+import gov.iti.jets.client.ClientMain;
 import gov.iti.jets.client.model.ClientImpl;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -7,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -205,6 +207,9 @@ public class CreateGroupController {
 
 
         // Implement logic for creating the group
+
+        try {
+            if (adminInt.getServerStatus() == true) {
         if (validContacts()) {
 
             if (validGroupName()) {
@@ -229,6 +234,34 @@ public class CreateGroupController {
             }
             Stage stage = (Stage) createButton.getScene().getWindow();
             stage.close();
+        }
+
+                  }
+            else 
+            {
+                System.out.println("server is off");
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ServerUnavailable.fxml"));
+        
+                Parent root = loader.load();
+                ServerUnavailableController serverUnavailableController = loader.getController();
+                serverUnavailableController.setAdminInt(ClientMain.adminInt);
+                serverUnavailableController.setUserInt(ClientMain.userInt);
+                serverUnavailableController.setCurrentUser(currentUser);
+    
+                Stage stage = homeScreenController.getStage();
+                Stage createGroupWindowStage = (Stage)  createButton.getScene().getWindow();
+
+
+                createGroupWindowStage.close();
+            
+    
+                // Set the scene with the admin login page
+                Scene scene = new Scene(root);
+                stage.setScene(scene);
+             
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
       

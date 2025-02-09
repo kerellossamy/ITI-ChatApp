@@ -1,11 +1,16 @@
 package gov.iti.jets.client.controller;
 
+import gov.iti.jets.client.ClientMain;
 import gov.iti.jets.client.model.ClientImpl;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.event.*;
 
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
 import shared.dto.Invitation;
 import shared.dto.User;
 import shared.dto.UserConnection;
@@ -23,7 +28,20 @@ public class AddContactWindowController  {
 
     private  UserInt userInt;
     private  AdminInt adminInt;
+    private User currentUser = null;
     ClientImpl c;
+
+    private HomeScreenController homeScreenController;
+
+    public void setHomeScreenController(HomeScreenController homeScreenController) {
+        this.homeScreenController = homeScreenController;
+    }
+
+    public void setCurrentUser(User currentUser) {
+        System.out.println(currentUser);
+        this.currentUser = currentUser;
+    }
+
 
     public void setUserInt(UserInt userInt) {
        this.userInt = userInt;
@@ -51,6 +69,9 @@ public class AddContactWindowController  {
     @FXML
     public void handleAddContactButton(ActionEvent event) throws IOException
      {
+        try {
+            if (adminInt.getServerStatus() == true) {
+
          UserConnection userConnection=null;
          Invitation invitation=null;
          User user = userInt.getUserByPhoneNumber( numberTextField.getText());
@@ -63,14 +84,14 @@ public class AddContactWindowController  {
               userInt.isUserConnection(HomeScreenController.currentUser.getUserId(), user.getUserId());
          }
 
-        //if(user!=null && user.getUserId()!=HomeScreenController.currentUser.getUserId() && (invitation==null||invitation.getStatus()!=Invitation.Status.PENDING) && userConnection==null )
-         if(user!=null && user.getUserId()!=HomeScreenController.currentUser.getUserId() && invitation==null &&!isUserConnection && userConnection == null)
+//         if(user!=null && user.getUserId()!=HomeScreenController.currentUser.getUserId() && (invitation==null||invitation.getStatus()!=Invitation.Status.PENDING) && userConnection==null )
+         if(user!=null && user.getUserId()!=HomeScreenController.currentUser.getUserId() && invitation==null &&!isUserConnection  && userConnection==null)
          {
 
              Invitation new_invitation=new Invitation();
              new_invitation.setSenderId(HomeScreenController.currentUser.getUserId());
              new_invitation.setReceiverId(user.getUserId());
-             new_invitation.setStatus(Invitation.Status.PENDING);
+             new_invitation.setStatus(Invitation.Status.pending);
 
             if(userInt.addInvitation(new_invitation)){
                 showInfoMessage("Done!", "Invitation sent successfully");
@@ -86,7 +107,7 @@ public class AddContactWindowController  {
              }
              else if (userConnection!=null){
                     showErrorAlert("Error", "User is already in your contacts");
-             } else if (invitation.getStatus()==Invitation.Status.PENDING){
+             } else if (invitation.getStatus()==Invitation.Status.pending){
                     showErrorAlert("Error", "Invitation already sent");
              }
              else{
@@ -94,6 +115,34 @@ public class AddContactWindowController  {
              }
 
          }
+
+            }
+            else
+            {
+                System.out.println("server is off");
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ServerUnavailable.fxml"));
+
+                Parent root = loader.load();
+                ServerUnavailableController serverUnavailableController = loader.getController();
+                serverUnavailableController.setAdminInt(ClientMain.adminInt);
+                serverUnavailableController.setUserInt(ClientMain.userInt);
+                serverUnavailableController.setCurrentUser(currentUser);
+
+                Stage stage = homeScreenController.getStage();
+                Stage addContactWindowStage = (Stage)  numberTextField.getScene().getWindow();
+
+
+                addContactWindowStage.close();
+
+
+                // Set the scene with the admin login page
+                Scene scene = new Scene(root);
+                stage.setScene(scene);
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 

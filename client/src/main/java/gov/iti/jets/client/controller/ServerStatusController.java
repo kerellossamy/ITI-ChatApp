@@ -16,7 +16,6 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
-
 public class ServerStatusController implements Initializable {
 
     private UserInt userInt;
@@ -28,12 +27,10 @@ public class ServerStatusController implements Initializable {
         this.userInt = userInt;
     }
 
-    public  void setAdminInt(AdminInt adminInt) {
+    public void setAdminInt(AdminInt adminInt) {
         this.adminInt = adminInt;
     }
 
-    private boolean onPressed;
-    private boolean offPressed;
     @FXML
     private ResourceBundle resources;
 
@@ -55,18 +52,14 @@ public class ServerStatusController implements Initializable {
         onbutton.setStyle("");
 
         try {
-            //Look up the remote object
-            adminInt = (AdminInt) reg.lookup("AdminServices");
+            // Look up the remote object
 
             adminInt.turnOffServer();
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        } catch (NotBoundException e) {
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        
-//        App.isOnPressed=false;
-//        App.isOffPressed=true;
+
     }
 
     @FXML
@@ -74,50 +67,55 @@ public class ServerStatusController implements Initializable {
         onbutton.setStyle("-fx-background-color: #00FF00; -fx-text-fill: black;");
         offbutton.setStyle("");
 
-           try {
-            //Look up the remote object
-            adminInt = (AdminInt) reg.lookup("AdminServices");
-
+        try {
+          
             adminInt.turnOnServer();
-        } catch (RemoteException e) {
+
+        } catch (Exception e) {
             e.printStackTrace();
-        } catch (NotBoundException e) {
-            e.printStackTrace();
-        }
-//        App.isOnPressed=true;
-//        App.isOffPressed=false;
+        } 
+        // App.isOnPressed=true;
+        // App.isOffPressed=false;
     }
 
-//    @FXML
-//    void initialize() {
-//        assert childBorderpanethree != null : "fx:id=\"childBorderpanethree\" was not injected: check your FXML file 'hello-view -serverstatus.fxml'.";
-//        assert offbutton != null : "fx:id=\"offbutton\" was not injected: check your FXML file 'hello-view -serverstatus.fxml'.";
-//        assert onbutton != null : "fx:id=\"onbutton\" was not injected: check your FXML file 'hello-view -serverstatus.fxml'.";
-//
-//    }
+    // @FXML
+    // void initialize() {
+    // assert childBorderpanethree != null : "fx:id=\"childBorderpanethree\" was not
+    // injected: check your FXML file 'hello-view -serverstatus.fxml'.";
+    // assert offbutton != null : "fx:id=\"offbutton\" was not injected: check your
+    // FXML file 'hello-view -serverstatus.fxml'.";
+    // assert onbutton != null : "fx:id=\"onbutton\" was not injected: check your
+    // FXML file 'hello-view -serverstatus.fxml'.";
+    //
+    // }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-               try {
+        boolean isServerOn=true;
+        try {
 
-            reg = LocateRegistry.getRegistry("localhost" , 8554);
-        } catch (RemoteException e) {
+            reg = LocateRegistry.getRegistry("localhost", 8554);
+            adminInt = (AdminInt) reg.lookup("AdminServices");
+            
+            isServerOn = adminInt.getServerStatus();
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
+        c = ClientImpl.getInstance();
+        c.setServerStatusController(this);
+           
+       
 
-            c= ClientImpl.getInstance();
-            c.setServerStatusController(this);
+        if (isServerOn) {
+            onbutton.setStyle("-fx-background-color: #00FF00; -fx-text-fill: black;");
+            offbutton.setStyle("");
+        } else {
+            offbutton.setStyle("-fx-background-color: red; -fx-text-fill: black;");
+            onbutton.setStyle("");
 
-//        if(App.isOnPressed){
-//            onbutton.setStyle("-fx-background-color: #00FF00; -fx-text-fill: black;");
-//            offbutton.setStyle("");
-//        }
-//        if(App.isOffPressed){
-//            offbutton.setStyle("-fx-background-color: red; -fx-text-fill: black;");
-//            onbutton.setStyle("");
-//
-//        }
+        }
     }
 }
