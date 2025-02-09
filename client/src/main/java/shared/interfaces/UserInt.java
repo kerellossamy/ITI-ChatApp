@@ -61,6 +61,9 @@ public interface UserInt extends Remote {
     void reloadContactList(String phoneNumber)throws RemoteException;
     void reloadNotificationList(String phoneNumber)throws RemoteException;
 
+    public String getSessionToken(String phoneNumber) throws RemoteException;
+    public boolean validateToken(String phoneNumber, String token) throws RemoteException;
+
 
 
 }

@@ -57,6 +57,7 @@ import netscape.javascript.JSObject;
 import shared.dto.*;
 import shared.interfaces.AdminInt;
 import shared.interfaces.UserInt;
+import shared.utils.SecureStorage;
 
 
 public class HomeScreenController implements Initializable {
@@ -915,6 +916,7 @@ public class HomeScreenController implements Initializable {
     @FXML
     void handleLogoutButton() {
         System.out.println("log out button pressed");
+        SecureStorage.clearCredentials();
 
         // Add your logic here
 
@@ -929,6 +931,16 @@ public class HomeScreenController implements Initializable {
 
             // Get the current stage
             Stage stage = (Stage) logOutbtn.getScene().getWindow();
+            stage.setOnCloseRequest(event -> {
+                try {
+                    if (currentUser != null) { // If a user is logged in
+                        userInt.unregister(c);
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            });
+
 
             double width = stage.getWidth();
             double height = stage.getHeight();
@@ -939,7 +951,6 @@ public class HomeScreenController implements Initializable {
             stage.setWidth(width);
             stage.setHeight(height);
 
-            userInt.unregister(c);
 
             // Set the scene with the user login page
 

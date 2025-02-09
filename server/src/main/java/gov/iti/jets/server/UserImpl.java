@@ -12,15 +12,14 @@ import shared.dto.*;
 import shared.interfaces.ClientInt;
 import shared.interfaces.UserInt;
 import shared.utils.DB_UtilityClass;
+import shared.utils.SecureStorage;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 public class UserImpl extends UnicastRemoteObject implements UserInt {
@@ -41,6 +40,7 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
     private final UserDAOImpl userDAO;
     private final UserGroupsDAOImpl userGroupsDAO;
     private Connection connection = DB_UtilityClass.getConnection();
+    private final HashMap<String, String> sessionTokens;
 
     protected UserImpl() throws RemoteException {
 
@@ -57,6 +57,7 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
         this.userBlockedConnectionDAO =new UserBlockedConnectionDAOImpl();
         this.userDAO = new UserDAOImpl();
         this.userGroupsDAO = new UserGroupsDAOImpl(connection);
+        sessionTokens=new HashMap<>();
     }
 
 
@@ -66,12 +67,17 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
         OnlineClintsList.add(client);
 
 
+
     }
 
     @Override
     public void unregister(ClientInt client) throws RemoteException {
 
         OnlineClintsList.remove(client);
+        //deletes the session token
+        sessionTokens.remove(client.getPhoneNumber());
+
+
     }
 
     @Override
@@ -509,5 +515,16 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
 
     }
 
+    @Override
+    public String getSessionToken(String phoneNumber) throws RemoteException {
+        String token = UUID.randomUUID().toString();
+        sessionTokens.put(phoneNumber, token);
+        return token;
+    }
+
+    @Override
+    public boolean validateToken(String phoneNumber, String token) throws RemoteException {
+        return sessionTokens.containsKey(phoneNumber) && sessionTokens.get(phoneNumber).equals(token);
+    }
 
 }

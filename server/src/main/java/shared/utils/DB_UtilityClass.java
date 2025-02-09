@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class DB_UtilityClass {
 
-    private static final String URL = "jdbc:mysql://localhost:3306/chatapp";
+    private static final String URL = "jdbc:mysql://localhost:3306/chatappiti";
     private static final String USER = "root";
     private static final String PASSWORD = "root";
 

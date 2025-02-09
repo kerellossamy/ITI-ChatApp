@@ -14,4 +14,5 @@ module gov.iti.jets.server {
     requires org.apache.httpcomponents.httpcore;
     requires org.json;
     requires org.apache.httpcomponents.httpclient;
+    requires java.prefs;
 }
