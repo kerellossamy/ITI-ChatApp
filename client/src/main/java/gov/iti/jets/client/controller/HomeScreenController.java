@@ -280,7 +280,9 @@ public class HomeScreenController implements Initializable {
             userNameText.setText(currentUser.getDisplayName());
 //            userProfileImage.setImage(new Image(getClass().getResource(currentUser.getProfilePicturePath()).toExternalForm()));
 
-            userProfileImage = SetImage(currentUser.getProfilePicturePath().toString());
+            ImageView imageView = SetImage(currentUser.getProfilePicturePath());
+            userProfileImage.setImage(imageView.getImage());
+//            userProfileImage = SetImage(currentUser.getProfilePicturePath().toString());
 
             try {
                 listOfContactCards = userInt.getCards(currentUser);
