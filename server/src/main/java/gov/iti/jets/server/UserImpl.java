@@ -3,11 +3,16 @@ package gov.iti.jets.server;
 
 
 import gov.iti.jets.server.model.dao.implementations.*;
+import javafx.application.Platform;
+import shared.dto.Invitation;
+import shared.dto.User;
+import shared.dto.UserConnection;
 import gov.iti.jets.server.model.dao.interfaces.DirectMessageDAOInt;
 import shared.dto.*;
 import shared.interfaces.ClientInt;
 import shared.interfaces.UserInt;
 import shared.utils.DB_UtilityClass;
+import shared.utils.SecureStorage;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -15,6 +20,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.util.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -40,8 +46,7 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
     private final UserDAOImpl userDAO;
     private final UserGroupsDAOImpl userGroupsDAO;
     private Connection connection = DB_UtilityClass.getConnection();
-
-    
+    private final HashMap<String, String> sessionTokens;
 
     protected UserImpl() throws RemoteException {
 
@@ -58,6 +63,7 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
         this.userBlockedConnectionDAO =new UserBlockedConnectionDAOImpl();
         this.userDAO = new UserDAOImpl();
         this.userGroupsDAO = new UserGroupsDAOImpl(connection);
+        sessionTokens=new HashMap<>();
     }
 
 
@@ -73,6 +79,10 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
     public void unregister(ClientInt client) throws RemoteException {
 
         OnlineClintsList.remove(client);
+        //deletes the session token
+        sessionTokens.remove(client.getPhoneNumber());
+
+
     }
 
     @Override
@@ -136,7 +146,6 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
         }
 */
         try {
-            //TODO: needs to be updated to create group
 
             List<UserGroups> groupsList = userGroupsDAO.getGroupsByUserId(user.getUserId());
             for (UserGroups group : groupsList) {
@@ -267,8 +276,57 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
         return name;
     }
 
+    @Override
+    public void addChatbot(Chatbot chatbot) throws RemoteException {
+        try {
+            chatbotDAO.addChatbot(chatbot);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
+    @Override
+    public boolean isChatbotEnabled(int userID) throws RemoteException {
+        try {
+            return chatbotDAO.isChatbotEnabled(userID);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
+    @Override
+    public void enableChatBot(int userID) throws RemoteException {
+        try {
+            chatbotDAO.enableChatBot(userID);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void disableChatBot(int userID) throws RemoteException {
+        try {
+            chatbotDAO.DisableChatBot(userID);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void addChatbotByUserID(int userID) throws RemoteException {
+        chatbotDAO.addChatbotByUserID(userID);
+    }
+
+    @Override
+    public Chatbot getChatbotById(int userID) throws RemoteException {
+        try {
+            return chatbotDAO.getChatbotByUserId(userID);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     @Override
     public List<GroupMessage> getGroupMessages(int groupId) throws RemoteException {
@@ -394,20 +452,117 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
     }
 
     @Override
+    public void pushSound(String phoneNumber)  {
+        for (ClientInt client : OnlineClintsList) {
+            try {
+                if(client.getPhoneNumber().equals(phoneNumber)) {
+                    try {
+                        client.playNotificationSound();
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    @Override
+    public void reload(String phoneNumber,BaseMessage message) throws RemoteException {
+        for (ClientInt client : OnlineClintsList) {
+            try {
+                if(client.getPhoneNumber().equals(phoneNumber)) {
+                                client.refreshChatList(message);
+                }
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public List<Integer> getUsersByGroupId(int groupId) throws RemoteException {
+        try {
+            return userGroupsDAO.getUsersByGroupId(groupId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public void reloadInvitationList(String phoneNumber) throws RemoteException {
+        for (ClientInt client : OnlineClintsList) {
+            try {
+                if(client.getPhoneNumber().equals(phoneNumber)) {
+                    client.refreshInvitationList();
+                }
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    @Override
+    public void reloadContactList(String phoneNumber) throws RemoteException {
+
+        for (ClientInt client : OnlineClintsList) {
+            try {
+                if(client.getPhoneNumber().equals(phoneNumber)) {
+                    client.refreshContactList();
+                }
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+    }
+
+    @Override
+    public void reloadNotificationList(String phoneNumber) throws RemoteException {
+
+        for (ClientInt client : OnlineClintsList) {
+            try {
+                if(client.getPhoneNumber().equals(phoneNumber)) {
+                    client.refreshNotificationList();
+                }
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    @Override
+    public String getSessionToken(String phoneNumber) throws RemoteException {
+        String token = UUID.randomUUID().toString();
+        sessionTokens.put(phoneNumber, token);
+        return token;
+    }
+
+    @Override
+    public boolean validateToken(String phoneNumber, String token) throws RemoteException {
+        return sessionTokens.containsKey(phoneNumber) && sessionTokens.get(phoneNumber).equals(token);
+    }
+
+    @Override
     public List<Invitation> getAllAcceptedInvitationsBySenderId(int senderId)
     {
         return invitationDAO.getAllAcceptedInvitationsBySenderId(senderId);
     }
-  
+
     @Override
    public List<Invitation> getAllPendingInvitationsByReceiverId(int receiverId)
     {
         return invitationDAO.getAllPendingInvitationsByReceiverId(receiverId);
     }
-    @Override 
+    @Override
     public void updateInvitationStatusById(int invitationId, Invitation.Status newStatus)
     {
-        invitationDAO.updateInvitationStatusById(invitationId, newStatus); 
+        invitationDAO.updateInvitationStatusById(invitationId, newStatus);
     }
 
 

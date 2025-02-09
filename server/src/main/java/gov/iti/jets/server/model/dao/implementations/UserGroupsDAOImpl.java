@@ -43,7 +43,7 @@ public class UserGroupsDAOImpl implements UserGroupsDAOInt {
     }
 
 
-    public List<UserGroups> getUsersByGroupId(int groupId) throws SQLException {
+    public List<UserGroups> getUserGroupsByGroupId(int groupId) throws SQLException {
         String query = "SELECT * FROM user_groups WHERE group_id = ?";
         List<UserGroups> userGroupsList = new ArrayList<>();
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -90,5 +90,23 @@ public class UserGroupsDAOImpl implements UserGroupsDAOInt {
             }
         }
     }
+
+    public List<Integer> getUsersByGroupId(int groupId) throws SQLException {
+        String query = "SELECT user_id FROM user_groups WHERE group_id = ?";
+        List<Integer> usersIDs = new ArrayList<>();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, groupId);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    usersIDs.add (resultSet.getInt("user_id"));
+
+                }
+            }
+        }
+        return usersIDs;
+    }
+
+
+
 }
 

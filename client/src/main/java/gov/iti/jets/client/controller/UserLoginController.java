@@ -2,9 +2,8 @@ package gov.iti.jets.client.controller;
 
 import gov.iti.jets.client.ClientMain;
 import gov.iti.jets.client.model.ClientImpl;
-import javafx.application.Platform;
+import shared.utils.SecureStorage;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -13,15 +12,11 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import shared.dto.SocialNetwork;
 import shared.dto.User;
 import shared.interfaces.AdminInt;
-import shared.interfaces.ClientInt;
 import shared.interfaces.UserInt;
 
-import java.net.URL;
 import java.rmi.RemoteException;
-import java.util.ResourceBundle;
 
 
 public class UserLoginController {
@@ -64,6 +59,13 @@ public class UserLoginController {
         c.setUserLoginController(this);
 
         phoneNumberTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+
+            // Skip validation if user is auto-logging in
+            if (newValue.isEmpty()) {
+                return;
+            }
+
+
             if (!newValue.matches("\\d*")) {
                 showAlert("Invalid Input", "Phone number must contain only digits.");
                 phoneNumberTextField.setText(oldValue);
@@ -84,16 +86,36 @@ public class UserLoginController {
 
     @FXML
     public void handleLogInButton() {
-        // here I need to check about user validation
+
         String phoneNumber = phoneNumberTextField.getText();
         String password = passwordTextField.getText();
 
+        String savedPhoneNumber = SecureStorage.getPhoneNumber();
+        String savedToken = SecureStorage.getToken();
+
+        System.out.println(savedPhoneNumber+""+savedToken +"this is");
+        boolean isValid=false;
+        try {
+           isValid=userInt.validateToken(savedPhoneNumber,savedToken);
+
+            System.out.println("is valid"+isValid);
+        } catch (RemoteException e) {
+           e.printStackTrace();
+        }
         try {
             currentUser = userInt.isValidUser(phoneNumber, password);
 
-            if (currentUser == null) {
+            if (currentUser == null && isValid==false) {
+                SecureStorage.clearCredentials();
                 showErrorAlert("Invalid User", "Phone number or password are not correct");
                 return;
+            }
+            else{
+                if(currentUser==null) {
+                    currentUser = userInt.getUserByPhoneNumber(savedPhoneNumber);
+                }
+                String token = userInt.getSessionToken(currentUser.getPhoneNumber()); // Get session token from server
+                SecureStorage.saveCredentials(currentUser.getPhoneNumber(), token); // Save locally
             }
         } catch (RemoteException e) {
             throw new RuntimeException(e);
