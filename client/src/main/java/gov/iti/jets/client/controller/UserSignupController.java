@@ -416,7 +416,7 @@ public class UserSignupController {
             double height = stage.getHeight();
 
             Scene scene = new Scene(signupRoot);
-            scene.getStylesheets().add(getClass().getResource("/cssStyles/message.css").toExternalForm());
+            //scene.getStylesheets().add(getClass().getResource("/cssStyles/message.css").toExternalForm());
             stage.setScene(scene);
             stage.setWidth(width);
             stage.setHeight(height);
