@@ -9,7 +9,7 @@ public interface ClientInt extends Remote {
     void playNotificationSound() throws RemoteException;
     public String getPhoneNumber() throws RemoteException;
     public void setPhoneNumber(String phoneNumber) throws RemoteException;
-    public void refreshChatList(BaseMessage message) throws RemoteException;
+    public void refreshChatList(BaseMessage message,String type,int ID) throws RemoteException;
 
 
     //methods to implement

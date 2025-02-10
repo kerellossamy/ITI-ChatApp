@@ -162,9 +162,9 @@ public class ClientImpl extends UnicastRemoteObject implements ClientInt {
     }
 
     @Override
-    public void refreshChatList(BaseMessage message) throws RemoteException {
+    public void refreshChatList(BaseMessage message,String type,int ID) throws RemoteException {
 
-        homeScreenController.refreshChatList(message);
+        homeScreenController.refreshChatList(message,type,ID);
 
     }
 

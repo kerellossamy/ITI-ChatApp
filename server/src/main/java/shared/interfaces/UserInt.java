@@ -71,7 +71,7 @@ public interface UserInt extends Remote {
     void addChatbotByUserID(int userID) throws RemoteException;
     public Chatbot getChatbotById(int userID) throws RemoteException;
     void pushSound(String phoneNumber) throws RemoteException;
-    void reload(String phoneNumber,BaseMessage message) throws RemoteException;
+    void reload(String phoneNumber,BaseMessage message,String type,int ID) throws RemoteException;
     List<Integer> getUsersByGroupId(int groupId) throws RemoteException;
 
     //to be implemented

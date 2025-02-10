@@ -469,11 +469,11 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
     }
 
     @Override
-    public void reload(String phoneNumber,BaseMessage message) throws RemoteException {
+    public void reload(String phoneNumber,BaseMessage message,String type,int ID) throws RemoteException {
         for (ClientInt client : OnlineClintsList) {
             try {
                 if(client.getPhoneNumber().equals(phoneNumber)) {
-                                client.refreshChatList(message);
+                                client.refreshChatList(message,type,ID);
                 }
             } catch (RemoteException e) {
                 e.printStackTrace();

@@ -195,7 +195,7 @@ public class HomeScreenController implements Initializable {
 
                     try {
 
-                        userInt.reload(userInt.getUserById(Target_ID).getPhoneNumber(),directMessage);
+                        userInt.reload(userInt.getUserById(Target_ID).getPhoneNumber(),directMessage,"user",currentUser.getUserId());
                         userInt.pushSound(userInt.getUserById(Target_ID).getPhoneNumber());
 
                     } catch (RemoteException e) {
@@ -251,7 +251,7 @@ public class HomeScreenController implements Initializable {
                                         chatListView.refresh();
                                         chatListView.scrollTo(observableMessages.size());
                                         try {
-                                            userInt.reload(userInt.getUserById(Target_ID).getPhoneNumber(),botMessage);
+                                            userInt.reload(userInt.getUserById(Target_ID).getPhoneNumber(),botMessage,"user",currentUser.getUserId());
                                             userInt.pushSound(userInt.getUserById(Target_ID).getPhoneNumber());
                                         } catch (RemoteException e) {
                                             e.printStackTrace();
@@ -305,8 +305,10 @@ public class HomeScreenController implements Initializable {
                 try {
                     List<Integer>l=userInt.getUsersByGroupId(Target_ID);
                     for(Integer id :l){
-                        userInt.reload(userInt.getUserById(id).getPhoneNumber(),groupMessage);
-                        userInt.pushSound(userInt.getUserById(id).getPhoneNumber());
+                        if(id!=currentUser.getUserId()) {
+                            userInt.reload(userInt.getUserById(id).getPhoneNumber(), groupMessage,"group",Target_ID);
+                            userInt.pushSound(userInt.getUserById(id).getPhoneNumber());
+                        }
                     }
                 } catch (RemoteException e) {
                     throw new RuntimeException(e);
@@ -1412,18 +1414,21 @@ public class HomeScreenController implements Initializable {
     }
 
 
-    public void refreshChatList(BaseMessage message){
-        Platform.runLater(() -> {
-            try {
-                observableMessages.add(message);
-                chatListView.refresh();
-                chatListView.scrollTo(observableMessages.size());
-                ContactList.refresh();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+    public void refreshChatList(BaseMessage message,String Type,int ID){
 
-        });
+        if(Target_Type.equals(Type) && Target_ID==ID) {
+            Platform.runLater(() -> {
+                try {
+                    observableMessages.add(message);
+                    chatListView.refresh();
+                    chatListView.scrollTo(observableMessages.size());
+                    ContactList.refresh();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            });
+        }
     }
 
 //********************************************************************************************************************
