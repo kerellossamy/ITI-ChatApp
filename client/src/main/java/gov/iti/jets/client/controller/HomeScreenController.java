@@ -28,6 +28,7 @@ import javafx.stage.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import javafx.scene.paint.ImagePattern;
 
 
 import java.io.File;
@@ -49,15 +50,7 @@ import java.util.regex.Pattern;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.text.Text;
 import javafx.scene.web.HTMLEditor;
 import netscape.javascript.JSObject;
 import shared.dto.*;
@@ -114,7 +107,7 @@ public class HomeScreenController implements Initializable {
     @FXML
     private Button logOutbtn;
     @FXML
-    private ImageView userProfileImage;
+    Circle userProfileImage;
     @FXML
     private Text userNameText;
     @FXML
@@ -124,7 +117,7 @@ public class HomeScreenController implements Initializable {
     @FXML
     private ListView<HBox> ContactList;
     @FXML
-    private ImageView friendImage;
+    private Circle friendImage;
     @FXML
     private Text friendName;
     @FXML
@@ -151,9 +144,19 @@ public class HomeScreenController implements Initializable {
     private Button Imagebtn;
     @FXML
     private ListView<BaseMessage> chatListView;
+    @FXML
+    private VBox vBox;
+    @FXML 
+    private ImageView defaultPhoto;
+  
     private ObservableList<BaseMessage> observableMessages = javafx.collections.FXCollections.observableArrayList();
-
+    
+    Image friImage=null;
     public void handleSendButton(ActionEvent actionEvent) {
+
+            try {
+            if (adminInt.getServerStatus() == true) {
+            
 
         String htmlString = messageField.getHtmlText();
 //        String messageContent = htmlString.replaceAll("\\<.*?\\>", "").trim();
@@ -320,6 +323,28 @@ public class HomeScreenController implements Initializable {
             }
 
         }
+    }
+    else 
+    {
+        System.out.println("server is off");
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ServerUnavailable.fxml"));
+
+        Parent root = loader.load();
+        ServerUnavailableController serverUnavailableController = loader.getController();
+        serverUnavailableController.setAdminInt(ClientMain.adminInt);
+        serverUnavailableController.setUserInt(ClientMain.userInt);
+        serverUnavailableController.setCurrentUser(currentUser);
+
+        Stage stage =this.getStage();
+        
+        // Set the scene with the admin login page
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+     
+    }
+} catch (Exception e) {
+    e.printStackTrace();
+}
 
     }
 
@@ -386,6 +411,11 @@ public class HomeScreenController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 //        System.out.println("currentUser is: " + currentUser);
+                
+             Image defaultImage= new Image(getClass().getResourceAsStream("/img/tawasolLogoBlue.png"));
+            defaultPhoto.setImage( defaultImage );
+
+            vBox.setVisible(false);
 
 
         Platform.runLater(() -> {
@@ -433,8 +463,9 @@ public class HomeScreenController implements Initializable {
             userNameText.setText(currentUser.getDisplayName());
 //            userProfileImage.setImage(new Image(getClass().getResource(currentUser.getProfilePicturePath()).toExternalForm()));
 
-            ImageView imageView = SetImage(currentUser.getProfilePicturePath());
-            userProfileImage.setImage(imageView.getImage());
+           ImageView imageView = SetImage(currentUser.getProfilePicturePath());
+            userProfileImage.setFill(new ImagePattern(imageView.getImage()));
+          //(imageView.getImage());
 //            userProfileImage = SetImage(currentUser.getProfilePicturePath().toString());
 
             try {
@@ -885,7 +916,7 @@ public class HomeScreenController implements Initializable {
         File file = new File(currentUser.getProfilePicturePath());
         if (file.exists()) {
             Image defaultPhoto = new Image(file.toURI().toString());
-            userProfileImage.setImage(defaultPhoto);
+            userProfileImage.setFill(new ImagePattern(defaultPhoto ));
         } else {
             // Handle case where the file doesn't exist
             System.out.println("Image file not found: " + currentUser.getProfilePicturePath());
@@ -1049,12 +1080,17 @@ public class HomeScreenController implements Initializable {
 
     @FXML
     void handleSelectedCard() {
+
+        defaultPhoto.setVisible(false);
+        vBox.setVisible(true);
+
         int index = ContactList.getSelectionModel().getSelectedIndex();
         Card c = listOfContactCards.get(index);
         System.out.println("index " + index + " Name " + c.getSenderName() + " Type " + c.getType() + " id " + c.getId());
         System.out.println("image " + c.getImagePath());
         ImageView imageView = SetImage(c.getImagePath());
-        friendImage.setImage(imageView.getImage());
+        friImage=imageView.getImage();
+        friendImage.setFill( new ImagePattern(imageView.getImage()));
         friendName.setText(c.getSenderName());
 
         Target_ID = c.getId();
@@ -1079,7 +1115,7 @@ public class HomeScreenController implements Initializable {
                 FriendProfileController controller = loader.getController();
                 User user = userInt.getUserById(c.getId());
                 System.out.println(user.getDisplayName());
-                controller.setInfo(friendImage.getImage(), user.getDisplayName(), user.getPhoneNumber(), user.getBio());
+                controller.setInfo(friImage, user.getDisplayName(), user.getPhoneNumber(), user.getBio());
             } catch (IOException e) {
                 System.out.println("failed");
                 e.printStackTrace();
@@ -1099,7 +1135,7 @@ public class HomeScreenController implements Initializable {
                 System.out.println(c.getId());
                 String createdGroup = userInt.getCreatedGroupName(c.getId());
                 System.out.println(createdGroup);
-                controller.setInfo(friendImage.getImage(), c.getSenderName(), createdGroup);
+                controller.setInfo(friImage, c.getSenderName(), createdGroup);
 
 
             } catch (IOException e) {
@@ -1349,23 +1385,26 @@ public class HomeScreenController implements Initializable {
             Parent root = loader.load();
             ChatbotWindowController chatbotWindowController = loader.getController();
             chatbotWindowController.setUserInt(ClientMain.userInt);
+            chatbotWindowController.setAdminInt(ClientMain.adminInt);
+            chatbotWindowController.setCurrentUser(currentUser);
+            chatbotWindowController.setHomeScreenController(this);
             if (root == null) {
                 System.out.println("nullllllllllllllllllllllllllllllllllllll");
             }
 
-            Stage addContactStage = new Stage();
-            addContactStage.setTitle("Chat bot");
+            Stage chatBotStage = new Stage();
+            chatBotStage.setTitle("Chat bot");
 
             // Set the scene for the small window
-            addContactStage.setScene(new Scene(root));
+            chatBotStage .setScene(new Scene(root));
 
             // Optional: Set modality to block the main window
-            addContactStage.initModality(Modality.APPLICATION_MODAL);
-            addContactStage.setResizable(false);
+            chatBotStage .initModality(Modality.APPLICATION_MODAL);
+            chatBotStage .setResizable(false);
 
 
             // Show the small window
-            addContactStage.showAndWait(); // Use show() for a non-blocking window
+            chatBotStage.showAndWait(); // Use show() for a non-blocking window
 
 
         } catch (Exception e) {

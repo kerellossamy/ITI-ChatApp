@@ -40,6 +40,8 @@ public class CardController implements Initializable {
     @FXML
     private ImageView frinedImage;
 
+   
+
 
     public void setUserInt(UserInt userInt) {
         this.userInt = userInt;

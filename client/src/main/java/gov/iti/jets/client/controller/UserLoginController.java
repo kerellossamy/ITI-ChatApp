@@ -18,8 +18,15 @@ import shared.interfaces.UserInt;
 
 import java.rmi.RemoteException;
 
+enum Window {
+    HOME_PAGE,
+    LOGIN_PAGE,
+    SIGNUP_PAGE
+}
 
 public class UserLoginController {
+
+    
 
     private UserInt userInt;
     private AdminInt adminInt;
@@ -86,6 +93,8 @@ public class UserLoginController {
 
     @FXML
     public void handleLogInButton() {
+        try {
+            if (adminInt.getServerStatus() == true) {
 
         String phoneNumber = phoneNumberTextField.getText();
         String password = passwordTextField.getText();
@@ -153,6 +162,30 @@ public class UserLoginController {
         {
             e.printStackTrace();
         }
+
+    }
+    else 
+    {
+        System.out.println("server is off");
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ServerUnavailable.fxml"));
+
+        Parent root = loader.load();
+        ServerUnavailableController serverUnavailableController = loader.getController();
+        serverUnavailableController.setAdminInt(ClientMain.adminInt);
+        serverUnavailableController.setUserInt(ClientMain.userInt);
+        serverUnavailableController.setCurrentUser(currentUser);
+        serverUnavailableController.setNavigatedWindow(gov.iti.jets.client.controller.ServerUnavailableController.Window.LOGIN_PAGE);
+
+        Stage stage =this.getStage();
+        
+        // Set the scene with the admin login page
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+     
+    }
+} catch (Exception e) {
+    e.printStackTrace();
+}
     }
 
 
@@ -224,4 +257,9 @@ public class UserLoginController {
 //        c= ClientImpl.getInstance();
 //        c.setUserLoginController(this);
 //    }
+
+   // Method to get the Stage
+   public Stage getStage() {
+    return (Stage)  loginButton.getScene().getWindow();
+}
 }

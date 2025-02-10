@@ -351,7 +351,7 @@ public class AdminSignupController {
         Admin newAdmin = null;
 
 
-        newAdmin = new Admin(userName.getText(),
+        newAdmin = new Admin(userName.getText().trim(),
                 phoneNumber.getText(),
                 email.getText(),
                 password.getText(),

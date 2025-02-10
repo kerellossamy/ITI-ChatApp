@@ -298,6 +298,9 @@ public class UserSignupController {
 
     @FXML
     private void handleSignup() {
+
+        try {
+            if (adminInt.getServerStatus() == true) {
         // Validate that all fields are filled
         boolean isValid = validateFields();
 
@@ -424,6 +427,30 @@ public class UserSignupController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+    }
+    else 
+    {
+        System.out.println("server is off");
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ServerUnavailable.fxml"));
+
+        Parent root = loader.load();
+        ServerUnavailableController serverUnavailableController = loader.getController();
+        serverUnavailableController.setAdminInt(ClientMain.adminInt);
+        serverUnavailableController.setUserInt(ClientMain.userInt);
+        serverUnavailableController.setCurrentUser(currentUser);
+        serverUnavailableController.setNavigatedWindow(gov.iti.jets.client.controller.ServerUnavailableController.Window.SIGNUP_PAGE);
+
+        Stage stage =this.getStage();
+        
+        // Set the scene with the admin login page
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+     
+    }
+} catch (Exception e) {
+    e.printStackTrace();
+}
     }
 
     // Helper method to validate all fields
@@ -531,6 +558,10 @@ public class UserSignupController {
 
     private boolean isUsedEmail(String email) throws RemoteException {
         return userInt.isUserFoundByEmail(email);
+    }
+
+    public Stage getStage() {
+        return (Stage)  button.getScene().getWindow();
     }
 
 //
