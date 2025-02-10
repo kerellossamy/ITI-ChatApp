@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.UUID;
 
-public class FileTransfer implements Serializable {
+public class FileTransfer extends BaseMessage implements Serializable {
 
     private UUID fileId;
     private int senderId;
@@ -15,7 +15,13 @@ public class FileTransfer implements Serializable {
     private String filePath;
     private Timestamp timestamp;
 
-    public FileTransfer() {}
+    public FileTransfer() {
+    }
+
+    public FileTransfer(UUID fileId, int senderId, Integer receiverId, Integer groupId, String fileName, String fileType, byte[] fileData, Timestamp timestamp) {
+        super();
+    }
+
 
     public FileTransfer(UUID fileId, int senderId, Integer receiverId, Integer groupId, String fileName, String fileType, String filePath, Timestamp timestamp) {
         this.fileId = fileId;
@@ -96,4 +102,23 @@ public class FileTransfer implements Serializable {
         return (groupId != null);
     }
 
+    @Override
+    public String getSenderName2() {
+        return "File";
+    }
+
+    @Override
+    public int getSenderID2() {
+        return getSenderId();
+    }
+
+    @Override
+    public Timestamp getTimeStamp2() {
+        return getTimestamp();
+    }
+
+    @Override
+    public String getMessageContent2() {
+        return fileName;
+    }
 }

@@ -2,19 +2,14 @@ package gov.iti.jets.server;
 
 
 import gov.iti.jets.server.model.dao.implementations.*;
-import gov.iti.jets.server.model.dao.interfaces.FileTransferDAOInt;
-import javafx.application.Platform;
 import shared.dto.Invitation;
 import shared.dto.User;
 import shared.dto.UserConnection;
-import gov.iti.jets.server.model.dao.interfaces.DirectMessageDAOInt;
 import shared.dto.*;
 import shared.interfaces.ClientInt;
 import shared.interfaces.UserInt;
 import shared.utils.DB_UtilityClass;
-import shared.utils.SecureStorage;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,7 +23,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class UserImpl extends UnicastRemoteObject implements UserInt {
 
@@ -349,14 +343,22 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
     }
 
     @Override
-    public List<GroupMessage> getGroupMessages(int groupId) throws RemoteException {
+    public List<BaseMessage> getGroupMessages(int groupId) throws RemoteException {
+        List<BaseMessage> messages = new ArrayList<>();
+
         try {
-            return groupMessageDAO.getGroupMessageByGroupId(groupId);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            List<GroupMessage> groupMessages = groupMessageDAO.getGroupMessageByGroupId(groupId);
+            messages.addAll(groupMessages);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
 
+        List<FileTransfer> fileTransfers = fileTransferDAO.getFilesByGroupId(groupId);
+        messages.addAll(fileTransfers);
+
+        messages.sort(Comparator.comparing(BaseMessage::getTimeStamp2));
+
+        return messages;
     }
 
     @Override
@@ -369,8 +371,21 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
     }
 
     @Override
-    public List<DirectMessage> getMessagesBetweenTwo(int receiverId, int senderId) throws RemoteException {
-        return directMessageDAO.getMessagesBetweenTwo(receiverId, senderId);
+    public List<BaseMessage> getMessagesBetweenTwo(int receiverId, int senderId) throws RemoteException {
+        List<BaseMessage> messages = new ArrayList<>();
+
+        List<DirectMessage> directMessages = directMessageDAO.getMessagesBetweenTwo(receiverId, senderId);
+        messages.addAll(directMessages);
+
+        List<FileTransfer> fileTransfers = fileTransferDAO.getFilesBetweenUsers(senderId, receiverId);
+        messages.addAll(fileTransfers);
+
+        // Sort messages by timestamp (assuming getTimeStamp2() returns a Timestamp)
+        messages.sort(Comparator.comparing(BaseMessage::getTimeStamp2));
+
+        //        return directMessageDAO.getMessagesBetweenTwo(receiverId, senderId);
+        System.out.println(messages);
+        return messages;
     }
 
     @Override

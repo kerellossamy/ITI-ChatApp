@@ -122,11 +122,37 @@ public class FileTransferDAOImpl implements FileTransferDAOInt {
     }
 
     @Override
-    public List<FileTransfer> getFilesBetweenUsersByType(int userAId, int userBId, String fileType) {
+//    public List<FileTransfer> getFilesBetweenUsersByType(int userAId, int userBId, String fileType) {
+//        String sql = "SELECT * FROM file_transfer " +
+//                "WHERE ((sender_id = ? AND receiver_id = ?) OR " +
+//                "(sender_id = ? AND receiver_id = ?)) " +
+//                "AND file_type = ?";
+//
+//        List<FileTransfer> files = new ArrayList<>();
+//
+//        try (Connection connection = DB_UtilityClass.getConnection();
+//             PreparedStatement ps = connection.prepareStatement(sql)) {
+//
+//            ps.setInt(1, userAId);
+//            ps.setInt(2, userBId);
+//            ps.setInt(3, userBId);
+//            ps.setInt(4, userAId);
+//            ps.setString(5, fileType);
+//
+//            try (ResultSet rs = ps.executeQuery()) {
+//                while (rs.next()) {
+//                    files.add(mapResultSetToFileTransfer(rs));
+//                }
+//            }
+//        } catch (SQLException e) {
+//            handleSQLException(e);
+//        }
+//        return files;
+//    }
+    public List<FileTransfer> getFilesBetweenUsers(int userAId, int userBId) {
         String sql = "SELECT * FROM file_transfer " +
                 "WHERE ((sender_id = ? AND receiver_id = ?) OR " +
-                "(sender_id = ? AND receiver_id = ?)) " +
-                "AND file_type = ?";
+                "(sender_id = ? AND receiver_id = ?)) ";
 
         List<FileTransfer> files = new ArrayList<>();
 
@@ -137,7 +163,6 @@ public class FileTransferDAOImpl implements FileTransferDAOInt {
             ps.setInt(2, userBId);
             ps.setInt(3, userBId);
             ps.setInt(4, userAId);
-            ps.setString(5, fileType);
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {

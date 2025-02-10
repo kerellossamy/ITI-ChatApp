@@ -83,7 +83,6 @@ public class HomeScreenController implements Initializable {
     static int Target_ID;
 
 
-
     public void setCurrentUser(User currentUser) {
         System.out.println("setting the current user in the home page");
         System.out.println(currentUser);
@@ -158,180 +157,213 @@ public class HomeScreenController implements Initializable {
     @FXML
     private ListView<BaseMessage> chatListView;
     private ObservableList<BaseMessage> observableMessages = FXCollections.observableArrayList();
+    boolean isFile = false;
+    FileTransfer fileMsg;
 
     public void handleSendButton(ActionEvent actionEvent) {
 
-        if(Target_Type == null){
+        if (Target_Type == null) {
             showErrorAlert("Choose a chat", "Please choose a user or a group to chat with.");
             return;
         }
 
-        String htmlString = messageField.getHtmlText();
-//        String messageContent = htmlString.replaceAll("\\<.*?\\>", "").trim();
-        if (htmlString.isEmpty()) {
-            return;
-        } else {
-            if (Target_Type.equals("user")) {
+        if(isFile){
+            //update the ui to show the file
+            //attachedFile.setTimestamp(new Timestamp(System.currentTimeMillis()));
 
-                UserBlockedConnection userBlockedConnection = null;
-                try {
-                    userBlockedConnection = userInt.getBlockedConnection(currentUser.getUserId(), Target_ID);
+            observableMessages.add(fileMsg);
+            chatListView.refresh();
+            chatListView.scrollTo(observableMessages.size() + 3);
+            messageField.setHtmlText("");
 
-                } catch (RemoteException e) {
-                    e.printStackTrace();
+            try {
 
-                }
-                if (userBlockedConnection == null) {
-                    DirectMessage directMessage = new DirectMessage();
-                    directMessage.setMessageContent(htmlString);
-                    directMessage.setSenderId(currentUser.getUserId());
-                    directMessage.setReceiverId(Target_ID);
-                    directMessage.setFontStyle("Arial");
-                    directMessage.setFontColor("Black");
-                    directMessage.setTextBackground("White");
-                    directMessage.setFontSize(14);
-                    directMessage.setBold(false);
-                    directMessage.setItalic(false);
-                    directMessage.setUnderlined(false);
-                    directMessage.setTimestamp(new Timestamp(System.currentTimeMillis()));
+                userInt.reload(userInt.getUserById(Target_ID).getPhoneNumber(), fileMsg);
+                userInt.pushSound(userInt.getUserById(Target_ID).getPhoneNumber());
+
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+
+
+            isFile = false;
+            fileMsg = null;
+        }
+        else {
+            String htmlString = messageField.getHtmlText();
+            String message = htmlString.replaceAll("\\<.*?\\>", "").trim();
+            if (message.isEmpty() && !isFile) {
+                showErrorAlert("Empty message", "Please write a message to send.");
+                return;
+            } else {
+                if (Target_Type.equals("user")) {
+
+                    UserBlockedConnection userBlockedConnection = null;
                     try {
-                        userInt.insertDirectMessage(directMessage);
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
-                    }
-                    observableMessages.add(directMessage);
-                    chatListView.refresh();
-                    chatListView.scrollTo(observableMessages.size()+3);
-                    messageField.setHtmlText("");
-
-                    try {
-
-                        userInt.reload(userInt.getUserById(Target_ID).getPhoneNumber(),directMessage);
-                        userInt.pushSound(userInt.getUserById(Target_ID).getPhoneNumber());
+                        userBlockedConnection = userInt.getBlockedConnection(currentUser.getUserId(), Target_ID);
 
                     } catch (RemoteException e) {
                         e.printStackTrace();
+
                     }
+                    if (userBlockedConnection == null) {
+                        DirectMessage directMessage = new DirectMessage();
+                        directMessage.setMessageContent(htmlString);
+                        directMessage.setSenderId(currentUser.getUserId());
+                        directMessage.setReceiverId(Target_ID);
+                        directMessage.setFontStyle("Arial");
+                        directMessage.setFontColor("Black");
+                        directMessage.setTextBackground("White");
+                        directMessage.setFontSize(14);
+                        directMessage.setBold(false);
+                        directMessage.setItalic(false);
+                        directMessage.setUnderlined(false);
+                        directMessage.setTimestamp(new Timestamp(System.currentTimeMillis()));
+                        try {
+                            userInt.insertDirectMessage(directMessage);
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+                        observableMessages.add(directMessage);
+                        chatListView.refresh();
+                        chatListView.scrollTo(observableMessages.size() + 3);
+                        messageField.setHtmlText("");
 
-                    //I will put here the chatbot service work***********************************************************
+                        try {
 
-                    boolean isChatbotEnabledForReciever=false;
-                    try {
-                        isChatbotEnabledForReciever = userInt.isChatbotEnabled(Target_ID);
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
-                    }
+                            userInt.reload(userInt.getUserById(Target_ID).getPhoneNumber(), directMessage);
+                            userInt.pushSound(userInt.getUserById(Target_ID).getPhoneNumber());
 
-                    if(isChatbotEnabledForReciever) {
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
 
-                        Runnable r1 = new Runnable() {
-                            @Override
-                            public void run() {
+                        //I will put here the chatbot service work***********************************************************
+
+                        boolean isChatbotEnabledForReciever = false;
+                        try {
+                            isChatbotEnabledForReciever = userInt.isChatbotEnabled(Target_ID);
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+
+                        if (isChatbotEnabledForReciever) {
+
+                            Runnable r1 = new Runnable() {
+                                @Override
+                                public void run() {
 
 //                                try {
 //                                  Thread.sleep(60000);
 //                                } catch (InterruptedException e) {
 //                                    e.printStackTrace();
 //                                }
-                                String messageContent = htmlString.replaceAll("\\<.*?\\>", "").trim();
-                                String response = ChatbotService.getChatbotResponse(messageContent);
-                                String htmlResponse = "<html dir=\"ltr\"><head></head><body contenteditable=\"true\"><p><span style=\"font-family: &quot;&quot;;\">" + response + "</span></p></body></html>";
-                                DirectMessage botMessage = new DirectMessage();
-                                botMessage.setMessageContent(htmlResponse);
-                                botMessage.setSenderId(Target_ID);
-                                botMessage.setReceiverId(HomeScreenController.currentUser.getUserId());
-                                botMessage.setFontStyle("Arial");
-                                botMessage.setFontColor("Black");
-                                botMessage.setTextBackground("White");
-                                botMessage.setFontSize(14);
-                                botMessage.setBold(false);
-                                botMessage.setItalic(false);
-                                botMessage.setUnderlined(false);
-                                botMessage.setTimestamp(new Timestamp(System.currentTimeMillis()));
-                                try {
-                                    userInt.insertDirectMessage(botMessage);
-                                } catch (RemoteException e) {
-                                    e.printStackTrace();
-                                }
-                                Platform.runLater(new Runnable() {
-                                    @Override
-                                    public void run() {
-
-
-                                        observableMessages.add(botMessage);
-                                        chatListView.refresh();
-                                        chatListView.scrollTo(observableMessages.size());
-                                        try {
-                                            userInt.reload(userInt.getUserById(Target_ID).getPhoneNumber(),botMessage);
-                                            userInt.pushSound(userInt.getUserById(Target_ID).getPhoneNumber());
-                                        } catch (RemoteException e) {
-                                            e.printStackTrace();
-                                        }
-
-
+                                    String messageContent = htmlString.replaceAll("\\<.*?\\>", "").trim();
+                                    String response = ChatbotService.getChatbotResponse(messageContent);
+                                    String htmlResponse = "<html dir=\"ltr\"><head></head><body contenteditable=\"true\"><p><span style=\"font-family: &quot;&quot;;\">" + response + "</span></p></body></html>";
+                                    DirectMessage botMessage = new DirectMessage();
+                                    botMessage.setMessageContent(htmlResponse);
+                                    botMessage.setSenderId(Target_ID);
+                                    botMessage.setReceiverId(HomeScreenController.currentUser.getUserId());
+                                    botMessage.setFontStyle("Arial");
+                                    botMessage.setFontColor("Black");
+                                    botMessage.setTextBackground("White");
+                                    botMessage.setFontSize(14);
+                                    botMessage.setBold(false);
+                                    botMessage.setItalic(false);
+                                    botMessage.setUnderlined(false);
+                                    botMessage.setTimestamp(new Timestamp(System.currentTimeMillis()));
+                                    try {
+                                        userInt.insertDirectMessage(botMessage);
+                                    } catch (RemoteException e) {
+                                        e.printStackTrace();
                                     }
-                                });
+                                    Platform.runLater(new Runnable() {
+                                        @Override
+                                        public void run() {
 
-                            }
+
+                                            observableMessages.add(botMessage);
+                                            chatListView.refresh();
+                                            chatListView.scrollTo(observableMessages.size());
+                                            try {
+                                                userInt.reload(userInt.getUserById(Target_ID).getPhoneNumber(), botMessage);
+                                                userInt.pushSound(userInt.getUserById(Target_ID).getPhoneNumber());
+                                            } catch (RemoteException e) {
+                                                e.printStackTrace();
+                                            }
 
 
-                        };
-                        Thread t1 = new Thread(r1);
-                        t1.start();
+                                        }
+                                    });
 
+                                }
+
+
+                            };
+                            Thread t1 = new Thread(r1);
+                            t1.start();
+
+
+                        }
+                    } else {
+                        showErrorAlert("Error", "You can't send message to this user");
+                        messageField.setHtmlText("");
 
                     }
-                }
-                else {
-                    showErrorAlert("Error", "You can't send message to this user");
+
+
+                } else if (Target_Type.equals("group")) {
+
+                    GroupMessage groupMessage = new GroupMessage();
+                    groupMessage.setMessageContent(htmlString);
+                    groupMessage.setSenderId(currentUser.getUserId());
+                    groupMessage.setGroupId(Target_ID);
+                    groupMessage.setFontStyle("Arial");
+                    groupMessage.setFontColor("Black");
+                    groupMessage.setTextBackground("White");
+                    groupMessage.setFontSize(14);
+                    groupMessage.setBold(false);
+                    groupMessage.setItalic(false);
+                    groupMessage.setUnderlined(false);
+                    groupMessage.setTimestamp(new Timestamp(System.currentTimeMillis()));
+                    try {
+                        userInt.addGroupMessage(groupMessage);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                    observableMessages.add(groupMessage);
+                    chatListView.refresh();
+                    chatListView.scrollTo(observableMessages.size());
                     messageField.setHtmlText("");
 
-                }
+                    try {
+                        List<Integer> l = userInt.getUsersByGroupId(Target_ID);
+                        for (Integer id : l) {
+                            User groupUser = userInt.getUserById(id);
 
-
-            } else if (Target_Type.equals("group")) {
-
-                GroupMessage groupMessage = new GroupMessage();
-                groupMessage.setMessageContent(htmlString);
-                groupMessage.setSenderId(currentUser.getUserId());
-                groupMessage.setGroupId(Target_ID);
-                groupMessage.setFontStyle("Arial");
-                groupMessage.setFontColor("Black");
-                groupMessage.setTextBackground("White");
-                groupMessage.setFontSize(14);
-                groupMessage.setBold(false);
-                groupMessage.setItalic(false);
-                groupMessage.setUnderlined(false);
-                groupMessage.setTimestamp(new Timestamp(System.currentTimeMillis()));
-                try {
-                    userInt.addGroupMessage(groupMessage);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-                observableMessages.add(groupMessage);
-                chatListView.refresh();
-                chatListView.scrollTo(observableMessages.size());
-                messageField.setHtmlText("");
-
-                try {
-                    List<Integer>l=userInt.getUsersByGroupId(Target_ID);
-                    for(Integer id :l){
-                        userInt.reload(userInt.getUserById(id).getPhoneNumber(),groupMessage);
-                        userInt.pushSound(userInt.getUserById(id).getPhoneNumber());
+                            if(groupUser != null){
+                                userInt.reload(userInt.getUserById(id).getPhoneNumber(), groupMessage);
+                                userInt.pushSound(userInt.getUserById(id).getPhoneNumber());
+                            }
+                            else{
+                                System.err.println("Warning: getUserById returned null for group member id " + id);
+                            }
+                        }
+                    } catch (RemoteException e) {
+                        throw new RuntimeException(e);
                     }
-                } catch (RemoteException e) {
-                    throw new RuntimeException(e);
+
+
+                } else if (Target_Type.equals("announcement")) {
+                    messageField.setHtmlText("");
+                } else {
+                    System.out.println("Error in type");
                 }
-
-
-            } else if (Target_Type.equals("announcement")) {
-                messageField.setHtmlText("");
-            } else {
-                System.out.println("Error in type");
             }
 
-        }
 
+        }
     }
 
     public void handleEnterPress(KeyEvent keyEvent) {
@@ -405,7 +437,7 @@ public class HomeScreenController implements Initializable {
 
             c = ClientImpl.getInstance();
             // c.setHomeScreenController(this);
-            c.homeScreenController=this;
+            c.homeScreenController = this;
             c.setPhoneNumber(HomeScreenController.currentUser.getPhoneNumber());
             try {
                 userInt.register(c);
@@ -416,8 +448,8 @@ public class HomeScreenController implements Initializable {
 
             //adding chatBot to the user
             try {
-                Chatbot chatbot=userInt.getChatbotById(HomeScreenController.currentUser.getUserId());
-                if(chatbot==null){
+                Chatbot chatbot = userInt.getChatbotById(HomeScreenController.currentUser.getUserId());
+                if (chatbot == null) {
                     userInt.addChatbotByUserID(HomeScreenController.currentUser.getUserId());
 
                 }
@@ -468,7 +500,6 @@ public class HomeScreenController implements Initializable {
         });
 
 
-
 //        c = ClientImpl.getInstance();
 //        c.setHomeScreenController(this);
 
@@ -515,6 +546,9 @@ public class HomeScreenController implements Initializable {
                 if (empty || msg == null) {
                     setGraphic(null);
                 } else {
+
+//                    System.out.println("Processing message of type: " + msg.getClass().getName());
+
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm dd-MM");
                     String formattedTime = msg.getTimeStamp2().toLocalDateTime().format(formatter);
 
@@ -524,7 +558,7 @@ public class HomeScreenController implements Initializable {
 
                     String senderName = "";
 
-                    if (msg.getSenderName2().equals("DM")) {
+                    if (msg.getSenderName2().equals("DM") || msg.getSenderName2().equals("File")) {
                         //get sender name
                         User user = null;
                         try {
@@ -536,7 +570,7 @@ public class HomeScreenController implements Initializable {
                             throw new RuntimeException(e);
                         }
 
-                    } else if (msg.getSenderName2().equals("GM")) {
+                    } else if (msg.getSenderName2().equals("GM") || msg.getSenderName2().equals("File")) {
                         User user = null;
                         try {
                             user = userInt.getUserById(msg.getSenderID2());
@@ -578,18 +612,62 @@ public class HomeScreenController implements Initializable {
                     }
 
                     if (!Target_Type.equals("announcement")) {
-                        // Convert HTML content into JavaFX TextFlow
-                        TextFlow messageText = createStyledTextFlow(msg.getMessageContent2());
+                        //File Transfer handling
+                        if (msg instanceof FileTransfer) {
 
-                        Text timestampText = new Text(formattedTime);
-                        timestampText.setStyle("-fx-font-size: 10px; -fx-fill: gray;");
+//                            System.out.println("FileTransfer message detected. File name: " + fileMsg.getFileName());
 
-                        if (username.getText().isEmpty()) {
-                            bubble.getChildren().addAll(messageText, timestampText);
+                            FileTransfer cellFileMsg = (FileTransfer) msg;
+
+                            // Create a horizontal box for the file message
+                            HBox fileMessageBox = new HBox(10);
+
+                            // Display an icon (using your getFileIcon method)
+                            ImageView icon = new ImageView(getFileIcon(cellFileMsg.getFileName()));
+                            icon.setFitWidth(32);
+                            icon.setFitHeight(32);
+
+                            // Display the file name
+                            Label fileNameLabel = new Label(cellFileMsg.getFileName());
+                            //fileNameLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: blue;");
+
+                            // Create a download button
+                            Button viewButton = new Button("View");
+                            viewButton.setMinWidth(Region.USE_PREF_SIZE);
+                            viewButton.setMaxWidth(Region.USE_PREF_SIZE);
+                            HBox.setHgrow(viewButton, Priority.NEVER);
+
+                            viewButton.setOnAction(e -> {
+                                handleFileDownload(cellFileMsg.getFileId());
+                            });
+
+                            fileMessageBox.getChildren().addAll(icon, fileNameLabel, viewButton);
+
+                            // Add a timestamp below the file message
+                            Text timestampText = new Text(formattedTime);
+                            timestampText.setStyle("-fx-font-size: 10px; -fx-fill: gray;");
+
+                            bubble.getChildren().addAll(username, fileMessageBox, timestampText);
+
                         } else {
-                            bubble.getChildren().addAll(username, messageText, timestampText);
+                            // Regular text message whether is a direct or group message
+
+                            // Convert HTML content into JavaFX TextFlow
+                            TextFlow messageText = createStyledTextFlow(msg.getMessageContent2());
+
+                            Text timestampText = new Text(formattedTime);
+                            timestampText.setStyle("-fx-font-size: 10px; -fx-fill: gray;");
+
+                            if (username.getText().isEmpty()) {
+                                bubble.getChildren().addAll(messageText, timestampText);
+                            } else {
+                                bubble.getChildren().addAll(username, messageText, timestampText);
+                            }
                         }
-                    } else {
+
+                    }
+                    //if it is an announcement
+                    else {
                         String htmlResponse = "<html dir=\"ltr\"><head></head><body contenteditable=\"true\"><p><span style=\"font-family: &quot;&quot;;\">" + msg.getMessageContent2() + "</span></p></body></html>";
                         TextFlow messageTextFlow = createStyledTextFlow(htmlResponse);
 
@@ -616,8 +694,6 @@ public class HomeScreenController implements Initializable {
                     setGraphic(container);
                 }
             }
-
-
         });
 
     }
@@ -911,7 +987,7 @@ public class HomeScreenController implements Initializable {
             VBox v2 = new VBox();
 
             //ImageView imageView = new ImageView(new Image(getClass().getResourceAsStream("/img/girl.png")));
-           // File file = new File(c.getImagePath());
+            // File file = new File(c.getImagePath());
 
             ImageView imageView = SetImage(c.getImagePath());
 
@@ -1318,40 +1394,40 @@ public class HomeScreenController implements Initializable {
     }
 
     @FXML
-   public void handleNotificationButton() {
-    System.out.println("notification window pressed");
-    try {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/NotificationWindow.fxml"));
-        Parent root = loader.load();
-        if ( ClientMain.userInt== null) {
-            System.out.println("nullllllllllllllllllllllllllllllllllllll");
+    public void handleNotificationButton() {
+        System.out.println("notification window pressed");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/NotificationWindow.fxml"));
+            Parent root = loader.load();
+            if (ClientMain.userInt == null) {
+                System.out.println("nullllllllllllllllllllllllllllllllllllll");
+            }
+            NotificationWindowController notificationWindowController = loader.getController();
+            notificationWindowController.setAdminInt(ClientMain.adminInt);
+            notificationWindowController.setUserInt(ClientMain.userInt);
+            notificationWindowController.setCurrentUser(currentUser);
+            notificationWindowController.setHomeScreenController(this);
+
+
+            Stage notificationStage = new Stage();
+            notificationStage.setTitle("Notifications");
+
+            // Set the scene for the small window
+            notificationStage.setScene(new Scene(root));
+
+            // Optional: Set modality to block the main window
+            notificationStage.initModality(Modality.APPLICATION_MODAL);
+            notificationStage.setResizable(false);
+
+
+            // Show the small window
+            notificationStage.showAndWait(); // Use show() for a non-blocking window
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        NotificationWindowController notificationWindowController = loader.getController();
-        notificationWindowController.setAdminInt(ClientMain.adminInt);
-        notificationWindowController.setUserInt(ClientMain.userInt);
-        notificationWindowController.setCurrentUser(currentUser);
-        notificationWindowController.setHomeScreenController(this);
-
-
-        Stage notificationStage = new Stage();
-        notificationStage.setTitle("Notifications");
-
-        // Set the scene for the small window
-        notificationStage.setScene(new Scene(root));
-
-        // Optional: Set modality to block the main window
-        notificationStage.initModality(Modality.APPLICATION_MODAL);
-        notificationStage.setResizable(false);
-
-
-        // Show the small window
-        notificationStage.showAndWait(); // Use show() for a non-blocking window
-
-
-    } catch (Exception e) {
-        e.printStackTrace();
     }
-   }
 
     public void handleBotButton(ActionEvent actionEvent) {
 
@@ -1399,13 +1475,13 @@ public class HomeScreenController implements Initializable {
 
         if (type.equals("group")) {
 
-            List<GroupMessage> list = userInt.getGroupMessages(id);
+            List<BaseMessage> list = userInt.getGroupMessages(id);
             observableMessages.clear();
             observableMessages.addAll(list);
 
         } else if (type.equals("user")) {
 
-            List<DirectMessage> list = userInt.getMessagesBetweenTwo(currentUser.getUserId(), id);
+            List<BaseMessage> list = userInt.getMessagesBetweenTwo(currentUser.getUserId(), id);
             observableMessages.clear();
             observableMessages.addAll(list);
 
@@ -1423,7 +1499,7 @@ public class HomeScreenController implements Initializable {
     }
 
 
-    public void refreshChatList(BaseMessage message){
+    public void refreshChatList(BaseMessage message) {
         Platform.runLater(() -> {
             try {
                 observableMessages.add(message);
@@ -1490,7 +1566,7 @@ public class HomeScreenController implements Initializable {
 
     // Method to get the Stage
     public Stage getStage() {
-        return (Stage)  groupbtn.getScene().getWindow();
+        return (Stage) groupbtn.getScene().getWindow();
     }
 
 
@@ -1637,7 +1713,7 @@ public class HomeScreenController implements Initializable {
 
     @FXML
     private void handleAttachmentButton(ActionEvent event) {
-        if(Target_Type == null){
+        if (Target_Type == null) {
             showErrorAlert("Choose a chat", "Please choose a user or a group to chat with.");
             return;
         }
@@ -1674,6 +1750,9 @@ public class HomeScreenController implements Initializable {
                                 fileType,
                                 fileData
                         );
+
+                        fileMsg = new FileTransfer(fileId, currentUser.getUserId(), Target_ID, null, fileName,fileType, fileData , new Timestamp(System.currentTimeMillis()));
+                        isFile = true;
                     } else if (Target_Type.equals("group")) {
                         fileId = userInt.uploadFile(
                                 currentUser.getUserId(),
@@ -1683,54 +1762,60 @@ public class HomeScreenController implements Initializable {
                                 fileType,
                                 fileData
                         );
+                        fileMsg = new FileTransfer(fileId, currentUser.getUserId(), null, Target_ID, fileName,fileType, fileData, new Timestamp(System.currentTimeMillis()));
+                        isFile = true;
                     } else {
                         fileId = null;
                     }
 
+
+                    showSuccessAlert("File uploaded successfully!");
+
                     // Update the UI on the JavaFX Application Thread
-                    Platform.runLater(() -> {
-                        addFileMessageToUI(fileId, fileName);
-                        showSuccessAlert("File uploaded successfully!");
-                    });
+//                    Platform.runLater(() -> {
+//                        //addFileMessageToUI(fileId, fileName);
+//                        showSuccessAlert("File uploaded successfully!");
+//                    });
                 } catch (Exception e) {
                     Platform.runLater(() ->
                             showErrorAlert("Error uploading file: " + e.getMessage()));
                 }
             }).start();
+
         }
     }
 
-    private void addFileMessageToUI(UUID fileId, String originalFileName) {
-        VBox chatContainer = new VBox();
-        HBox fileMessage = new HBox(10);
-        fileMessage.setStyle("-fx-background-color: #f0f0f0; -fx-padding: 10;");
-        fileMessage.setAlignment(Pos.CENTER_LEFT);
-
-        ImageView icon = new ImageView(getFileIcon(originalFileName));
-        icon.setFitWidth(32);
-        icon.setFitHeight(32);
-
-        Label fileNameLabel = new Label(originalFileName);
-        Button downloadButton = new Button("Download");
-        downloadButton.setOnAction(e -> handleFileDownload(fileId));
-
-        fileMessage.getChildren().addAll(icon, fileNameLabel, downloadButton);
-        chatContainer.getChildren().add(fileMessage);
-        Scene s = new Scene(chatContainer);
-        getStage().setScene(s);
-    }
+//    private void addFileMessageToUI(UUID fileId, String originalFileName) {
+//        VBox chatContainer = new VBox();
+//        HBox fileMessage = new HBox(10);
+//        fileMessage.setStyle("-fx-background-color: #f0f0f0; -fx-padding: 10;");
+//        fileMessage.setAlignment(Pos.CENTER_LEFT);
+//
+//        ImageView icon = new ImageView(getFileIcon(originalFileName));
+//        icon.setFitWidth(32);
+//        icon.setFitHeight(32);
+//
+//        Label fileNameLabel = new Label(originalFileName);
+//        Button downloadButton = new Button("Download");
+//        downloadButton.setOnAction(e -> handleFileDownload(fileId));
+//
+//        fileMessage.getChildren().addAll(icon, fileNameLabel, downloadButton);
+//        chatContainer.getChildren().add(fileMessage);
+//        Scene s = new Scene(chatContainer);
+//        getStage().setScene(s);
+//    }
 
     private Image getFileIcon(String fileName) {
         String imagePath = "/img/pdf.png"; // default icon
-//        if (fileName.toLowerCase().endsWith(".pdf")) {
-//            imagePath = "/icons/pdf.png";
-//        } else if (fileName.toLowerCase().matches(".*\\.(png|jpg|jpeg|gif)$")) {
-//            imagePath = "/icons/image.png";
-//        } else if (fileName.toLowerCase().matches(".*\\.(mp4|avi|mov|mkv)$")) {
-//            imagePath = "/icons/video.png";
-//        } else if (fileName.toLowerCase().matches(".*\\.(mp3|wav|aac)$")) {
-//            imagePath = "/icons/audio.png";
-//        }
+        if (fileName.toLowerCase().endsWith(".pdf")) {
+            imagePath = "/img/pdf.png";
+        } else if (fileName.toLowerCase().matches(".*\\.(png|jpg|jpeg|gif)$")) {
+            imagePath = "/img/insert-picture-icon.png";
+        } else if (fileName.toLowerCase().matches(".*\\.(mp4|avi|mov|mkv)$")) {
+            imagePath = "/img/clapperboard.png";
+        } else if (fileName.toLowerCase().matches(".*\\.(mp3|wav|aac)$")) {
+            imagePath = "/img/music.png";
+        }
         return new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
     }
 

@@ -4,7 +4,6 @@ import shared.dto.*;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,11 +37,11 @@ public interface UserInt extends Remote {
 
     Invitation getInvitationBySenderAndReciever(int senderId, int receiverId) throws RemoteException;
 
-    List<GroupMessage> getGroupMessages(int groupId) throws RemoteException;
+    List<BaseMessage> getGroupMessages(int groupId) throws RemoteException;
 
     List<ServerAnnouncement> getAllServerAnnouncements() throws RemoteException;
 
-    List<DirectMessage> getMessagesBetweenTwo(int receiverId, int senderId) throws RemoteException;
+    List<BaseMessage> getMessagesBetweenTwo(int receiverId, int senderId) throws RemoteException;
 
     boolean insertDirectMessage(DirectMessage directMessage) throws RemoteException;
 

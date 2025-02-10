@@ -28,7 +28,7 @@ public interface FileTransferDAOInt {
     boolean deleteFile(UUID fileId);
 
     // For individual messages
-    List<FileTransfer> getFilesBetweenUsersByType(int userAId, int userBId, String fileType);
+    List<FileTransfer> getFilesBetweenUsers(int userAId, int userBId);
 
     // For group messages
     List<FileTransfer> getFilesByGroupId(int groupId);
