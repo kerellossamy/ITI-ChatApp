@@ -2,35 +2,37 @@ package shared.dto;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.UUID;
 
 public class FileTransfer implements Serializable {
-    private int fileId;
+
+    private UUID fileId;
     private int senderId;
-    private int receiverId;
+    private Integer receiverId;
+    private Integer groupId;
     private String fileName;
     private String fileType;
-    private long fileSize;
     private String filePath;
     private Timestamp timestamp;
 
     public FileTransfer() {}
 
-    public FileTransfer(int fileId, int senderId, int receiverId, String fileName, String fileType, long fileSize, String filePath, Timestamp timestamp) {
+    public FileTransfer(UUID fileId, int senderId, Integer receiverId, Integer groupId, String fileName, String fileType, String filePath, Timestamp timestamp) {
         this.fileId = fileId;
         this.senderId = senderId;
         this.receiverId = receiverId;
+        this.groupId = groupId;
         this.fileName = fileName;
         this.fileType = fileType;
-        this.fileSize = fileSize;
         this.filePath = filePath;
         this.timestamp = timestamp;
     }
 
-    public int getFileId() {
+    public UUID getFileId() {
         return fileId;
     }
 
-    public void setFileId(int fileId) {
+    public void setFileId(UUID fileId) {
         this.fileId = fileId;
     }
 
@@ -42,12 +44,20 @@ public class FileTransfer implements Serializable {
         this.senderId = senderId;
     }
 
-    public int getReceiverId() {
+    public Integer getReceiverId() {
         return receiverId;
     }
 
     public void setReceiverId(int receiverId) {
         this.receiverId = receiverId;
+    }
+
+    public Integer getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(int groupId) {
+        this.groupId = groupId;
     }
 
     public String getFileName() {
@@ -66,14 +76,6 @@ public class FileTransfer implements Serializable {
         this.fileType = fileType;
     }
 
-    public long getFileSize() {
-        return fileSize;
-    }
-
-    public void setFileSize(long fileSize) {
-        this.fileSize = fileSize;
-    }
-
     public String getFilePath() {
         return filePath;
     }
@@ -82,7 +84,7 @@ public class FileTransfer implements Serializable {
         this.filePath = filePath;
     }
 
-    public java.sql.Timestamp getTimestamp() {
+    public Timestamp getTimestamp() {
         return timestamp;
     }
 
@@ -90,8 +92,8 @@ public class FileTransfer implements Serializable {
         this.timestamp = timestamp;
     }
 
-    @Override
-    public String toString() {
-        return String.format("File ID: %d, Sender ID: %d, Receiver ID: %d, File Name: %s", fileId, senderId, receiverId, fileName);
+    public boolean isGroupTransfer() {
+        return (groupId != null);
     }
+
 }

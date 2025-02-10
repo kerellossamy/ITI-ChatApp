@@ -1,8 +1,8 @@
 package gov.iti.jets.server;
 
 
-
 import gov.iti.jets.server.model.dao.implementations.*;
+import gov.iti.jets.server.model.dao.interfaces.FileTransferDAOInt;
 import javafx.application.Platform;
 import shared.dto.Invitation;
 import shared.dto.User;
@@ -14,12 +14,14 @@ import shared.interfaces.UserInt;
 import shared.utils.DB_UtilityClass;
 import shared.utils.SecureStorage;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Time;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -31,7 +33,7 @@ import java.util.concurrent.ExecutionException;
 public class UserImpl extends UnicastRemoteObject implements UserInt {
 
 
-   static List<ClientInt> OnlineClintsList =new ArrayList<>();
+    static List<ClientInt> OnlineClintsList = new ArrayList<>();
     private final AdminDAOImpl adminDAO;
     private final ChatbotDAOImpl chatbotDAO;
     private final DirectMessageDAOImpl directMessageDAO;
@@ -47,23 +49,52 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
     private final UserGroupsDAOImpl userGroupsDAO;
     private Connection connection = DB_UtilityClass.getConnection();
     private final HashMap<String, String> sessionTokens;
+    private final java.nio.file.Path storagePath = Paths.get("./server_files/");
+    //private Path storagePath;
+
 
     protected UserImpl() throws RemoteException {
 
-        this.userConnectionDAO=new UserConnectionDAOImpl();
+        this.userConnectionDAO = new UserConnectionDAOImpl();
         this.adminDAO = new AdminDAOImpl(connection);
         this.chatbotDAO = new ChatbotDAOImpl(connection);
         this.directMessageDAO = new DirectMessageDAOImpl();
         this.fileTransferDAO = new FileTransferDAOImpl();
         this.groupDAO = new GroupDAOImpl(connection);
-        this.groupMessageDAO =new GroupMessageDAOImpl(connection);
+        this.groupMessageDAO = new GroupMessageDAOImpl(connection);
         this.invitationDAO = new InvitationDAOImpl();
         this.serverAnnouncementDAO = new ServerAnnouncementDAOImpl(connection);
         this.socialNetworkDAO = new SocialNetworkDAOImpl(connection);
-        this.userBlockedConnectionDAO =new UserBlockedConnectionDAOImpl();
+        this.userBlockedConnectionDAO = new UserBlockedConnectionDAOImpl();
         this.userDAO = new UserDAOImpl();
         this.userGroupsDAO = new UserGroupsDAOImpl(connection);
-        sessionTokens=new HashMap<>();
+        sessionTokens = new HashMap<>();
+
+        try {
+            if (!Files.exists(storagePath)) {
+                Files.createDirectories(storagePath);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to create storage directory", e);
+        }
+
+//        // Load configuration and set up storage path
+//        Properties config = new Properties();
+//        try (FileInputStream in = new FileInputStream("config.properties")) {
+//            config.load(in);
+//        } catch (IOException e) {
+//            System.err.println("Could not load configuration file, using defaults.");
+//        }
+//
+//        String storageDir = config.getProperty("file.storage.dir", "files");
+//        storagePath = Paths.get(storageDir);
+//        try {
+//            if (!Files.exists(storagePath)) {
+//                Files.createDirectories(storagePath);
+//            }
+//        } catch (IOException e) {
+//            throw new RuntimeException("Failed to create storage directory", e);
+//        }
     }
 
 
@@ -98,10 +129,9 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedNow = now.format(formatter);
 
-        for(UserConnection userConnection : listofConnections)
-        {
-            Card card =  new Card();
-            DirectMessage Message = directMessageDAO.getLastMessageForUser(user.getUserId() ,userConnection.getConnectedUserId());
+        for (UserConnection userConnection : listofConnections) {
+            Card card = new Card();
+            DirectMessage Message = directMessageDAO.getLastMessageForUser(user.getUserId(), userConnection.getConnectedUserId());
 
             System.out.println(Message.getTimestamp());
 
@@ -116,13 +146,10 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
             card.setImagePath(connecterUser.getProfilePicturePath());
 
 
-           if(Message.getMessageContent() == null)
-            {
+            if (Message.getMessageContent() == null) {
                 card.setMessageContent("");
                 card.setTimeStamp(Timestamp.valueOf(formattedNow));
-            }
-            else
-            {
+            } else {
                 card.setMessageContent(Message.getMessageContent());
                 card.setTimeStamp(Message.getTimestamp());
             }
@@ -152,7 +179,7 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
                 Card card = new Card();
                 //System.out.println(group.getGroupId());
                 GroupMessage groupMessage = groupMessageDAO.getLatestMessageInGroup(group.getGroupId());
-                if(groupMessage != null) {
+                if (groupMessage != null) {
                     card.setId(group.getGroupId());
                     card.setType(Card.Type.group.toString());
                     // User sender = userDAO.getUserById(groupMessage.getSenderId());
@@ -161,9 +188,7 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
                     card.setImagePath("/img/people.png");
                     card.setMessageContent(groupMessage.getMessageContent());
                     card.setTimeStamp(groupMessage.getTimestamp());
-                }
-                else
-                {
+                } else {
                     card.setId(group.getGroupId());
                     card.setType(Card.Type.group.toString());
                     card.setMessageContent("");
@@ -190,9 +215,7 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
                 cardList.add(announcementCard);
             }
 
-        }
-        catch (SQLException ex)
-        {
+        } catch (SQLException ex) {
             System.out.println("SQL Exception");
         }
 
@@ -203,19 +226,17 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
 
     // List<UserConnection> getAllConnectionsForUser(int userId);
     @Override
-    public  List<UserConnection> getUserConncectionById(int userId) throws RemoteException
-    {      System.out.println("hello");
-          return userConnectionDAO.getAllConnectionsForUser(userId);
+    public List<UserConnection> getUserConncectionById(int userId) throws RemoteException {
+        System.out.println("hello");
+        return userConnectionDAO.getAllConnectionsForUser(userId);
     }
 
     @Override
-    public  User getUserById(int userId) throws RemoteException
-    {
-          return userDAO.getUserById(userId);
+    public User getUserById(int userId) throws RemoteException {
+        return userDAO.getUserById(userId);
     }
 
-    public static int getOnlineUsers()
-    {
+    public static int getOnlineUsers() {
         return OnlineClintsList.size();
     }
 
@@ -244,7 +265,7 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
         return userDAO.editUserShownInfo(userId, name, status, picPath, bio);
     }
 
-   public User getUserByPhoneNumber(String phone_number) {
+    public User getUserByPhoneNumber(String phone_number) {
 
         return userDAO.getUserByPhoneNumber(phone_number);
     }
@@ -256,7 +277,7 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
 
     @Override
     public boolean addInvitation(Invitation invitation) throws RemoteException {
-       return invitationDAO.addInvitation(invitation);
+        return invitationDAO.addInvitation(invitation);
     }
 
     @Override
@@ -265,11 +286,10 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
     }
 
     @Override
-    public String getCreatedGroupName(int groupId) throws RemoteException
-    {
+    public String getCreatedGroupName(int groupId) throws RemoteException {
         String name = null;
         try {
-            name= groupDAO.getCreatedGroup(groupId).getDisplayName();
+            name = groupDAO.getCreatedGroup(groupId).getDisplayName();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -340,7 +360,7 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
     }
 
     @Override
-    public List<ServerAnnouncement> getAllServerAnnouncements()  {
+    public List<ServerAnnouncement> getAllServerAnnouncements() {
         try {
             return serverAnnouncementDAO.getAllServerAnnouncements();
         } catch (Exception e) {
@@ -357,9 +377,7 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
     public boolean insertDirectMessage(DirectMessage directMessage) {
         try {
             directMessageDAO.insertDirectMessage(directMessage);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
@@ -389,62 +407,48 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
     }
 
 
-
     @Override
-    public int createGroup(String groupName, int createdBy)
-    {
-        try
-        {
-        return groupDAO.createGroupWithId(groupName,  createdBy);
-        }
-        catch (Exception e)
-        {
+    public int createGroup(String groupName, int createdBy) {
+        try {
+            return groupDAO.createGroupWithId(groupName, createdBy);
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return 0;
     }
+
     @Override
-    public void addUserToGroup(int userId, int groupId)
-    {
-        try
-        {
-        userGroupsDAO.addUserToGroup( userId,  groupId);
-        }
-        catch (Exception e)
-        {
+    public void addUserToGroup(int userId, int groupId) {
+        try {
+            userGroupsDAO.addUserToGroup(userId, groupId);
+        } catch (Exception e) {
             e.printStackTrace();
 
         }
     }
 
     @Override
-    public  List<Invitation> getAllInvitationsById(int userId)
-    {
-       return invitationDAO.getAllInvitationsByReceiverId(userId);
+    public List<Invitation> getAllInvitationsById(int userId) {
+        return invitationDAO.getAllInvitationsByReceiverId(userId);
     }
+
     @Override
-    public boolean addUserConnection(UserConnection userConnection)
-    {
+    public boolean addUserConnection(UserConnection userConnection) {
         return userConnectionDAO.insertUserConnection(userConnection);
     }
 
     @Override
-    public  void deleteInvitation(int invitationId)
-    {
-          invitationDAO.deleteInvitation(invitationId);
+    public void deleteInvitation(int invitationId) {
+        invitationDAO.deleteInvitation(invitationId);
     }
 
     @Override
-    public boolean isUserConnection(int userId, int connectedUserId)
-    {
+    public boolean isUserConnection(int userId, int connectedUserId) {
         UserConnection userConnection = userConnectionDAO.getUserConnection(userId, connectedUserId);
-        if(userConnection==null)
-        {
+        if (userConnection == null) {
             return false;
 
-        }
-        else
-        {
+        } else {
             return true;
         }
 
@@ -452,10 +456,10 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
     }
 
     @Override
-    public void pushSound(String phoneNumber)  {
+    public void pushSound(String phoneNumber) {
         for (ClientInt client : OnlineClintsList) {
             try {
-                if(client.getPhoneNumber().equals(phoneNumber)) {
+                if (client.getPhoneNumber().equals(phoneNumber)) {
                     try {
                         client.playNotificationSound();
                     } catch (RemoteException e) {
@@ -469,11 +473,11 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
     }
 
     @Override
-    public void reload(String phoneNumber,BaseMessage message) throws RemoteException {
+    public void reload(String phoneNumber, BaseMessage message) throws RemoteException {
         for (ClientInt client : OnlineClintsList) {
             try {
-                if(client.getPhoneNumber().equals(phoneNumber)) {
-                                client.refreshChatList(message);
+                if (client.getPhoneNumber().equals(phoneNumber)) {
+                    client.refreshChatList(message);
                 }
             } catch (RemoteException e) {
                 e.printStackTrace();
@@ -495,7 +499,7 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
     public void reloadInvitationList(String phoneNumber) throws RemoteException {
         for (ClientInt client : OnlineClintsList) {
             try {
-                if(client.getPhoneNumber().equals(phoneNumber)) {
+                if (client.getPhoneNumber().equals(phoneNumber)) {
                     client.refreshInvitationList();
                 }
             } catch (RemoteException e) {
@@ -510,7 +514,7 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
 
         for (ClientInt client : OnlineClintsList) {
             try {
-                if(client.getPhoneNumber().equals(phoneNumber)) {
+                if (client.getPhoneNumber().equals(phoneNumber)) {
                     client.refreshContactList();
                 }
             } catch (RemoteException e) {
@@ -526,7 +530,7 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
 
         for (ClientInt client : OnlineClintsList) {
             try {
-                if(client.getPhoneNumber().equals(phoneNumber)) {
+                if (client.getPhoneNumber().equals(phoneNumber)) {
                     client.refreshNotificationList();
                 }
             } catch (RemoteException e) {
@@ -549,21 +553,180 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
     }
 
     @Override
-    public List<Invitation> getAllAcceptedInvitationsBySenderId(int senderId)
-    {
+    public List<Invitation> getAllAcceptedInvitationsBySenderId(int senderId) {
         return invitationDAO.getAllAcceptedInvitationsBySenderId(senderId);
     }
 
     @Override
-   public List<Invitation> getAllPendingInvitationsByReceiverId(int receiverId)
-    {
+    public List<Invitation> getAllPendingInvitationsByReceiverId(int receiverId) {
         return invitationDAO.getAllPendingInvitationsByReceiverId(receiverId);
     }
+
     @Override
-    public void updateInvitationStatusById(int invitationId, Invitation.Status newStatus)
-    {
+    public void updateInvitationStatusById(int invitationId, Invitation.Status newStatus) {
         invitationDAO.updateInvitationStatusById(invitationId, newStatus);
     }
 
+//    @Override
+//    public UUID uploadFile(int senderId, Integer receiverId, Integer groupId, String fileName, String fileType, byte[] fileData) throws RemoteException {
+//
+//        UUID fileId = UUID.randomUUID();
+//        String fileExtension = getFileExtension(fileName);
+//        String storedFileName = fileId.toString() + fileExtension;
+//        java.nio.file.Path filePath = storagePath.resolve(storedFileName);
+//
+//
+//        // Save file to disk
+//        try {
+//            Files.write(filePath, fileData);
+//        } catch (IOException e) {
+//            throw new RemoteException("File write failed", e);
+//        }
+//
+//        // Create database record
+//        FileTransfer transfer = new FileTransfer(fileId, senderId, receiverId, groupId, fileName, fileType, storedFileName, new Timestamp(System.currentTimeMillis()));
+//        fileTransferDAO.insertFile(transfer);
+//        return fileId;
+//    }
+//
+//    @Override
+//    public byte[] downloadFile(UUID fileId, int requesterId) throws RemoteException {
+//        try {
+//            FileTransfer transfer = fileTransferDAO.getFileById(fileId);
+//            if (transfer == null) {
+//                throw new RemoteException("File not found");
+//            }
+//
+//            // Validate permissions
+//            if (transfer.getGroupId() != null) {
+//                if (!userGroupsDAO.isUserInGroup(requesterId, transfer.getGroupId())) {
+//                    throw new RemoteException("User not in group");
+//                }
+//            } else {
+//                if (requesterId != transfer.getSenderId() && requesterId != transfer.getReceiverId()) {
+//                    throw new RemoteException("Unauthorized access");
+//                }
+//            }
+//
+//            java.nio.file.Path filePath = storagePath.resolve(transfer.getFilePath());
+//            return Files.readAllBytes(filePath);
+//
+//        } catch (SQLException | IOException e) {
+//            throw new RemoteException("Download failed: " + e.getMessage(), e);
+//        }
+//    }
+//
+//    private String getFileExtension(String fileName) {
+//        int dotIndex = fileName.lastIndexOf('.');
+//        return (dotIndex == -1) ? "" : fileName.substring(dotIndex);
+//    }
+
+    @Override
+    public UUID uploadFile(int senderId, Integer receiverId, Integer groupId,
+                           String fileName, String fileType, byte[] fileData) throws RemoteException {
+        // Generate a new file ID and create a unique stored file name
+        UUID fileId = UUID.randomUUID();
+        String fileExtension = getFileExtension(fileName);
+        String storedFileName = fileId.toString() + fileExtension;
+        java.nio.file.Path filePath = storagePath.resolve(storedFileName);
+
+        // Save file to disk
+        try {
+            Files.write(filePath, fileData);
+        } catch (IOException e) {
+            throw new RemoteException("File write failed", e);
+        }
+
+        // Insert file metadata into the database using try-with-resources
+        String sql = "INSERT INTO file_transfer (file_id, sender_id, receiver_id, group_id, file_name, file_type, file_path, timestamp) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, fileId.toString());
+            ps.setInt(2, senderId);
+            if (receiverId != null) {
+                ps.setInt(3, receiverId);
+            } else {
+                ps.setNull(3, Types.INTEGER);
+            }
+            if (groupId != null) {
+                ps.setInt(4, groupId);
+            } else {
+                ps.setNull(4, Types.INTEGER);
+            }
+            ps.setString(5, fileName);
+            ps.setString(6, fileType);
+            ps.setString(7, storedFileName);
+            ps.setTimestamp(8, new Timestamp(System.currentTimeMillis()));
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RemoteException("Database insert failed", e);
+        }
+
+        return fileId;
+    }
+
+    @Override
+    public byte[] downloadFile(UUID fileId, int requesterId) throws RemoteException {
+        FileTransfer transfer = null;
+        String sql = "SELECT sender_id, receiver_id, group_id, file_path FROM file_transfer WHERE file_id = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, fileId.toString());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    int senderId = rs.getInt("sender_id");
+                    int receiverId = rs.getInt("receiver_id");
+                    // Use getObject to properly check for NULL in groupId
+                    Integer groupId = rs.getObject("group_id") != null ? rs.getInt("group_id") : null;
+                    String storedFileName = rs.getString("file_path");
+
+
+                    // Create a FileTransfer object. (The original file name and file type are not needed for download.)
+                    transfer = new FileTransfer(fileId, senderId, receiverId, groupId, null, null, storedFileName,
+                            new Timestamp(System.currentTimeMillis()));
+                } else {
+                    throw new RemoteException("File not found");
+                }
+            }
+        } catch (SQLException e) {
+            throw new RemoteException("Database retrieval failed", e);
+        }
+
+        // Validate permissions: if the file belongs to a group, ensure the requester is a member;
+        // otherwise, check that the requester is either the sender or receiver.
+        if (transfer.getGroupId() != null) {
+            try {
+                if (!userGroupsDAO.isUserInGroup(requesterId, transfer.getGroupId())) {
+                    throw new RemoteException("User not in group");
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            if (requesterId != transfer.getSenderId() && requesterId != transfer.getReceiverId()) {
+                throw new RemoteException("Unauthorized access");
+            }
+        }
+
+        // Read the file from disk and return its bytes
+        Path filePath = storagePath.resolve(transfer.getFilePath());
+        try {
+            return Files.readAllBytes(filePath);
+        } catch (IOException e) {
+            throw new RemoteException("Download failed: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public String getFileName(UUID fileId) throws RemoteException {
+        return fileTransferDAO.getFileName(fileId);
+
+    }
+
+
+    private String getFileExtension(String fileName) {
+        int dotIndex = fileName.lastIndexOf('.');
+        return (dotIndex == -1) ? "" : fileName.substring(dotIndex);
+    }
 
 }

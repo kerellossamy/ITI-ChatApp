@@ -4,6 +4,7 @@ import gov.iti.jets.client.ClientMain;
 import gov.iti.jets.client.model.ChatbotService;
 import gov.iti.jets.client.model.ClientImpl;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.collections.transformation.FilteredList;
@@ -30,17 +31,20 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.rmi.RemoteException;
+import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
+import java.util.*;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -72,7 +76,7 @@ public class HomeScreenController implements Initializable {
     private AdminInt adminInt;
     ClientImpl c;
     List<Card> listOfContactCards;
-    private ObservableList<HBox> cardObservableList = javafx.collections.FXCollections.observableArrayList();
+    private ObservableList<HBox> cardObservableList = FXCollections.observableArrayList();
     static User currentUser = null;
     //***************chat
     static String Target_Type;
@@ -150,10 +154,17 @@ public class HomeScreenController implements Initializable {
     @FXML
     private Button Imagebtn;
     @FXML
+    private Button attachmentButton;
+    @FXML
     private ListView<BaseMessage> chatListView;
-    private ObservableList<BaseMessage> observableMessages = javafx.collections.FXCollections.observableArrayList();
+    private ObservableList<BaseMessage> observableMessages = FXCollections.observableArrayList();
 
     public void handleSendButton(ActionEvent actionEvent) {
+
+        if(Target_Type == null){
+            showErrorAlert("Choose a chat", "Please choose a user or a group to chat with.");
+            return;
+        }
 
         String htmlString = messageField.getHtmlText();
 //        String messageContent = htmlString.replaceAll("\\<.*?\\>", "").trim();
@@ -242,7 +253,7 @@ public class HomeScreenController implements Initializable {
                                 } catch (RemoteException e) {
                                     e.printStackTrace();
                                 }
-                                javafx.application.Platform.runLater(new Runnable() {
+                                Platform.runLater(new Runnable() {
                                     @Override
                                     public void run() {
 
@@ -1482,6 +1493,289 @@ public class HomeScreenController implements Initializable {
         return (Stage)  groupbtn.getScene().getWindow();
     }
 
+
+//    @FXML
+//    private void handleAttachmentButton(ActionEvent event) {
+//        FileChooser fileChooser = new FileChooser();
+//        fileChooser.setTitle("Select File to Attach");
+//        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+//
+//        fileChooser.getExtensionFilters().setAll(
+//                new FileChooser.ExtensionFilter("All Files", "*.*"),
+//                new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg", "*.gif"),
+//                new FileChooser.ExtensionFilter("Documents", "*.pdf", "*.doc", "*.docx", "*.txt"),
+//                new FileChooser.ExtensionFilter("Videos", "*.mp4", "*.avi", "*.mov", "*.mkv"),
+//                new FileChooser.ExtensionFilter("Audios", "*.mp3", "*.wav", "*.aac"));
+//
+//        File selectedFile = fileChooser.showOpenDialog(attachmentButton.getScene().getWindow());
+//        if (selectedFile != null) {
+//            new Thread(() -> {
+//                try {
+//                    // Retrieve file properties
+//                    String fileName = selectedFile.getName();
+//                    String fileType = Files.probeContentType(selectedFile.toPath());
+//
+//                    // Read the entire file into a byte array
+//                    byte[] fileData = Files.readAllBytes(selectedFile.toPath());
+//
+//                    // Call the RMI service to upload the file
+//                    UUID fileId;
+//                    if(Target_Type.equals("user")){
+//                        fileId = userInt.uploadFile(
+//                                currentUser.getUserId(),
+//                                Target_ID,
+//                                null,
+//                                fileName,
+//                                fileType,
+//                                fileData
+//                        );
+//                    }else if(Target_Type.equals("group")){
+//                        fileId = userInt.uploadFile(
+//                                currentUser.getUserId(),
+//                                null,
+//                                Target_ID,
+//                                fileName,
+//                                fileType,
+//                                fileData
+//                        );
+//                    } else {
+//                        fileId = null;
+//                    }
+//
+//
+//                    // Update the UI on the JavaFX Application Thread
+//                    Platform.runLater(() -> {
+//                        addFileMessageToUI(fileId, fileName);
+//                        showSuccessAlert("File uploaded successfully!");
+//                    });
+//                } catch (IOException e) {
+//                    Platform.runLater(() ->
+//                            showErrorAlert("Error reading file: " + e.getMessage()));
+//                }
+//            }).start();
+//        }
+//    }
+//
+//
+//    private void addFileMessageToUI(UUID fileId, String originalFileName) {
+//        VBox chatContainer = new VBox();
+//
+//        HBox fileMessage = new HBox(10);
+//        fileMessage.setStyle("-fx-background-color: #f0f0f0; -fx-padding: 10;");
+//        fileMessage.setAlignment(Pos.CENTER_LEFT);
+//
+//        ImageView icon = new ImageView(getFileIcon(originalFileName));
+//        icon.setFitWidth(32);
+//        icon.setFitHeight(32);
+//
+//        Label fileNameLabel = new Label(originalFileName);
+//        Button downloadButton = new Button("Download");
+//        downloadButton.setOnAction(e -> handleFileDownload(fileId));
+//
+//        fileMessage.getChildren().addAll(icon, fileNameLabel, downloadButton);
+//        chatContainer.getChildren().add(fileMessage);
+//    }
+//
+//
+//    private Image getFileIcon(String fileName) {
+//        String imagePath = "/icons/file.png"; // default icon
+//        if (fileName.toLowerCase().endsWith(".pdf")) {
+//            imagePath = "/icons/pdf.png";
+//        } else if (fileName.toLowerCase().matches(".*\\.(png|jpg|jpeg|gif)$")) {
+//            imagePath = "/icons/image.png";
+//        } else if (fileName.toLowerCase().matches(".*\\.(mp4|avi|mov|mkv)$")) {
+//            imagePath = "/icons/video.png";
+//        } else if (fileName.toLowerCase().matches(".*\\.(mp3|wav|aac)$")) {
+//            imagePath = "/icons/audio.png";
+//        }
+//        return new Image(getClass().getResourceAsStream(imagePath));
+//    }
+//
+//
+//    private void handleFileDownload(UUID fileId) {
+//        new Thread(() -> {
+//            try {
+//                // Call the RMI service to download the file (returns file bytes)
+//                byte[] fileData = userInt.downloadFile(fileId, currentUser.getUserId());
+//
+//                // Assume the server has a method to return the original file name.
+//                String originalFileName = userInt.getFileName(fileId);
+//
+//                // Create a Downloads directory in the user's home directory
+//                Path downloadDir = Paths.get(System.getProperty("user.home"), "Downloads");
+//                Files.createDirectories(downloadDir);
+//
+//                // Save the downloaded file using the original file name
+//                Path outputPath = downloadDir.resolve(originalFileName);
+//                Files.write(outputPath, fileData);
+//
+//                Platform.runLater(() -> {
+//                    showSuccessAlert("File saved to: " + outputPath);
+//                    try {
+//                        Desktop.getDesktop().open(outputPath.toFile());
+//                    } catch (IOException e) {
+//                        showErrorAlert("Couldn't open file automatically");
+//                    }
+//                });
+//            } catch (RemoteException e) {
+//                Platform.runLater(() -> showErrorAlert("Download failed: " + e.getMessage()));
+//            } catch (IOException e) {
+//                Platform.runLater(() -> showErrorAlert("File handling error: " + e.getMessage()));
+//            }
+//        }).start();
+//    }
+//
+//    // Dummy implementations of alert methods; replace these with your actual alert code.
+//    private void showSuccessAlert(String message) {
+//        System.out.println("SUCCESS: " + message);
+//    }
+//
+//    private void showErrorAlert(String message) {
+//        System.err.println("ERROR: " + message);
+//    }
+//
+
+    @FXML
+    private void handleAttachmentButton(ActionEvent event) {
+        if(Target_Type == null){
+            showErrorAlert("Choose a chat", "Please choose a user or a group to chat with.");
+            return;
+        }
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select File to Attach");
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+
+        fileChooser.getExtensionFilters().setAll(
+                new FileChooser.ExtensionFilter("All Files", "*.*"),
+                new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg", "*.gif"),
+                new FileChooser.ExtensionFilter("Documents", "*.pdf", "*.doc", "*.docx", "*.txt"),
+                new FileChooser.ExtensionFilter("Videos", "*.mp4", "*.avi", "*.mov", "*.mkv"),
+                new FileChooser.ExtensionFilter("Audios", "*.mp3", "*.wav", "*.aac")
+        );
+
+        File selectedFile = fileChooser.showOpenDialog(attachmentButton.getScene().getWindow());
+        if (selectedFile != null) {
+            new Thread(() -> {
+                try {
+                    String fileName = selectedFile.getName();
+                    String fileType = Files.probeContentType(selectedFile.toPath());
+
+                    // Read the entire file into a byte array
+                    byte[] fileData = Files.readAllBytes(selectedFile.toPath());
+
+                    UUID fileId;
+                    if (Target_Type.equals("user")) {
+                        fileId = userInt.uploadFile(
+                                currentUser.getUserId(),
+                                Target_ID,
+                                null,
+                                fileName,
+                                fileType,
+                                fileData
+                        );
+                    } else if (Target_Type.equals("group")) {
+                        fileId = userInt.uploadFile(
+                                currentUser.getUserId(),
+                                null,
+                                Target_ID,    // group ID for group chat
+                                fileName,
+                                fileType,
+                                fileData
+                        );
+                    } else {
+                        fileId = null;
+                    }
+
+                    // Update the UI on the JavaFX Application Thread
+                    Platform.runLater(() -> {
+                        addFileMessageToUI(fileId, fileName);
+                        showSuccessAlert("File uploaded successfully!");
+                    });
+                } catch (Exception e) {
+                    Platform.runLater(() ->
+                            showErrorAlert("Error uploading file: " + e.getMessage()));
+                }
+            }).start();
+        }
+    }
+
+    private void addFileMessageToUI(UUID fileId, String originalFileName) {
+        VBox chatContainer = new VBox();
+        HBox fileMessage = new HBox(10);
+        fileMessage.setStyle("-fx-background-color: #f0f0f0; -fx-padding: 10;");
+        fileMessage.setAlignment(Pos.CENTER_LEFT);
+
+        ImageView icon = new ImageView(getFileIcon(originalFileName));
+        icon.setFitWidth(32);
+        icon.setFitHeight(32);
+
+        Label fileNameLabel = new Label(originalFileName);
+        Button downloadButton = new Button("Download");
+        downloadButton.setOnAction(e -> handleFileDownload(fileId));
+
+        fileMessage.getChildren().addAll(icon, fileNameLabel, downloadButton);
+        chatContainer.getChildren().add(fileMessage);
+        Scene s = new Scene(chatContainer);
+        getStage().setScene(s);
+    }
+
+    private Image getFileIcon(String fileName) {
+        String imagePath = "/img/pdf.png"; // default icon
+//        if (fileName.toLowerCase().endsWith(".pdf")) {
+//            imagePath = "/icons/pdf.png";
+//        } else if (fileName.toLowerCase().matches(".*\\.(png|jpg|jpeg|gif)$")) {
+//            imagePath = "/icons/image.png";
+//        } else if (fileName.toLowerCase().matches(".*\\.(mp4|avi|mov|mkv)$")) {
+//            imagePath = "/icons/video.png";
+//        } else if (fileName.toLowerCase().matches(".*\\.(mp3|wav|aac)$")) {
+//            imagePath = "/icons/audio.png";
+//        }
+        return new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
+    }
+
+
+    private void handleFileDownload(UUID fileId) {
+        new Thread(() -> {
+            try {
+                // Call the RMI service to download the file (returns file bytes)
+                byte[] fileData = userInt.downloadFile(fileId, currentUser.getUserId());
+
+                // Retrieve the original file name from the server
+                String originalFileName = userInt.getFileName(fileId);
+
+                // Create a Downloads directory in the user's home directory
+                Path downloadDir = Paths.get(System.getProperty("user.home"), "/Downloads/Server_Downloads");
+                Files.createDirectories(downloadDir);
+
+                // Save the downloaded file using the original file name
+                Path outputPath = downloadDir.resolve(originalFileName);
+                Files.write(outputPath, fileData);
+
+                Platform.runLater(() -> {
+                    showSuccessAlert("File saved to: " + outputPath);
+                    try {
+                        Desktop.getDesktop().open(outputPath.toFile());
+                    } catch (IOException e) {
+                        showErrorAlert("Couldn't open file automatically");
+                    }
+                });
+            } catch (RemoteException e) {
+                Platform.runLater(() -> showErrorAlert("Download failed: " + e.getMessage()));
+            } catch (IOException e) {
+                Platform.runLater(() -> showErrorAlert("File handling error: " + e.getMessage()));
+            }
+        }).start();
+    }
+
+    // Dummy alert methods
+    private void showSuccessAlert(String message) {
+        System.out.println("SUCCESS: " + message);
+    }
+
+    private void showErrorAlert(String message) {
+        System.err.println("ERROR: " + message);
+    }
 
 }
 
