@@ -82,11 +82,6 @@ public class CreateGroupController {
     private TextField nameTextField;
 
     @FXML
-    private Circle photoCircle; // Circle for the profile picture
-    @FXML
-    private ImageView cameraIcon; // ImageView for the camera icon
-
-    @FXML
     private Button createButton; // Button to create the group
 
     private List<Integer> selectedContacts = new ArrayList<>();
@@ -168,30 +163,7 @@ public class CreateGroupController {
     }
 
     // Event handler for changing photo
-    @FXML
-    private void changePhotoEvent(MouseEvent event) {
-
-        try {
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Choose an Image");
-            fileChooser.getExtensionFilters().addAll(
-                    new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg"));
-            Stage stage = (Stage) createButton.getScene().getWindow();
-
-            File selectedFile = fileChooser.showOpenDialog(stage);
-            if (selectedFile != null) {
-
-                Image image = new Image(selectedFile.toURI().toString());
-
-                // Setting the image view
-                photoCircle.setFill(new ImagePattern(image));
-
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
+   
 
     // Event handler for the create button
     @FXML
@@ -230,9 +202,10 @@ public class CreateGroupController {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                Stage stage = (Stage) createButton.getScene().getWindow();
+                stage.close();
             }
-            Stage stage = (Stage) createButton.getScene().getWindow();
-            stage.close();
+           
         }
 
                   }
@@ -268,16 +241,16 @@ public class CreateGroupController {
     }
 
     private boolean validGroupName() {
-        if (nameTextField.getText().trim().length() == 0) {
-            showErrorAlert("Invalid Group Name", "Please enter a valid group name.");
+        if (nameTextField.getText().trim().length() == 0 || nameTextField.getText().trim().length() >15) {
+            showErrorAlert("Invalid Group Name", "Please enter a valid group name");
             return false;
         }
         return true;
     }
 
     private boolean validContacts() {
-        if (selectedContacts.size() == 0) {
-            showErrorAlert("No Contacts Selected", "Please select at least one contact to create a group.");
+        if (selectedContacts.size() < 2) {
+            showErrorAlert("No Contacts Selected", "Please select at least two contact to create a group.");
             return false;
         }
         return true;

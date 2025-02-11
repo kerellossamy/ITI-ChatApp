@@ -351,7 +351,7 @@ public class AdminSignupController {
         Admin newAdmin = null;
 
 
-        newAdmin = new Admin(userName.getText(),
+        newAdmin = new Admin(userName.getText().trim(),
                 phoneNumber.getText(),
                 email.getText(),
                 password.getText(),
@@ -474,7 +474,7 @@ public class AdminSignupController {
     // Helper method to validate phone number (must contain only numbers)
     private boolean isValidPhoneNumber(String phoneNumber) {
         // Regex to match only numbers
-        String regex = "^\\d{11}$";
+        String regex = "^(010|011|012|015)[0-9]{8}$";
         return phoneNumber.matches(regex);
     }
 

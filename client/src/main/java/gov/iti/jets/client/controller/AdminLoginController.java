@@ -139,7 +139,7 @@ public class AdminLoginController {
             //Look up the remote object
             adminInt = (AdminInt) reg.lookup("AdminServices");
 
-            if(adminInt.Login(username.getText() , password.getText()))
+            if(adminInt.Login(username.getText().trim() , password.getText()))
             {
                 
                 return true;
