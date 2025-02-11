@@ -1,17 +1,20 @@
 package gov.iti.jets.client.model;
 
 import gov.iti.jets.client.controller.*;
+import javafx.scene.layout.HBox;
 import shared.dto.BaseMessage;
+import shared.dto.Card;
 import shared.interfaces.ClientInt;
 
 import javax.sound.sampled.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
-public class ClientImpl extends UnicastRemoteObject implements ClientInt {
+public class ClientImpl extends UnicastRemoteObject implements ClientInt , Serializable {
 
 
    private AddContactWindowController addContactWindowController;
@@ -170,21 +173,23 @@ public class ClientImpl extends UnicastRemoteObject implements ClientInt {
 
     @Override
     public void refreshInvitationList() throws RemoteException {
-
             //put implementation here
+
 
 
     }
 
     @Override
     public void refreshNotificationList() throws RemoteException {
-        //put implementation here
+            //put implementation here
     }
 
     @Override
-    public void refreshContactList() throws RemoteException {
+    public void refreshContactList(Card c) throws RemoteException {
 
         //put implementation here
+        System.out.println("ClientImpl , refreshContactList");
+        homeScreenController.refreshContactList(c);
     }
 
 

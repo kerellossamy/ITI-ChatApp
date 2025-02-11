@@ -27,11 +27,11 @@
          </font>
       </Label>
       <Line endX="100.0" layoutX="134.0" layoutY="244.0" startX="-100.0" />
-      <Text layoutX="35.0" layoutY="306.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Member Name" />
       <Text fx:id="createdGroupName" fill="#c9c5c5" layoutY="218.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Created by:" textAlignment="CENTER" wrappingWidth="250.12060546875" AnchorPane.leftAnchor="0.0">
          <font>
             <Font name="System Bold" size="15.0" />
          </font>
       </Text>
+      <TextFlow fx:id="MembersName" layoutX="43.0" layoutY="290.0" prefHeight="20.0" prefWidth="182.0" />
    </children>
 </AnchorPane>

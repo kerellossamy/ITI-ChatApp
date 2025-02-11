@@ -18,7 +18,20 @@ public class Card implements Serializable {
         user , group , announcement
 
     }
+    public Card(int id, String type, String senderName, String messageContent, Timestamp timestamp, User.Status status, String imagePath) {
+        this.id = id;
+        this.type = type;
+        this.senderName = senderName;
+        this.messageContent = messageContent;
+        this.timestamp = timestamp;
+        this.status = status;
+        this.imagePath = imagePath;
+    }
 
+    public Card()
+    {
+
+    }
 
 
     public Timestamp getTimestamp() {

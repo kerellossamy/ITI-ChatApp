@@ -5,7 +5,6 @@ import gov.iti.jets.client.model.ClientImpl;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -23,19 +22,17 @@ import javafx.scene.paint.*;
 import javafx.scene.image.Image;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import shared.dto.Card;
 import shared.dto.User;
 import shared.dto.UserConnection;
 import shared.interfaces.AdminInt;
 import shared.interfaces.UserInt;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.URL;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -221,12 +218,14 @@ public class CreateGroupController {
                     // get id of the current user
                     int groupId = userInt.createGroup(nameTextField.getText().trim(), currentUser.getUserId());
                     userInt.addUserToGroup(currentUser.getUserId(), groupId);
-                    System.out.println("grooup id" + groupId);
-                    homeScreenController.CreateCard(groupId ,"/img/people.png" , "AVAILABLE" , nameTextField.getText().trim() , Timestamp.valueOf(formattedNow) ,  "group");
+                    System.out.println("group id" + groupId);
                     // add contactId to the group
                     for (Integer i : selectedContacts) {
                         userInt.addUserToGroup(i, groupId);
                     }
+
+                    Card card = new Card(groupId ,"group",  nameTextField.getText().trim() , "" ,  Timestamp.valueOf(formattedNow), User.Status.AVAILABLE , "/img/people.png" );
+                    homeScreenController.addCardtoListView(card , currentUser.getPhoneNumber());
 
                 } catch (Exception e) {
                     e.printStackTrace();

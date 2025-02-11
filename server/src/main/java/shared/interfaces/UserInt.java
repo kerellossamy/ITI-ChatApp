@@ -1,5 +1,6 @@
 package shared.interfaces;
 
+import javafx.scene.layout.HBox;
 import shared.dto.*;
 
 import java.rmi.Remote;
@@ -76,7 +77,7 @@ public interface UserInt extends Remote {
 
     //to be implemented
     void reloadInvitationList(String phoneNumber)throws RemoteException;
-    void reloadContactList(String phoneNumber)throws RemoteException;
+    void reloadContactList(String phoneNumber ,Card c) throws RemoteException ;
     void reloadNotificationList(String phoneNumber)throws RemoteException;
 
     public String getSessionToken(String phoneNumber) throws RemoteException;

@@ -7,11 +7,13 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import shared.interfaces.AdminInt;
 import shared.interfaces.UserInt;
 
 import java.net.URI;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class GroupProfileController implements Initializable {
@@ -25,6 +27,8 @@ public class GroupProfileController implements Initializable {
     private Text groupProfileName;
     @FXML
     private Text createdGroupName;
+    @FXML
+    private TextFlow MembersName;
 
     public void setUserInt(UserInt userInt) {
         this.userInt = userInt;
@@ -35,11 +39,19 @@ public class GroupProfileController implements Initializable {
     }
 
 
-    public void setInfo(Image image , String name , String createdGroup)
+    public void setInfo(Image image , String name , String createdGroup , List<String> members)
     {
         groupProfileImage.setImage(image);
         groupProfileName.setText(name);
         createdGroupName.setText("Created by: " + createdGroup);
+        Text text ;
+        for(String m : members)
+        {
+            text = new Text(m);
+            text.setStyle("-fx-font-size: 16px;");
+            MembersName.getChildren().add(text);
+        }
+
     }
 
 

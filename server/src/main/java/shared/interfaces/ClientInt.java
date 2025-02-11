@@ -1,6 +1,7 @@
 package shared.interfaces;
 
 import shared.dto.BaseMessage;
+import shared.dto.Card;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -12,8 +13,8 @@ public interface ClientInt extends Remote {
     public void refreshChatList(BaseMessage message,String type,int ID) throws RemoteException;
 
         //methods to be implemented
-    public void refreshInvitationList()throws RemoteException;
-    public void refreshNotificationList()throws RemoteException;
-    public void refreshContactList()throws RemoteException;
+    void refreshInvitationList()throws RemoteException;
+    void refreshNotificationList()throws RemoteException;
+    void refreshContactList(Card c) throws RemoteException ;
 
 }
