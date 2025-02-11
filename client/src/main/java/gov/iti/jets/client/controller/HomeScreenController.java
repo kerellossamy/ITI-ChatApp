@@ -249,7 +249,7 @@ public class HomeScreenController implements Initializable {
                                         chatListView.refresh();
                                         chatListView.scrollTo(observableMessages.size());
                                         try {
-                                            userInt.reload(userInt.getUserById(Target_ID).getPhoneNumber(),botMessage,"user",currentUser.getUserId());
+                                            userInt.reload(userInt.getUserById(Target_ID).getPhoneNumber(), botMessage, "user", currentUser.getUserId());
                                             userInt.pushSound(userInt.getUserById(Target_ID).getPhoneNumber());
                                         } catch (RemoteException e) {
                                             e.printStackTrace();
@@ -302,8 +302,8 @@ public class HomeScreenController implements Initializable {
                 try {
                     List<Integer> l = userInt.getUsersByGroupId(Target_ID);
                     for (Integer id : l) {
-                        if(id!=currentUser.getUserId()) {
-                            userInt.reload(userInt.getUserById(id).getPhoneNumber(), groupMessage,"group",Target_ID);
+                        if (id != currentUser.getUserId()) {
+                            userInt.reload(userInt.getUserById(id).getPhoneNumber(), groupMessage, "group", Target_ID);
                             userInt.pushSound(userInt.getUserById(id).getPhoneNumber());
                         }
                     }
@@ -1042,17 +1042,28 @@ public class HomeScreenController implements Initializable {
     @FXML
     void handleSelectedCard() {
         Card card = ContactList.getSelectionModel().getSelectedItem();
+
+        if (card == null) {
+            System.out.println("I'm a null card");
+
+        }
+
+        System.out.println(card);
+
+
         System.out.println(" Name " + card.getSenderName() + " Type " + card.getType() + " id " + card.getId());
         //System.out.println("image " + c.getImagePath());
         ImageView imageView = SetImage(card.getImagePath());
         friendImage.setImage(imageView.getImage());
         friendName.setText(card.getSenderName());
 
-        Target_ID = card.getId();
-        Target_Type = card.getType();
+
 
         Platform.runLater(() -> {
             try {
+                Target_ID = card.getId();
+                Target_Type = card.getType();
+
                 populateChatListView(Target_Type, Target_ID);
                 // fillChatListView();
             } catch (RemoteException e) {
@@ -1408,10 +1419,31 @@ public class HomeScreenController implements Initializable {
     }
 
 
-    public void refreshChatList(BaseMessage message,String Type,int ID){
+    public void refreshChatList(BaseMessage message, String Type, int ID) {
 
-        if(Target_Type.equals(Type) && Target_ID==ID) {
-            Platform.runLater(() -> {
+        if (chatListView == null) {
+            System.out.println("Chat list is null!");
+            return;
+        }
+
+        if (observableMessages == null) {
+            System.out.println("Observable messages list is null!");
+            return;
+        }
+
+        if (Target_Type == null || Type == null) {
+            System.out.println("Target_Type or Type is null!");
+            return;
+        }
+
+        if (ContactList == null) {
+            System.out.println("ContactList is null!");
+            return;
+        }
+
+        Platform.runLater(() -> {
+            if (Objects.equals(Target_Type, Type) && Target_ID == ID) {
+//            if (Target_Type.equals(Type) && Target_ID == ID) {
                 try {
                     observableMessages.add(message);
                     chatListView.refresh();
@@ -1421,6 +1453,7 @@ public class HomeScreenController implements Initializable {
                     e.printStackTrace();
                 }
 
+            }
         });
     }
 
@@ -1435,8 +1468,7 @@ public class HomeScreenController implements Initializable {
                 e.printStackTrace();
             }
 
-            });
-        }
+        });
     }
 
 //********************************************************************************************************************
