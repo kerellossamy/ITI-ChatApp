@@ -11,6 +11,8 @@ public class ServerMain {
     public ServerMain() {
         try{
 
+            System.setProperty("java.rmi.server.hostname", "127.0.0.1");
+
             UserInt userInt=new UserImpl();
             AdminInt adminInt=new AdminImpl();
             Registry registry= LocateRegistry.createRegistry(8554);

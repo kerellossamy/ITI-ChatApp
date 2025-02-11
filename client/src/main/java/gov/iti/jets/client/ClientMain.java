@@ -21,7 +21,8 @@ public class ClientMain extends Application {
 
     static {
         try {
-            Registry registry = LocateRegistry.getRegistry(8554);
+            Registry registry = LocateRegistry.getRegistry("127.0.0.1", 8554);
+//            Registry registry = LocateRegistry.getRegistry(8554);
             userInt = (UserInt) registry.lookup("UserServices");
             adminInt = (AdminInt) registry.lookup("AdminServices");
             System.out.println("Connected to RMI Server!");
