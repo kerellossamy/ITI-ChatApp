@@ -148,6 +148,9 @@ public class HomeScreenController implements Initializable {
     private VBox vBox;
     @FXML 
     private ImageView defaultPhoto;
+
+    @FXML 
+    private StackPane stackPane;
   
     private ObservableList<BaseMessage> observableMessages = javafx.collections.FXCollections.observableArrayList();
     
@@ -417,6 +420,23 @@ public class HomeScreenController implements Initializable {
 
             vBox.setVisible(false);
 
+                            // Load the image
+        Image image = new Image(getClass().getResourceAsStream("/img/background3.jpg"));
+        
+
+        BackgroundImage backgroundImage = new BackgroundImage(
+            image, 
+            BackgroundRepeat.NO_REPEAT, 
+            BackgroundRepeat.NO_REPEAT, 
+            BackgroundPosition.CENTER, 
+            new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, true)
+        );
+
+        // Set the background
+        Background background = new Background(backgroundImage);
+        chatListView.setBackground(background);
+      
+
 
         Platform.runLater(() -> {
 
@@ -534,6 +554,7 @@ public class HomeScreenController implements Initializable {
                 super.updateItem(msg, empty);
                 if (empty || msg == null) {
                     setGraphic(null);
+                    setBackground(Background.EMPTY); 
                 } else {
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm dd-MM");
                     String formattedTime = msg.getTimeStamp2().toLocalDateTime().format(formatter);

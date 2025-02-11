@@ -155,7 +155,7 @@
       </HBox>
    </left>
    <center>
-      <StackPane BorderPane.alignment="CENTER">
+      <StackPane fx:id="stackPane" BorderPane.alignment="CENTER">
          <children>
             <VBox fx:id="vBox" minWidth="540.0" prefHeight="600.0" prefWidth="570.0">
                <children>
