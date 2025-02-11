@@ -216,22 +216,22 @@
                               </ImageView>
                            </graphic>
                         </Button>
-                        <Button layoutX="535.0" layoutY="147.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" AnchorPane.rightAnchor="76.0">
-                           <graphic>
-                              <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../img/attach-file.png" />
-                                 </image>
-                              </ImageView>
-                           </graphic>
-                        </Button>
-                     </children>
-                     <VBox.margin>
-                        <Insets />
-                     </VBox.margin>
-                  </AnchorPane>
+                  <Button fx:id="attachmentButton" onAction="#handleAttachmentButton" layoutX="535.0" layoutY="147.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" AnchorPane.rightAnchor="76.0">
+                     <graphic>
+                        <ImageView  fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/attach-file.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
                </children>
-            </VBox>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </AnchorPane>
+         </children>
+      </VBox>
             <ImageView fx:id="defaultPhoto" fitHeight="400.0" fitWidth="556.0" opacity="0.52" pickOnBounds="true" preserveRatio="true" />
          </children>
       </StackPane>
