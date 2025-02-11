@@ -4,7 +4,6 @@ import shared.dto.*;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.sql.SQLException;
 import java.util.List;
 
 public interface UserInt extends Remote {
@@ -60,7 +59,7 @@ public interface UserInt extends Remote {
 
     //to be implemented
     void reloadInvitationList(String phoneNumber)throws RemoteException;
-    void reloadContactList(String phoneNumber)throws RemoteException;
+    void reloadContactList(String phoneNumber ,Card c) throws RemoteException ;
     void reloadNotificationList(String phoneNumber)throws RemoteException;
 
     public String getSessionToken(String phoneNumber) throws RemoteException;

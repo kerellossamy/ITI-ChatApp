@@ -20,7 +20,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import shared.dto.*;
 import shared.interfaces.AdminInt;
@@ -146,8 +145,12 @@ public class InvitationListCardController {
                 System.out.println("accept");
 
                 try {
+                    // Get the current date and time
+                    LocalDateTime now = LocalDateTime.now();
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                    String formattedNow = now.format(formatter);
 
-                  //  userInt.deleteInvitation(cardInvitation.getInvitationId());
+                    // userInt.deleteInvitation(cardInvitation.getInvitationId());
                     userInt.updateInvitationStatusById(cardInvitation.getInvitationId(), Invitation.Status.accepted);
                     UserConnection userConnection1 = new UserConnection(currentUser.getUserId(), cardUser.getUserId(),
                             "friend");
@@ -165,6 +168,14 @@ public class InvitationListCardController {
                     userInt.addUserConnection(userConnection1);
                     userInt.addUserConnection(userConnection2);
 
+                    //1
+                    Card card = new Card(cardUser.getUserId()  ,"user", cardUser.getDisplayName(), "" ,  Timestamp.valueOf(formattedNow), cardUser.getStatus() , cardUser.getProfilePicturePath());
+                    System.out.println(cardUser.getUserId() +"      " + currentUser.getUserId());
+                    homeScreenController.addCardtoListView(card , cardUser.getPhoneNumber());
+
+                    //5
+                    Card card1 = new Card(currentUser.getUserId() , "user" , currentUser.getDisplayName() , "" , Timestamp.valueOf(formattedNow) ,currentUser.getStatus() , currentUser.getProfilePicturePath() );
+                    homeScreenController.addCardtoListView(card1 , cardUser.getPhoneNumber());
 
                 } catch (Exception e) {
                     e.printStackTrace();

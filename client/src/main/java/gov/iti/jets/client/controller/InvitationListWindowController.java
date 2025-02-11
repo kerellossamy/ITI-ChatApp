@@ -99,7 +99,7 @@ public class InvitationListWindowController {
 
             for (Invitation invitation : invitationsList) {
                 try {
-                     User user=userInt.getUserById(invitation.getSenderId());
+                    User user=userInt.getUserById(invitation.getSenderId());
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/InvitationListCard.fxml"));
                     Parent card = loader.load();
 
@@ -111,6 +111,7 @@ public class InvitationListWindowController {
                     invitationListCardController.setInvitationListController(this);
                     invitationListCardController.setHomeScreenController(homeScreenController);
                     System.out.println("hello");
+
                     vBox.getChildren().add(card);
 
                 } catch (Exception e) {

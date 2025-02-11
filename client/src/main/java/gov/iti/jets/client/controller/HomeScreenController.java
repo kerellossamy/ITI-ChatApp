@@ -38,9 +38,7 @@ import java.rmi.RemoteException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -65,6 +63,8 @@ import shared.interfaces.AdminInt;
 import shared.interfaces.UserInt;
 import shared.utils.SecureStorage;
 
+import javax.swing.plaf.synth.SynthRadioButtonMenuItemUI;
+
 
 public class HomeScreenController implements Initializable {
 
@@ -72,17 +72,17 @@ public class HomeScreenController implements Initializable {
     private AdminInt adminInt;
     ClientImpl c;
     List<Card> listOfContactCards;
-    private ObservableList<HBox> cardObservableList = javafx.collections.FXCollections.observableArrayList();
+    private ObservableList<Card> cardObservableList = javafx.collections.FXCollections.observableArrayList();
     static User currentUser = null;
     //***************chat
-    static String Target_Type;
-    static int Target_ID;
+     String Target_Type;
+     int Target_ID;
 
 
 
     public void setCurrentUser(User currentUser) {
         System.out.println("setting the current user in the home page");
-        System.out.println(currentUser);
+        //System.out.println(currentUser);
         this.currentUser = currentUser;
     }
 
@@ -122,7 +122,7 @@ public class HomeScreenController implements Initializable {
     @FXML
     private TextField searchTextField;
     @FXML
-    private ListView<HBox> ContactList;
+    private ListView<Card> ContactList;
     @FXML
     private ImageView friendImage;
     @FXML
@@ -195,6 +195,7 @@ public class HomeScreenController implements Initializable {
 
                     try {
 
+                        System.out.println("message Target ID" + Target_ID);
                         userInt.reload(userInt.getUserById(Target_ID).getPhoneNumber(),directMessage);
                         userInt.pushSound(userInt.getUserById(Target_ID).getPhoneNumber());
 
@@ -305,8 +306,10 @@ public class HomeScreenController implements Initializable {
                 try {
                     List<Integer>l=userInt.getUsersByGroupId(Target_ID);
                     for(Integer id :l){
-                        userInt.reload(userInt.getUserById(id).getPhoneNumber(),groupMessage);
-                        userInt.pushSound(userInt.getUserById(id).getPhoneNumber());
+                        if(id != currentUser.getUserId()) {
+                            userInt.reload(userInt.getUserById(id).getPhoneNumber(), groupMessage);
+                            userInt.pushSound(userInt.getUserById(id).getPhoneNumber());
+                        }
                     }
                 } catch (RemoteException e) {
                     throw new RuntimeException(e);
@@ -349,8 +352,6 @@ public class HomeScreenController implements Initializable {
 
     private ImageView SetImage(String imagePath) {
         ImageView imageView = new ImageView();
-
-
         userNameText.setText(currentUser.getDisplayName());
 //            userProfileImage.setImage(new Image(getClass().getResource(currentUser.getProfilePicturePath()).toExternalForm()));
 
@@ -369,7 +370,7 @@ public class HomeScreenController implements Initializable {
                         System.out.println("Error: File does not exist or cannot be read.");
                     }
                 } else {
-                    System.out.println(profilePicturePath);
+                   // System.out.println(profilePicturePath);
                     profileImage = new Image(getClass().getResource(profilePicturePath).toExternalForm());
                     imageView.setImage(profileImage);
                 }
@@ -385,8 +386,7 @@ public class HomeScreenController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-//        System.out.println("currentUser is: " + currentUser);
-
+    //System.out.println("currentUser is: " + currentUser);
 
         Platform.runLater(() -> {
 
@@ -395,7 +395,7 @@ public class HomeScreenController implements Initializable {
             c = ClientImpl.getInstance();
             // c.setHomeScreenController(this);
             c.homeScreenController=this;
-            c.setPhoneNumber(HomeScreenController.currentUser.getPhoneNumber());
+            c.setPhoneNumber(currentUser.getPhoneNumber());
             try {
                 userInt.register(c);
             } catch (RemoteException e) {
@@ -405,9 +405,9 @@ public class HomeScreenController implements Initializable {
 
             //adding chatBot to the user
             try {
-                Chatbot chatbot=userInt.getChatbotById(HomeScreenController.currentUser.getUserId());
+                Chatbot chatbot=userInt.getChatbotById(currentUser.getUserId());
                 if(chatbot==null){
-                    userInt.addChatbotByUserID(HomeScreenController.currentUser.getUserId());
+                    userInt.addChatbotByUserID(currentUser.getUserId());
 
                 }
             } catch (RemoteException e) {
@@ -437,25 +437,54 @@ public class HomeScreenController implements Initializable {
             userProfileImage.setImage(imageView.getImage());
 //            userProfileImage = SetImage(currentUser.getProfilePicturePath().toString());
 
-            try {
-                listOfContactCards = userInt.getCards(currentUser);
-                //populateChatListView("group", 1);
-//            userInt.getUserConncectionById(1);
-            } catch (RemoteException e) {
-                //throw new RuntimeException(e);
-                e.printStackTrace();
+        });
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    listOfContactCards = userInt.getCards(HomeScreenController.currentUser);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                cardObservableList.setAll(listOfContactCards);
+                ContactList.setItems(cardObservableList);
+
+                FilteredList<Card> cardFilteredList = new FilteredList<Card>(cardObservableList , p -> true);
+                searchTextField.textProperty().addListener((observable , oldValue , newValue) -> {
+                    cardFilteredList.setPredicate(item ->{
+                        if(item == null || newValue.isEmpty())
+                            return true;
+
+                        String filter = newValue.toLowerCase();
+                        String name = item.getSenderName().toLowerCase();
+                        return name.contains(filter);
+                    });
+                });
+                SortedList<Card> sortedList = new SortedList<>(cardFilteredList);
+                ContactList.setItems(sortedList);
+                ContactList.refresh();
             }
-
-            //fullListView(ContactList);
-            populateCard(cardObservableList);
-            ContactList.setItems(cardObservableList);
-
-            //ContactList.getSelectionModel().selectFirst();
-            //ContactList.getSelectionModel().
-            System.out.println(ContactList.isMouseTransparent());
-
         });
 
+
+//        try {
+//            List<Card> cards= userInt.getCards(HomeScreenController.currentUser);
+//            //populateChatListView("group", 1);
+//            //userInt.getUserConncectionById(1);
+//
+//
+//            //fullListView(ContactList);
+//            ///populateCard(cardObservableList);
+//            cardObservableList.setAll(cards);
+//            ContactList.setItems(cardObservableList);
+//
+//        } catch (RemoteException e) {
+//            //throw new RuntimeException(e);
+//            e.printStackTrace();
+//        }
+        //ContactList.getSelectionModel().selectFirst();
+        //ContactList.getSelectionModel().
+       //System.out.println(ContactList.isMouseTransparent());
 
 
 //        c = ClientImpl.getInstance();
@@ -465,9 +494,9 @@ public class HomeScreenController implements Initializable {
 
         ContactList.setCellFactory((param) -> {
 
-            ListCell<HBox> cell = new ListCell<>() {
+            ListCell<Card> cell = new ListCell<>() {
                 @Override
-                protected void updateItem(HBox item, boolean empty) {
+                protected void updateItem(Card item, boolean empty) {
                     super.updateItem(item, empty);
                     if (!empty) {
                         if (item != null) {
@@ -486,7 +515,7 @@ public class HomeScreenController implements Initializable {
                         }
                     } else {
                         // System.out.println("empty");
-                        return;
+                        setGraphic(null);
                     }
                 }
             };
@@ -892,7 +921,7 @@ public class HomeScreenController implements Initializable {
         }
     }
 
-    void populateCard(ObservableList<HBox> cardObservableList) {
+    /*void populateCard(ObservableList<HBox> cardObservableList) {
         for (Card c : listOfContactCards) {
             HBox card = new HBox();
             Group g1 = new Group();
@@ -918,7 +947,7 @@ public class HomeScreenController implements Initializable {
             g1.getChildren().addAll(imageView, status);
 
             Text name = new Text(c.getSenderName());
-            Text message = new Text(c.getMessageContent());
+            Text message = new Text(extractPlainText(c.getMessageContent()));
             v1.getChildren().addAll(name, message);
             //System.out.println("time : " + c.getTimestamp().toString().substring(11 , 16));
 
@@ -931,70 +960,38 @@ public class HomeScreenController implements Initializable {
             cardObservableList.add(card); // Add card to chatList
         }
     }
+    */
 
-    void CreateCard(int id, String ImagePath, String Status, String Name, Timestamp timestamp, String Type) {
-        Card c = new Card();
-        c.setId(id);
-        c.setType(Type);
+    void addCardtoListView(Card card, String phoneName) {
+        try {
+            // Done
+            if(card.getType().equals("group")) {
+                //send for all
+                System.out.println("card id" + card.getId() + "current id" + currentUser.getUserId() + "Target Id" + Target_ID);
+                List<Integer> l = userInt.getUsersByGroupId(card.getId());
+                System.out.println(l);
+                for (Integer id : l) {
+                        userInt.reloadContactList(userInt.getUserById(id).getPhoneNumber(), card);
+                }
+            }
+            else if(card.getType().equals("user"))
+            {
+                //list<Card> newCard -> {,,,}
+                if(card.getId() != currentUser.getUserId()) {
+                    listOfContactCards.addFirst(card);
+                    cardObservableList.clear();
+                    cardObservableList.setAll(listOfContactCards);
+                    ContactList.refresh();
+                }
+                else {
+                    userInt.reloadContactList(phoneName , card);
+                }
+            }
 
 
-        HBox card = new HBox();
-        Group g1 = new Group();
-        VBox v1 = new VBox();
-        VBox v2 = new VBox();
-
-        //ImageView imageView = new ImageView(new Image(getClass().getResourceAsStream("/img/girl.png")));
-        // File file = new File(c.getImagePath());
-
-        ImageView imageView = SetImage(ImagePath);
-        c.setImagePath(ImagePath);
-
-        Circle circle = new Circle();
-        //System.out.println("status : " + c.getStatus().toString().equals("AVAILABLE"));
-        if (Status.equals("AVAILABLE")) {
-            circle.setFill(Color.valueOf(colorEnum.GREEN.getColor()));
-            c.setStatus(User.Status.AVAILABLE);
-        } else if (Status.equals("BUSY")) {
-            circle.setFill(Color.valueOf(colorEnum.RED.getColor()));
-            c.setStatus(User.Status.BUSY);
-        } else if (Status.equals("AWAY")) {
-            circle.setFill(Color.valueOf(colorEnum.YELLOW.getColor()));
-            c.setStatus(User.Status.AWAY);
-
-        } else {
-            circle.setFill(Color.valueOf(colorEnum.GRAY.getColor()));
-            c.setStatus(User.Status.OFFLINE);
-
+        } catch (RemoteException e) {
+            e.printStackTrace();
         }
-
-        g1.getChildren().addAll(imageView, circle);
-
-        Text name = new Text(Name);
-        c.setSenderName(Name);
-        Text message = new Text("");
-        c.setMessageContent("");
-        v1.getChildren().addAll(name, message);
-        //System.out.println("time : " + c.getTimestamp().toString().substring(11 , 16));
-
-        String messageTime = timestamp.toString().substring(11, 16);
-        Text time = new Text(messageTime);
-        c.setTimeStamp(timestamp);
-        v2.getChildren().addAll(time);
-
-        card.getChildren().addAll(g1, v1, v2);
-
-//            ObservableList<HBox> buffer = javafx.collections.FXCollections.observableArrayList();
-//            buffer.addFirst(card);
-//            buffer.addAll(cardObservableList);
-//            cardObservableList.clear();
-//            cardObservableList.addAll(buffer);
-//            ContactList.getItems().clear();
-//            ContactList.setItems(cardObservableList);
-
-
-        cardObservableList.addFirst(card);
-        listOfContactCards.addFirst(c);
-        ContactList.refresh();
 
     }
 
@@ -1049,16 +1046,15 @@ public class HomeScreenController implements Initializable {
 
     @FXML
     void handleSelectedCard() {
-        int index = ContactList.getSelectionModel().getSelectedIndex();
-        Card c = listOfContactCards.get(index);
-        System.out.println("index " + index + " Name " + c.getSenderName() + " Type " + c.getType() + " id " + c.getId());
-        System.out.println("image " + c.getImagePath());
-        ImageView imageView = SetImage(c.getImagePath());
+        Card card = ContactList.getSelectionModel().getSelectedItem();
+        System.out.println(" Name " + card.getSenderName() + " Type " + card.getType() + " id " + card.getId());
+        //System.out.println("image " + c.getImagePath());
+        ImageView imageView = SetImage(card.getImagePath());
         friendImage.setImage(imageView.getImage());
-        friendName.setText(c.getSenderName());
+        friendName.setText(card.getSenderName());
 
-        Target_ID = c.getId();
-        Target_Type = c.getType();
+        Target_ID = card.getId();
+        Target_Type = card.getType();
 
         Platform.runLater(() -> {
             try {
@@ -1070,14 +1066,14 @@ public class HomeScreenController implements Initializable {
         });
 
 
-        if (c.getType().equals("user")) {
+        if (card.getType().equals("user")) {
             System.out.println("user");
             AnchorPane anchorPane = null;
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FriendProfile.fxml"));
                 anchorPane = loader.load();
                 FriendProfileController controller = loader.getController();
-                User user = userInt.getUserById(c.getId());
+                User user = userInt.getUserById(card.getId());
                 System.out.println(user.getDisplayName());
                 controller.setInfo(friendImage.getImage(), user.getDisplayName(), user.getPhoneNumber(), user.getBio());
             } catch (IOException e) {
@@ -1087,7 +1083,7 @@ public class HomeScreenController implements Initializable {
             MainBorderPane.setRight(anchorPane);
 
 
-        } else if (c.getType().equals("group")) {
+        } else if (card.getType().equals("group")) {
 
             System.out.println("group");
 
@@ -1096,10 +1092,16 @@ public class HomeScreenController implements Initializable {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/GroupProfile.fxml"));
                 anchorPane = loader.load();
                 GroupProfileController controller = loader.getController();
-                System.out.println(c.getId());
-                String createdGroup = userInt.getCreatedGroupName(c.getId());
+                System.out.println(card.getId());
+                String createdGroup = userInt.getCreatedGroupName(card.getId());
+                List<Integer> membersId = userInt.getUsersByGroupId(card.getId());
+                List<String> members = new ArrayList<>(membersId.size() -1);
+                for(int id : membersId)
+                {
+                    members.add(userInt.getUserById(id).getDisplayName() + "\n");
+                }
                 System.out.println(createdGroup);
-                controller.setInfo(friendImage.getImage(), c.getSenderName(), createdGroup);
+                controller.setInfo(friendImage.getImage(), card.getSenderName(), createdGroup , members);
 
 
             } catch (IOException e) {
@@ -1109,7 +1111,7 @@ public class HomeScreenController implements Initializable {
             MainBorderPane.setRight(anchorPane);
 
 
-        } else if (c.getType().equals("announcement")) {
+        } else if (card.getType().equals("announcement")) {
             System.out.println("announcement");
             AnchorPane anchorPane = null;
             try {
@@ -1418,6 +1420,20 @@ public class HomeScreenController implements Initializable {
                 observableMessages.add(message);
                 chatListView.refresh();
                 chatListView.scrollTo(observableMessages.size());
+                ContactList.refresh();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        });
+    }
+
+    public void refreshContactList(Card c){
+        Platform.runLater(() -> {
+            try {
+                listOfContactCards.addFirst(c);
+                cardObservableList.clear();
+                cardObservableList.addAll(listOfContactCards);
                 ContactList.refresh();
             } catch (Exception e) {
                 e.printStackTrace();

@@ -4,6 +4,7 @@ package gov.iti.jets.server;
 
 import gov.iti.jets.server.model.dao.implementations.*;
 import javafx.application.Platform;
+import javafx.scene.layout.HBox;
 import shared.dto.Invitation;
 import shared.dto.User;
 import shared.dto.UserConnection;
@@ -91,7 +92,7 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
         List<Card> cardList = new ArrayList<>();
 
         List<UserConnection> listofConnections = userConnectionDAO.getAllConnectionsForUser(user.getUserId());
-        System.out.println(listofConnections.size());
+        //System.out.println(listofConnections.size());
 
         // Get the current date and time
         LocalDateTime now = LocalDateTime.now();
@@ -100,15 +101,16 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
 
         for(UserConnection userConnection : listofConnections)
         {
-            Card card =  new Card();
+
             DirectMessage Message = directMessageDAO.getLastMessageForUser(user.getUserId() ,userConnection.getConnectedUserId());
 
-            System.out.println(Message.getTimestamp());
+            //System.out.println(Message.getTimestamp());
 
             User connecterUser = userDAO.getUserById(userConnection.getConnectedUserId());
 
-            System.out.println(connecterUser.getUserId());
+           // System.out.println(connecterUser.getUserId());
 
+            Card card =  new Card();
             card.setId(connecterUser.getUserId());
             card.setType(Card.Type.user.toString());
             card.setSenderName(connecterUser.getDisplayName());
@@ -441,14 +443,11 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
         if(userConnection==null)
         {
             return false;
-
         }
         else
         {
             return true;
         }
-
-
     }
 
     @Override
@@ -473,7 +472,8 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
         for (ClientInt client : OnlineClintsList) {
             try {
                 if(client.getPhoneNumber().equals(phoneNumber)) {
-                                client.refreshChatList(message);
+                    System.out.println("client " + client.getPhoneNumber() + " user " + phoneNumber + "message "+message);
+                    client.refreshChatList(message);
                 }
             } catch (RemoteException e) {
                 e.printStackTrace();
@@ -506,12 +506,13 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
     }
 
     @Override
-    public void reloadContactList(String phoneNumber) throws RemoteException {
+    public void reloadContactList(String phoneNumber , Card c) throws RemoteException {
 
         for (ClientInt client : OnlineClintsList) {
             try {
                 if(client.getPhoneNumber().equals(phoneNumber)) {
-                    client.refreshContactList();
+                    System.out.println("UserImpl , reloadContactList");
+                    client.refreshContactList(c);
                 }
             } catch (RemoteException e) {
                 e.printStackTrace();
