@@ -2,8 +2,6 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Group?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Circle?>
@@ -15,11 +13,7 @@
    <children>
       <Group>
          <children>
-            <ImageView fx:id="frinedImage" fitHeight="44.0" fitWidth="44.0" layoutY="3.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../img/woman.png" />
-               </image>
-            </ImageView>
+            <Circle fx:id="imageCircle" fill="#1f93ff00" layoutX="22.0" layoutY="25.0" radius="25.0" stroke="TRANSPARENT" strokeType="INSIDE" />
             <Circle fx:id="friendStatusCircle" fill="#fff848" layoutX="40.0" layoutY="45.0" radius="8.0" stroke="BLACK" strokeType="INSIDE" />
          </children>
          <HBox.margin>
