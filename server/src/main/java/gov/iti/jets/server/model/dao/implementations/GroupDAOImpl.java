@@ -53,6 +53,7 @@ public class GroupDAOImpl implements GroupDAOInt {
                 group.put("group_id", rs.getInt("group_id"));
                 group.put("group_name", rs.getString("group_name"));
                 group.put("created_by", rs.getInt("created_by"));
+                group.put("created_when", rs.getInt("created_when"));
                 groups.add(group);
             }
             return groups;
@@ -87,6 +88,7 @@ public class GroupDAOImpl implements GroupDAOInt {
                     group.put("group_id", rs.getInt("group_id"));
                     group.put("group_name", rs.getString("group_name"));
                     group.put("created_by", rs.getInt("created_by"));
+                    group.put("created_when", rs.getInt("created_when"));
                     groups.add(group);
                 }
                 return groups;
@@ -137,6 +139,22 @@ public class GroupDAOImpl implements GroupDAOInt {
                 return user;
             }
         }
+    }
+    @Override
+    public Timestamp getTimeStampOfGroupById(int groupId) throws SQLException {
+        String sql = "SELECT created_when FROM `group` WHERE group_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, groupId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getTimestamp("created_when");
+                }
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null; // Return null if the group ID does not exist
     }
 
 

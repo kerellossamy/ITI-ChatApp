@@ -398,6 +398,8 @@ public class HomeScreenController implements Initializable {
                         cardObservableList.clear();
                         cardObservableList.addAll(listOfContactCards);
                         ContactList.refresh();
+
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

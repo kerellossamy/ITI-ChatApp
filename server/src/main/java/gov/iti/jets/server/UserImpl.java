@@ -153,7 +153,7 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
            if(Message.getMessageContent() == null)
             {
                 card.setMessageContent("");
-                card.setTimeStamp(Timestamp.valueOf(formattedNow));
+                card.setTimeStamp(connecterUser.getLastSeen());
             }
             else
             {
@@ -199,7 +199,8 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
                     card.setId(group.getGroupId());
                     card.setType(Card.Type.group.toString());
                     card.setMessageContent("");
-                    card.setTimeStamp(Timestamp.valueOf(formattedNow));
+                    //card.setTimeStamp(Timestamp.valueOf(formattedNow));
+                    card.setTimeStamp(groupDAO.getTimeStampOfGroupById(group.getGroupId()));
                     // User sender = userDAO.getUserById(groupMessage.getSenderId());
                     card.setStatus(User.Status.AVAILABLE);
                     card.setSenderName(groupDAO.getGroupNameById(group.getGroupId()));
