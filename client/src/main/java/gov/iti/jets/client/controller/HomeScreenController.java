@@ -70,6 +70,8 @@ import shared.interfaces.AdminInt;
 import shared.interfaces.UserInt;
 import shared.utils.SecureStorage;
 
+import javax.imageio.ImageIO;
+
 
 public class HomeScreenController implements Initializable {
 
@@ -486,7 +488,7 @@ public class HomeScreenController implements Initializable {
         vBox.setVisible(false);
 
         // Load the image
-        Image image = new Image(getClass().getResourceAsStream("/img/background3.jpg"));
+        Image image = new Image(getClass().getResourceAsStream("/img/backGround3.png"));
 
 
         BackgroundImage backgroundImage = new BackgroundImage(

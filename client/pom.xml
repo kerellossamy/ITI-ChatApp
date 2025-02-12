@@ -129,43 +129,105 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.1</version>
+                <version>3.2.4</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
                         <goals>
                             <goal>shade</goal>
                         </goals>
+                        <configuration>
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <transformers>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>gov.iti.jets.client.Main</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
                     </execution>
                 </executions>
-                <configuration>
-<!--                    <shadedArtifactAttached>false</shadedArtifactAttached>-->
-                    <transformers>
-                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                            <mainClass>gov.iti.jets.client.Main</mainClass>
-                        </transformer>
-                    </transformers>
-                    <!-- Bundle JavaFX runtime with the JAR -->
-<!--                    <filters>-->
-<!--                        <filter>-->
-<!--                            <artifact>*:javafx-*</artifact>-->
-<!--                        </filter>-->
-<!--                    </filters>-->
-                </configuration>
             </plugin>
+
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-shade-plugin</artifactId>-->
+<!--                <version>3.2.1</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <phase>package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>shade</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--                <configuration>-->
+<!--                    <transformers>-->
+<!--                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">-->
+<!--                            <mainClass>gov.iti.jets.client.Main</mainClass>-->
+<!--                        </transformer>-->
+<!--                        &lt;!&ndash; If needed, merge service files &ndash;&gt;-->
+<!--                        <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>-->
+<!--                    </transformers>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.3.0</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>gov.iti.jets.client.ClientMain</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>resources</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
+
+            <!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-shade-plugin</artifactId>-->
+<!--                <version>3.2.1</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <phase>package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>shade</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--                <configuration>-->
+<!--&lt;!&ndash;                    <shadedArtifactAttached>false</shadedArtifactAttached>&ndash;&gt;-->
+<!--                    <transformers>-->
+<!--                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">-->
+<!--                            <mainClass>gov.iti.jets.client.Main</mainClass>-->
+<!--                        </transformer>-->
+<!--                    </transformers>-->
+<!--                    &lt;!&ndash; Bundle JavaFX runtime with the JAR &ndash;&gt;-->
+<!--&lt;!&ndash;                    <filters>&ndash;&gt;-->
+<!--&lt;!&ndash;                        <filter>&ndash;&gt;-->
+<!--&lt;!&ndash;                            <artifact>*:javafx-*</artifact>&ndash;&gt;-->
+<!--&lt;!&ndash;                        </filter>&ndash;&gt;-->
+<!--&lt;!&ndash;                    </filters>&ndash;&gt;-->
+<!--                </configuration>-->
+<!--            </plugin>-->
+
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-jar-plugin</artifactId>-->
+<!--                <version>3.3.0</version>-->
+<!--                <configuration>-->
+<!--                    <archive>-->
+<!--                        <manifest>-->
+<!--                            <mainClass>gov.iti.jets.client.ClientMain</mainClass>-->
+<!--                        </manifest>-->
+<!--                    </archive>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
 
 
             <!-- Maven Shade Plugin -->
@@ -213,5 +275,13 @@
                     </configuration>
                 </plugin>
         </plugins>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <!-- Make sure filtering is disabled if not needed -->
+                <filtering>false</filtering>
+            </resource>
+        </resources>
     </build>
 </project>
