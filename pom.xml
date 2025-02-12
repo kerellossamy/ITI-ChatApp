@@ -42,7 +42,7 @@
             <classifier>win</classifier>
         </dependency>
 
-        <!--     ******************************   chatbot dependencies-->
+<!--     ******************************   chatbot dependencies-->
 
         <!-- HTTP Client (for API requests) -->
         <dependency>
@@ -63,12 +63,27 @@
             <artifactId>httpcore</artifactId>
             <version>4.4.15</version>
         </dependency>
-
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>4.5.13</version>
         </dependency>
+
+
+
+
+        <!-- Jakarta Activation API -->
+        <dependency>
+            <groupId>org.eclipse.angus</groupId>
+            <artifactId>angus-activation</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>jakarta.mail</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+<!--**********************************************************************************-->
 
     </dependencies>
 

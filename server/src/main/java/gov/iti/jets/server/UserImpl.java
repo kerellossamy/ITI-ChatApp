@@ -13,6 +13,7 @@ import shared.dto.*;
 import shared.interfaces.ClientInt;
 import shared.interfaces.UserInt;
 import shared.utils.DB_UtilityClass;
+import shared.utils.JakartaMail;
 import shared.utils.SecureStorage;
 
 import java.io.IOException;
@@ -285,6 +286,17 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
 
     @Override
     public boolean addInvitation(Invitation invitation) throws RemoteException {
+
+
+        User sender=userDAO.getUserById(invitation.getSenderId());
+        String senderPhone=sender.getPhoneNumber();
+        String senderName=sender.getDisplayName();
+
+        User reciever=userDAO.getUserById(invitation.getReceiverId());
+        String email=reciever.getEmail();
+        Thread t1=new Thread(()-> JakartaMail.mailService(senderPhone,email,senderName));
+        t1.start();
+
         return invitationDAO.addInvitation(invitation);
     }
 

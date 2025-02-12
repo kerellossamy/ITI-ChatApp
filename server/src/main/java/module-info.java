@@ -4,9 +4,10 @@ module gov.iti.jets.server {
     requires javafx.controls;
     requires javafx.fxml;
     //requires gov.iti.jets.shared;
-    opens gov.iti.jets.server to javafx.fxml;
+    opens gov.iti.jets.server to javafx.fxml,java.rmi;
     exports gov.iti.jets.server;
     exports shared.interfaces;
+    requires jakarta.mail;
 
 
     //chatbot requires
