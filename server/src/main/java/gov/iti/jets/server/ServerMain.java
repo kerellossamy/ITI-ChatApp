@@ -11,7 +11,8 @@ public class ServerMain {
     public ServerMain() {
         try{
 
-            System.setProperty("java.rmi.server.hostname", "127.0.0.1");
+           // System.setProperty("java.rmi.server.hostname", "127.0.0.1");
+          //  System.setProperty("java.rmi.server.useCompression", "true");
 
             UserInt userInt=new UserImpl();
             AdminInt adminInt=new AdminImpl();

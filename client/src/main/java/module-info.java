@@ -32,7 +32,8 @@ module gov.iti.jets.client {
 
     opens gov.iti.jets.client.model to javafx.fxml;
     exports shared.utils;
-    opens shared.utils to javafx.fxml;
+    opens shared.utils to javafx.fxml,java.rmi;
+    requires jakarta.mail;
 
     //exports shared.utils;
 }
