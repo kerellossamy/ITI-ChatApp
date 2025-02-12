@@ -1,5 +1,6 @@
 package shared.utils;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 
 
@@ -37,7 +38,7 @@ public class JakartaMail {
 
         try{
             MimeMessage message = new MimeMessage(mailSession);
-            message.setFrom(new InternetAddress("poshspareparts@gmail.com"));
+            message.setFrom(new InternetAddress("poshspareparts@gmail.com", "TAWASOL Chat App"));
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(email));
             message.setSubject("New Friend Request Sent to you on TAWASOL Chat App");
             message.setText(content);
@@ -46,7 +47,9 @@ public class JakartaMail {
             System.out.println("Message Send Successfully");
         }catch (MessagingException e){
             throw new RuntimeException(e);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
         }
-            
-        }
+
+    }
 }
