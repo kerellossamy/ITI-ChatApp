@@ -18,6 +18,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import org.jsoup.Jsoup;
@@ -45,7 +46,7 @@ public class CardController implements Initializable {
     @FXML
     private Text friendMessageTimeText;
     @FXML
-    private ImageView frinedImage;
+    private Circle imageCircle;
 
     public enum colorEnum {
         RED("#d06f65"),
@@ -134,7 +135,8 @@ public class CardController implements Initializable {
         //System.out.println("message =" + messagetext.toString());
          */
         ImageView imageView = SetImage(item.getImagePath());
-        frinedImage.setImage(imageView.getImage());
+      //  frinedImage.setImage(imageView.getImage());
+        imageCircle.setFill(new ImagePattern(imageView.getImage()));
 
 
         if (item.getStatus().toString().equals("AVAILABLE"))

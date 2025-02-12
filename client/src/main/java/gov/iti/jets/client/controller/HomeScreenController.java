@@ -56,13 +56,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.text.Text;
 import javafx.scene.web.HTMLEditor;
 import netscape.javascript.JSObject;
 import shared.dto.*;
@@ -393,6 +389,21 @@ public class HomeScreenController implements Initializable {
 
 
                 }
+                Platform.runLater(() -> {
+                    try 
+                    {
+                       
+                         listOfContactCards.clear();
+                         listOfContactCards = userInt.getCards(HomeScreenController.currentUser);
+                        cardObservableList.clear();
+                        cardObservableList.addAll(listOfContactCards);
+                        ContactList.refresh();
+                    }
+                    catch(Exception e)
+                    {
+                     e.printStackTrace();
+                    }
+                });
             } else {
                 System.out.println("server is off");
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ServerUnavailable.fxml"));
@@ -1586,7 +1597,22 @@ public class HomeScreenController implements Initializable {
 
 
     public void refreshChatList(BaseMessage message, String Type, int ID) {
-
+        Platform.runLater(() -> {
+        try 
+        {
+             System.out.println("Targer id " + Target_ID); // from where
+             System.out.println("id " + ID); //from where
+             listOfContactCards.clear();
+             listOfContactCards = userInt.getCards(HomeScreenController.currentUser);
+            cardObservableList.clear();
+            cardObservableList.addAll(listOfContactCards);
+            ContactList.refresh();
+        }
+        catch(Exception e)
+        {
+         e.printStackTrace();
+        }
+    });
         if (chatListView == null) {
             System.out.println("Chat list is null!");
             return;
@@ -1607,6 +1633,23 @@ public class HomeScreenController implements Initializable {
             return;
         }
 
+
+        if (Objects.equals(Target_Type, Type) && Target_ID == ID) {
+            Platform.runLater(() -> {
+            // if (Target_Type.equals(Type) && Target_ID == ID) {
+            try {
+                observableMessages.add(message);
+                chatListView.refresh();
+                chatListView.scrollTo(observableMessages.size());
+
+            
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+        
+        /* 
         Platform.runLater(() -> {
             if (Objects.equals(Target_Type, Type) && Target_ID == ID) {
 //            if (Target_Type.equals(Type) && Target_ID == ID) {
@@ -1621,6 +1664,7 @@ public class HomeScreenController implements Initializable {
 
             }
         });
+        */
     }
 
     public void refreshContactList(Card c) {
