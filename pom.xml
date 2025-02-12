@@ -26,7 +26,6 @@
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
             <version>${javafx.version}</version>
-<!--            <type>jar</type>-->
         </dependency>
 
         <dependency>
@@ -43,7 +42,7 @@
             <classifier>win</classifier>
         </dependency>
 
-<!--     ******************************   chatbot dependencies-->
+        <!--     ******************************   chatbot dependencies-->
 
         <!-- HTTP Client (for API requests) -->
         <dependency>
@@ -64,12 +63,12 @@
             <artifactId>httpcore</artifactId>
             <version>4.4.15</version>
         </dependency>
+
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>4.5.13</version>
         </dependency>
-<!--**********************************************************************************-->
 
     </dependencies>
 

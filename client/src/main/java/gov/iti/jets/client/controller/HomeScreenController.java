@@ -565,7 +565,9 @@ public class HomeScreenController implements Initializable {
                                     item.toString().contains("align") ||
                                     item.toString().contains("bullets") ||
                                     item.toString().contains("numbers") ||
-                                    item.toString().contains("hr")   // Horizontal Rule
+                                    item.toString().contains("hr") ||
+                                    item.toString().toLowerCase().contains("background")
+
                     );
                 }
             });
