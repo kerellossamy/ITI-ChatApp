@@ -212,7 +212,6 @@ public class HomeScreenController implements Initializable {
                         }
 
 
-
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
@@ -392,18 +391,15 @@ public class HomeScreenController implements Initializable {
 
                 }
                 Platform.runLater(() -> {
-                    try 
-                    {
-                       
-                         listOfContactCards.clear();
-                         listOfContactCards = userInt.getCards(HomeScreenController.currentUser);
+                    try {
+
+                        listOfContactCards.clear();
+                        listOfContactCards = userInt.getCards(HomeScreenController.currentUser);
                         cardObservableList.clear();
                         cardObservableList.addAll(listOfContactCards);
                         ContactList.refresh();
-                    }
-                    catch(Exception e)
-                    {
-                     e.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 });
             } else {
@@ -493,6 +489,9 @@ public class HomeScreenController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
 //        System.out.println("currentUser is: " + currentUser);
 
+
+
+
         Image defaultImage = new Image(getClass().getResourceAsStream("/img/tawasolLogoBlue.png"));
         defaultPhoto.setImage(defaultImage);
 
@@ -516,6 +515,19 @@ public class HomeScreenController implements Initializable {
 
 
         Platform.runLater(() -> {
+
+            // Get the current stage
+            Stage stage = this.getStage();
+
+            stage.setOnCloseRequest(event -> {
+                try {
+                    if (currentUser != null) { // If a user is logged in
+                        userInt.unregister(c);
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            });
 
             //register the client in the online list
 
@@ -1377,6 +1389,11 @@ public class HomeScreenController implements Initializable {
     void handleLogoutButton() {
         System.out.println("log out button pressed");
         SecureStorage.clearCredentials();
+        try {
+            userInt.unregister(c);
+        } catch (RemoteException e) {
+            throw new RuntimeException(e);
+        }
 
         // Add your logic here
 
@@ -1389,30 +1406,14 @@ public class HomeScreenController implements Initializable {
             controller.setAdminInt(adminInt);
 
 
-            // Get the current stage
-            Stage stage = (Stage) logOutbtn.getScene().getWindow();
-            stage.setOnCloseRequest(event -> {
-                try {
-                    if (currentUser != null) { // If a user is logged in
-                        userInt.unregister(c);
-                    }
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-            });
-
-
+            Stage stage = getStage();
             double width = stage.getWidth();
             double height = stage.getHeight();
 
-            // Set the scene with the signup page
             Scene scene = new Scene(userLoginRoot);
             stage.setScene(scene);
             stage.setWidth(width);
             stage.setHeight(height);
-
-            // Set the scene with the user login page
-
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -1600,21 +1601,18 @@ public class HomeScreenController implements Initializable {
 
     public void refreshChatList(BaseMessage message, String Type, int ID) {
         Platform.runLater(() -> {
-        try 
-        {
-             System.out.println("Targer id " + Target_ID); // from where
-             System.out.println("id " + ID); //from where
-             listOfContactCards.clear();
-             listOfContactCards = userInt.getCards(HomeScreenController.currentUser);
-            cardObservableList.clear();
-            cardObservableList.addAll(listOfContactCards);
-            ContactList.refresh();
-        }
-        catch(Exception e)
-        {
-         e.printStackTrace();
-        }
-    });
+            try {
+                System.out.println("Targer id " + Target_ID); // from where
+                System.out.println("id " + ID); //from where
+                listOfContactCards.clear();
+                listOfContactCards = userInt.getCards(HomeScreenController.currentUser);
+                cardObservableList.clear();
+                cardObservableList.addAll(listOfContactCards);
+                ContactList.refresh();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
         if (chatListView == null) {
             System.out.println("Chat list is null!");
             return;
@@ -1638,18 +1636,18 @@ public class HomeScreenController implements Initializable {
 
         if (Objects.equals(Target_Type, Type) && Target_ID == ID) {
             Platform.runLater(() -> {
-            // if (Target_Type.equals(Type) && Target_ID == ID) {
-            try {
-                observableMessages.add(message);
-                chatListView.refresh();
-                chatListView.scrollTo(observableMessages.size());
+                // if (Target_Type.equals(Type) && Target_ID == ID) {
+                try {
+                    observableMessages.add(message);
+                    chatListView.refresh();
+                    chatListView.scrollTo(observableMessages.size());
 
-            
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            });
+        }
         
         /* 
         Platform.runLater(() -> {

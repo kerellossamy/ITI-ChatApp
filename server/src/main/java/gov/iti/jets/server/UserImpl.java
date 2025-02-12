@@ -109,7 +109,9 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
     @Override
     public void unregister(ClientInt client) throws RemoteException {
 
+        System.out.println("Before: " + OnlineClintsList.size());
         OnlineClintsList.remove(client);
+        System.out.println("After: " + OnlineClintsList.size());
         //deletes the session token
         sessionTokens.remove(client.getPhoneNumber());
 
