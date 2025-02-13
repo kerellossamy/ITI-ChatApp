@@ -67,6 +67,57 @@ public class FileTransferDAOImpl implements FileTransferDAOInt {
         return fileName;
     }
 
+    @Override
+    public FileTransfer getLastFileBetweenUsers(int userAId, int userBId) {
+        String sql = "SELECT * FROM file_transfer ft WHERE ft.timestamp = ( SELECT MAX(timestamp) FROM file_transfer WHERE sender_id = ? AND receiver_id = ? OR (sender_id = ? AND receiver_id = ?))";
+
+//        String sql = "SELECT * FROM file_transfer " +
+//                "WHERE ((sender_id = ? AND receiver_id = ?) OR " +
+//                "(sender_id = ? AND receiver_id = ?)) ";
+
+        FileTransfer fileTransfer = new FileTransfer();
+
+        try (Connection connection = DB_UtilityClass.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setInt(1, userBId);
+            ps.setInt(2, userAId);
+            ps.setInt(3, userAId);
+            ps.setInt(4, userBId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    fileTransfer = mapResultSetToFileTransfer(rs);
+                }
+            }
+        } catch (SQLException e) {
+            handleSQLException(e);
+        }
+        return fileTransfer;
+    }
+
+
+    @Override
+    public FileTransfer getLastFileByGroupId(int groupId) {
+        String sql = "SELECT * FROM file_transfer WHERE group_id = ? ORDER BY timestamp DESC LIMIT 1";
+        FileTransfer files = new FileTransfer();
+
+        try (Connection connection = DB_UtilityClass.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setInt(1, groupId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    files = mapResultSetToFileTransfer(rs);
+                }
+            }
+        } catch (SQLException e) {
+            handleSQLException(e);
+        }
+        return files;
+    }
+
 
     @Override
     public FileTransfer getFileById(UUID fileId) {

@@ -12,5 +12,6 @@ public interface ServerAnnouncementDAOInt {
     void updateServerAnnouncement(ServerAnnouncement announcement) throws SQLException;
     void deleteServerAnnouncement(int announcementId) throws SQLException;
     ServerAnnouncement getLatestAnnouncement()  throws SQLException ;
+    List<ServerAnnouncement> getAllServerAnnouncementsBasedOnCreatedTime(int userID) throws SQLException ;
 
     }

@@ -29,7 +29,7 @@
 <?import javafx.scene.web.HTMLEditor?>
 
 <BorderPane fx:id="MainBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gov.iti.jets.client.controller.HomeScreenController">
-   
+
    <left>
       <HBox maxWidth="1.7976931348623157E308" minWidth="350.0" prefHeight="900.0" BorderPane.alignment="CENTER">
          <children>
@@ -113,7 +113,7 @@
                      <children>
                         <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
                            <image>
-<!--                              <Image url="@../img/user.png" />-->
+                              <!--                              <Image url="@../img/user.png" />-->
                            </image>
                         </ImageView>
                         <Circle fx:id="userProfileImage" fill="#1f93ff00" layoutX="35.0" layoutY="33.0" radius="25.0" stroke="TRANSPARENT" strokeType="INSIDE" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="8.0" />
@@ -155,7 +155,7 @@
                   <Line endX="157.0" layoutX="122.0" layoutY="149.0" startX="-100.0" />
                   <ScrollPane layoutX="10.0" layoutY="161.0" prefHeight="200.0" prefWidth="270.0" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="161.0">
                      <content>
-                        <ListView fx:id="ContactList" onMouseClicked="#handleSelectedCard" prefHeight="830.0" prefWidth="286.0" />
+                        <ListView fx:id="ContactList" onMouseClicked="#handleSelectedCard" prefHeight="830.0" prefWidth="290.0" />
                      </content>
                   </ScrollPane>
                </children>
@@ -168,7 +168,7 @@
          <children>
             <VBox fx:id="vBox" minWidth="350.0" prefHeight="900.0" prefWidth="570.0">
                <children>
-            <AnchorPane maxWidth="590.0" prefHeight="54.0" prefWidth="583.0">
+                  <AnchorPane maxWidth="848.0" prefHeight="53.0" prefWidth="848.0">
                      <children>
                         <Circle fx:id="friendImage" fill="#1f93ff00" layoutX="47.0" layoutY="26.0" radius="27.0" stroke="TRANSPARENT" strokeType="INSIDE" />
                         <Text fx:id="friendName" fill="#3ca9fd" layoutX="86.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Ali">
@@ -176,7 +176,7 @@
                               <Font name="System Bold" size="18.0" />
                            </font>
                         </Text>
-                        <Button fx:id="blockbtn" layoutX="415.0" layoutY="12.0" mnemonicParsing="false" AnchorPane.rightAnchor="15.0">
+                        <Button fx:id="blockbtn" layoutX="415.0" layoutY="12.0" mnemonicParsing="false" AnchorPane.rightAnchor="5.0">
                            <graphic>
                               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
@@ -190,14 +190,14 @@
                         <Insets top="20.0" />
                      </VBox.margin>
                   </AnchorPane>
-            <ListView fx:id="chatListView" prefHeight="700.0" prefWidth="887.0">
-               <VBox.margin>
-                  <Insets top="10.0" />
-               </VBox.margin>
-            </ListView>
-            <AnchorPane minWidth="400.0" prefHeight="132.0" prefWidth="400.0">
+                  <ListView fx:id="chatListView" prefHeight="700.0" prefWidth="887.0">
+                     <VBox.margin>
+                        <Insets top="10.0" />
+                     </VBox.margin>
+                  </ListView>
+                  <AnchorPane minWidth="400.0" prefHeight="132.0" prefWidth="400.0">
                      <children>
-                  <HTMLEditor fx:id="messageField" htmlText="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body contenteditable=&quot;true&quot;&gt;&lt;/body&gt;&lt;/html&gt;" minWidth="400.0" onKeyPressed="#handleEnterPress" prefHeight="200.0" prefWidth="400.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                        <HTMLEditor fx:id="messageField" htmlText="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body contenteditable=&quot;true&quot;&gt;&lt;/body&gt;&lt;/html&gt;" minWidth="400.0" onKeyPressed="#handleEnterPress" prefHeight="200.0" prefWidth="400.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                         <Button fx:id="sendButton" layoutX="588.0" layoutY="121.0" mnemonicParsing="false" onAction="#handleSendButton" prefHeight="34.0" prefWidth="30.0" AnchorPane.rightAnchor="20.0">
                            <graphic>
                               <ImageView fitHeight="30.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
@@ -207,31 +207,22 @@
                               </ImageView>
                            </graphic>
                         </Button>
-                        <Button layoutX="535.0" layoutY="100.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" AnchorPane.rightAnchor="76.0">
+                        <Button fx:id="attachmentButton" layoutX="705.0" layoutY="122.0" mnemonicParsing="false" onAction="#handleAttachmentButton" prefHeight="34.0" prefWidth="30.0" AnchorPane.rightAnchor="70.0">
                            <graphic>
                               <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../img/happy-face.png" />
+                                    <Image url="@../img/attach-file.png" />
                                  </image>
                               </ImageView>
                            </graphic>
                         </Button>
-                  <Button fx:id="attachmentButton" onAction="#handleAttachmentButton" layoutX="535.0" layoutY="147.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="30.0" AnchorPane.rightAnchor="76.0">
-                     <graphic>
-                        <ImageView  fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../img/attach-file.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Button>
+                     </children>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </AnchorPane>
                </children>
-               <VBox.margin>
-                  <Insets />
-               </VBox.margin>
-            </AnchorPane>
-         </children>
-      </VBox>
+            </VBox>
             <ImageView fx:id="defaultPhoto" fitHeight="400.0" fitWidth="556.0" opacity="0.52" pickOnBounds="true" preserveRatio="true" />
          </children>
       </StackPane>

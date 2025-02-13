@@ -40,4 +40,7 @@ public interface FileTransferDAOInt {
 
     String getFileName(UUID fileID);
 
+    FileTransfer getLastFileBetweenUsers(int userAId, int userBId) ;
+    FileTransfer getLastFileByGroupId(int groupId);
+
 }

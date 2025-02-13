@@ -97,8 +97,22 @@ public class ServerAnnouncementDAOImpl implements ServerAnnouncementDAOInt {
         catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;    }
+        return null;
+    }
 
+    @Override
+    public List<ServerAnnouncement> getAllServerAnnouncementsBasedOnCreatedTime(int userID) throws SQLException {
+        List<ServerAnnouncement> announcements = new ArrayList<>();
+        String sql = "SELECT * from server_announcement where created_at > (SELECT last_seen from user where user_id= ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, userID);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                announcements.add(mapResultSetToServerAnnouncement(rs));
+            }
+        }
+        return announcements;
+    }
 
     private ServerAnnouncement mapResultSetToServerAnnouncement(ResultSet rs) throws SQLException {
         return new ServerAnnouncement(
