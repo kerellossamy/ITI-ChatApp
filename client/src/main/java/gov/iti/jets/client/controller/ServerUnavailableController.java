@@ -42,7 +42,6 @@ public class ServerUnavailableController {
     private UserInt userInt;
     private AdminInt adminInt;
     private User currentUser = null;
-    Registry registry = null;
     ClientImpl c;
 
     public void setCurrentUser(User currentUser) {
@@ -69,13 +68,6 @@ public class ServerUnavailableController {
 
     @FXML
     public void initialize() {
-
-        try {
-
-            registry = LocateRegistry.getRegistry("localhost", 8554);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
 
     }
 

@@ -10,8 +10,9 @@ public class ServerMain {
 
     public ServerMain() {
         try{
+            System.setProperty("java.rmi.server.hostname", "10.145.3.48");
 
-            System.setProperty("java.rmi.server.hostname", "127.0.0.1");
+//            System.setProperty("java.rmi.server.hostname", "127.0.0.1");
 
             UserInt userInt=new UserImpl();
             AdminInt adminInt=new AdminImpl();

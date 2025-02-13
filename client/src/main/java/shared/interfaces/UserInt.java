@@ -104,4 +104,9 @@ public interface UserInt extends Remote {
     byte[] downloadFile(UUID fileId, int requesterId) throws RemoteException;
 
     String getFileName(UUID fileId) throws RemoteException;
-}
+
+    List<ServerAnnouncement> getAllServerAnnouncementsBasedOnCreatedTime(int userID) throws RemoteException;
+
+    void reloadContactListwithAnnouncement() throws RemoteException ;
+
+    }

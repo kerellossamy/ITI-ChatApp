@@ -192,6 +192,11 @@ public class ClientImpl extends UnicastRemoteObject implements ClientInt , Seria
         homeScreenController.refreshContactList(c);
     }
 
+    @Override
+    public void refreshContactListWithAnnouncement() throws RemoteException {
+        homeScreenController.refreshContactListWithAnnouncement();
+    }
+
 
 }
 

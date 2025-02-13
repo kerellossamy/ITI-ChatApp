@@ -130,8 +130,6 @@ public class HomeScreenController implements Initializable {
     @FXML
     private Text friendName;
     @FXML
-    private Button blockbtn;
-    @FXML
     private ScrollPane chatMessageScrollPane;
     @FXML
     private HTMLEditor messageField;
@@ -1236,91 +1234,87 @@ public class HomeScreenController implements Initializable {
 
         if (card == null) {
             System.out.println("I'm a null card");
-        }
-
-        System.out.println(card);
-
-
-        System.out.println(" Name " + card.getSenderName() + " Type " + card.getType() + " id " + card.getId());
-        //System.out.println("image " + c.getImagePath());
-        ImageView imageView = SetImage(card.getImagePath());
-        friImage = imageView.getImage();
-        friendImage.setFill(new ImagePattern(imageView.getImage()));
-        friendName.setText(card.getSenderName());
+        } else {
+            System.out.println(" Name " + card.getSenderName() + " Type " + card.getType() + " id " + card.getId());
+            //System.out.println("image " + c.getImagePath());
+            ImageView imageView = SetImage(card.getImagePath());
+            friImage = imageView.getImage();
+            friendImage.setFill(new ImagePattern(imageView.getImage()));
+            friendName.setText(card.getSenderName());
 
 
-        Platform.runLater(() -> {
-            try {
-                Target_ID = card.getId();
-                Target_Type = card.getType();
+            Platform.runLater(() -> {
+                try {
+                    Target_ID = card.getId();
+                    Target_Type = card.getType();
 
-                populateChatListView(Target_Type, Target_ID);
-                // fillChatListView();
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        });
-
-
-        if (card.getType().equals("user")) {
-            System.out.println("user");
-            AnchorPane anchorPane = null;
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FriendProfile.fxml"));
-                anchorPane = loader.load();
-                FriendProfileController controller = loader.getController();
-                User user = userInt.getUserById(card.getId());
-                System.out.println(user.getDisplayName());
-                controller.setInfo(friImage, user.getDisplayName(), user.getPhoneNumber(), user.getBio());
-            } catch (IOException e) {
-                System.out.println("failed");
-                e.printStackTrace();
-            }
-            MainBorderPane.setRight(anchorPane);
-
-
-        } else if (card.getType().equals("group")) {
-
-            System.out.println("group");
-
-            AnchorPane anchorPane = null;
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/GroupProfile.fxml"));
-                anchorPane = loader.load();
-                GroupProfileController controller = loader.getController();
-                System.out.println(card.getId());
-                String createdGroup = userInt.getCreatedGroupName(card.getId());
-                List<Integer> membersId = userInt.getUsersByGroupId(card.getId());
-                List<String> members = new ArrayList<>(membersId.size() - 1);
-                for (int id : membersId) {
-                    members.add(userInt.getUserById(id).getDisplayName() + "\n");
+                    populateChatListView(Target_Type, Target_ID);
+                    // fillChatListView();
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
-                System.out.println(createdGroup);
-                controller.setInfo(friImage, card.getSenderName(), createdGroup, members);
+            });
 
 
-            } catch (IOException e) {
-                System.out.println("failed");
-                e.printStackTrace();
+            if (card.getType().equals("user")) {
+                System.out.println("user");
+                AnchorPane anchorPane = null;
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/FriendProfile.fxml"));
+                    anchorPane = loader.load();
+                    FriendProfileController controller = loader.getController();
+                    User user = userInt.getUserById(card.getId());
+                    System.out.println(user.getDisplayName());
+                    controller.setInfo(friImage, user.getDisplayName(), user.getPhoneNumber(), user.getBio());
+                } catch (IOException e) {
+                    System.out.println("failed");
+                    e.printStackTrace();
+                }
+                MainBorderPane.setRight(anchorPane);
+
+
+            } else if (card.getType().equals("group")) {
+
+                System.out.println("group");
+
+                AnchorPane anchorPane = null;
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/GroupProfile.fxml"));
+                    anchorPane = loader.load();
+                    GroupProfileController controller = loader.getController();
+                    System.out.println(card.getId());
+                    String createdGroup = userInt.getCreatedGroupName(card.getId());
+                    List<Integer> membersId = userInt.getUsersByGroupId(card.getId());
+                    List<String> members = new ArrayList<>(membersId.size() - 1);
+                    for (int id : membersId) {
+                        members.add(userInt.getUserById(id).getDisplayName() + "\n");
+                    }
+                    System.out.println(createdGroup);
+                    controller.setInfo(friImage, card.getSenderName(), createdGroup, members);
+
+
+                } catch (IOException e) {
+                    System.out.println("failed");
+                    e.printStackTrace();
+                }
+                MainBorderPane.setRight(anchorPane);
+
+
+            } else if (card.getType().equals("announcement")) {
+                System.out.println("announcement");
+                AnchorPane anchorPane = null;
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AnnouncementProfile.fxml"));
+                    anchorPane = loader.load();
+
+                } catch (IOException e) {
+                    System.out.println("failed");
+                    e.printStackTrace();
+                }
+                MainBorderPane.setRight(anchorPane);
             }
-            MainBorderPane.setRight(anchorPane);
-
-
-        } else if (card.getType().equals("announcement")) {
-            System.out.println("announcement");
-            AnchorPane anchorPane = null;
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AnnouncementProfile.fxml"));
-                anchorPane = loader.load();
-
-            } catch (IOException e) {
-                System.out.println("failed");
-                e.printStackTrace();
-            }
-            MainBorderPane.setRight(anchorPane);
         }
     }
-
 
     @FXML
     void handleAddContact(ActionEvent event) {
@@ -1589,7 +1583,7 @@ public class HomeScreenController implements Initializable {
 
         } else if (type.equals("announcement")) {
             observableMessages.clear();
-            List<ServerAnnouncement> list = userInt.getAllServerAnnouncements();
+            List<ServerAnnouncement> list = userInt.getAllServerAnnouncementsBasedOnCreatedTime(currentUser.getUserId());
             observableMessages.addAll(list);
         } else {
 
@@ -1598,6 +1592,7 @@ public class HomeScreenController implements Initializable {
 
         chatListView.setItems(observableMessages);
         chatListView.refresh();
+        chatListView.scrollTo(observableMessages.size());
     }
 
 
@@ -1681,6 +1676,21 @@ public class HomeScreenController implements Initializable {
             }
 
         });
+    }
+
+    public void refreshContactListWithAnnouncement() {
+//        Platform.runLater(() -> {
+//            try {
+//                listOfContactCards.clear();
+//                listOfContactCards = userInt.getCards(HomeScreenController.currentUser);
+//                cardObservableList.clear();
+//                cardObservableList.addAll(listOfContactCards);
+//                ContactList.refresh();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//
+//        });
     }
 
 //********************************************************************************************************************

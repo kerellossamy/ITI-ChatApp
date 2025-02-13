@@ -44,7 +44,6 @@ public class CreateGroupController {
     private AdminInt adminInt;
     private User currentUser = null;
     ClientImpl c;
-    Registry registry = null;
 
     private HomeScreenController homeScreenController;
 
@@ -95,16 +94,10 @@ public class CreateGroupController {
         Platform.runLater(() -> {
 
             try {
-                registry = LocateRegistry.getRegistry("localhost", 8554);
-                userInt = (UserInt) registry.lookup("UserServices");
-                if (userInt == null) {
-                    System.out.println("null");
-                }
+
                 userConnections = userInt.getUserConncectionById(currentUser.getUserId());
 
             } catch (RemoteException e) {
-                e.printStackTrace();
-            } catch (NotBoundException e) {
                 e.printStackTrace();
             }
 

@@ -80,11 +80,6 @@ public class InvitationListWindowController {
             vBox.setSpacing(2);
 
             try {
-                registry = LocateRegistry.getRegistry("localhost", 8554);
-                userInt = (UserInt) registry.lookup("UserServices");
-                if (userInt == null) {
-                    System.out.println("null");
-                }
                 try {
 
                     invitationsList = userInt.getAllPendingInvitationsByReceiverId(currentUser.getUserId());

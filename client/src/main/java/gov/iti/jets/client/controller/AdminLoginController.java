@@ -26,7 +26,6 @@ public class AdminLoginController {
 
     private  UserInt userInt;
     private  AdminInt adminInt;
-    private Registry reg;
     ClientImpl c;
 
     public void setUserInt(UserInt userInt) {
@@ -51,14 +50,6 @@ public class AdminLoginController {
 
     @FXML
     public void initialize() {
-
-        try {
-
-            reg = LocateRegistry.getRegistry("localhost" , 8554);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-
         loginAsUserButton.setOnAction(event -> navigateToUserLogin());
         loginButton.setOnAction(event -> navigateToServerPage());
         c= ClientImpl.getInstance();
@@ -137,8 +128,6 @@ public class AdminLoginController {
 
         try {
             //Look up the remote object
-            adminInt = (AdminInt) reg.lookup("AdminServices");
-
             if(adminInt.Login(username.getText().trim() , password.getText()))
             {
                 
@@ -150,8 +139,6 @@ public class AdminLoginController {
                 return false;
             }
         } catch (RemoteException e) {
-            e.printStackTrace();
-        } catch (NotBoundException e) {
             e.printStackTrace();
         }
         return false;

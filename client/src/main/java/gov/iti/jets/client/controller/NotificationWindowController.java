@@ -36,7 +36,6 @@ public class NotificationWindowController {
     private AdminInt adminInt;
     private User currentUser = null;
     ClientImpl c;
-    Registry registry = null;
     List<Invitation> invitationsList = null;
 
     private HomeScreenController homeScreenController;
@@ -78,24 +77,14 @@ public class NotificationWindowController {
             pane.getStylesheets().add(getClass().getResource("/cssStyles/InvitationList.css").toExternalForm());
 
             vBox.setSpacing(2);
-        
 
             try {
-                registry = LocateRegistry.getRegistry("localhost", 8554);
-                userInt = (UserInt) registry.lookup("UserServices");
-                if (userInt == null) {
-                    System.out.println("null");
-                }
-                try {
 
-                    invitationsList = userInt.getAllAcceptedInvitationsBySenderId(currentUser.getUserId());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
+                invitationsList = userInt.getAllAcceptedInvitationsBySenderId(currentUser.getUserId());
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
             Collections.reverse(invitationsList);
            
 

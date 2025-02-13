@@ -7,7 +7,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
+import shared.dto.Card;
 import shared.dto.ServerAnnouncement;
+import shared.dto.User;
 import shared.interfaces.AdminInt;
 import shared.interfaces.UserInt;
 
@@ -23,7 +25,6 @@ import java.sql.Timestamp;
 public class AnnouncementController  {
     private UserInt userInt;
     private AdminInt adminInt;
-    private Registry registry;
 
     private static int announcementId=1;
     ClientImpl c;
@@ -57,14 +58,12 @@ public class AnnouncementController  {
     
         try {
             System.out.println(txtarea.getText());
-            registry = LocateRegistry.getRegistry("localhost" , 8554);
-            adminInt = (AdminInt) registry.lookup("AdminServices");
-
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
       
 
             ServerAnnouncement serverAnnouncement=new  ServerAnnouncement(announcementId,txtarea.getText(),timestamp);
-          adminInt.sendAnnouncement(serverAnnouncement);
+            adminInt.sendAnnouncement(serverAnnouncement);
+            userInt.reloadContactListwithAnnouncement();
          
         } catch (Exception e) {
             e.printStackTrace();

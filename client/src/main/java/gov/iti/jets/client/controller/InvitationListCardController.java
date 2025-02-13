@@ -31,7 +31,6 @@ public class InvitationListCardController {
     private AdminInt adminInt;
     private User currentUser = null;
     ClientImpl c;
-    Registry registry = null;
 
     private InvitationListWindowController invitationListWindowController;
     private HomeScreenController homeScreenController;
@@ -124,16 +123,6 @@ public class InvitationListCardController {
 
         acceptIcon.setFill(new ImagePattern(new Image(getClass().getResourceAsStream("/img/accept.png"))));
         deleteIcon.setFill(new ImagePattern(new Image(getClass().getResourceAsStream("/img/delete.png"))));
-
-        try {
-            registry = LocateRegistry.getRegistry("localhost", 8554);
-            userInt = (UserInt) registry.lookup("UserServices");
-            if (userInt == null) {
-                System.out.println("null");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     @FXML

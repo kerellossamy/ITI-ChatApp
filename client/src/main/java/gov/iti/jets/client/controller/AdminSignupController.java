@@ -263,14 +263,6 @@ public class AdminSignupController {
 
     @FXML
     public void initialize() {
-
-
-        try {
-            registry = LocateRegistry.getRegistry("localhost", 8554);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-
         c = ClientImpl.getInstance();
         c.setAdminSignupController(this);
 
@@ -361,15 +353,15 @@ public class AdminSignupController {
 
 
         // Look up the remote object
-        System.out.println("Admin: Looking up remote object...");
-
-        try {
-            adminInt = (AdminInt) registry.lookup("AdminServices");
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        } catch (NotBoundException e) {
-            e.printStackTrace();
-        }
+//        System.out.println("Admin: Looking up remote object...");
+//
+//        try {
+//            adminInt = (AdminInt) registry.lookup("AdminServices");
+//        } catch (RemoteException e) {
+//            e.printStackTrace();
+//        } catch (NotBoundException e) {
+//            e.printStackTrace();
+//        }
         System.out.println("Admin: Remote object found.");
 
         System.out.println(newAdmin);

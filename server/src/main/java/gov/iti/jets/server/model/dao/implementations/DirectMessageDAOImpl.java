@@ -160,17 +160,19 @@ public class DirectMessageDAOImpl implements DirectMessageDAOInt {
         return result;
     }
 
+
     @Override
     public DirectMessage getLastMessageForUser(int senderId , int receiverId) {
         //Done
         //4 1 1
         DirectMessage directMessage = new DirectMessage();
-        String query = "SELECT * FROM direct_message dm WHERE dm.timestamp = ( SELECT MAX(timestamp) FROM direct_message WHERE sender_id = ? AND receiver_id = ? ) AND dm.receiver_id = ?";
+        String query = "SELECT * FROM direct_message dm WHERE dm.timestamp = ( SELECT MAX(timestamp) FROM direct_message WHERE sender_id = ? AND receiver_id = ? OR (sender_id = ? AND receiver_id = ?))";
         //هنجيب اخر رسالة الreviever بعتها ل sender
         try (PreparedStatement stmt =DB_UtilityClass.getConnection().prepareStatement(query)) {
             stmt.setInt(1, receiverId); // Setting receiver_id
             stmt.setInt(2, senderId);  // Setting sender_id
-            stmt.setInt(3, senderId);  // Setting sender_id again to filter results
+            stmt.setInt(3, senderId);
+            stmt.setInt(4, receiverId);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
@@ -204,7 +206,6 @@ public class DirectMessageDAOImpl implements DirectMessageDAOInt {
                 "WHERE (receiver_id = ? AND sender_id = ?) \n" +
                 "   OR (receiver_id = ? AND sender_id = ?)\n" +
                 "ORDER BY timestamp ASC;\n";
-
         try (Connection connection = DB_UtilityClass.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
