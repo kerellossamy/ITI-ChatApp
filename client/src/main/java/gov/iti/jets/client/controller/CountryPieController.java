@@ -24,7 +24,6 @@ public class CountryPieController implements Initializable {
 
     private UserInt userInt;
     private AdminInt adminInt;
-    private Registry registry;
     ClientImpl c;
 
     @FXML
@@ -257,15 +256,6 @@ public class CountryPieController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
-        try {
-            registry = LocateRegistry.getRegistry("localhost" , 8554);
-            adminInt = (AdminInt) registry.lookup("AdminServices");
-        } catch (RemoteException | NotBoundException e) {
-            e.printStackTrace();
-        }
-
-
 
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
         try {

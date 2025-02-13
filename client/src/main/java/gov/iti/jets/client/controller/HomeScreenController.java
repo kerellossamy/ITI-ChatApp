@@ -1682,7 +1682,7 @@ public class HomeScreenController implements Initializable {
         });
     }
 
-//    public void refreshContactListWithAnnouncement() {
+    public void refreshContactListWithAnnouncement() {
 //        Platform.runLater(() -> {
 //            try {
 //                listOfContactCards.clear();
@@ -1695,7 +1695,7 @@ public class HomeScreenController implements Initializable {
 //            }
 //
 //        });
-//    }
+    }
 
 
 //********************************************************************************************************************

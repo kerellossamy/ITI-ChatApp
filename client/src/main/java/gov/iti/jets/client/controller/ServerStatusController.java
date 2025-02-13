@@ -20,7 +20,6 @@ public class ServerStatusController implements Initializable {
 
     private UserInt userInt;
     private AdminInt adminInt;
-    private Registry reg;
     ClientImpl c;
 
     public void setUserInt(UserInt userInt) {
@@ -95,9 +94,6 @@ public class ServerStatusController implements Initializable {
         boolean isServerOn=true;
         try {
 
-            reg = LocateRegistry.getRegistry("localhost", 8554);
-            adminInt = (AdminInt) reg.lookup("AdminServices");
-            
             isServerOn = adminInt.getServerStatus();
 
         } catch (Exception e) {

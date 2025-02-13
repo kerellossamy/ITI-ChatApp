@@ -32,7 +32,6 @@ public class NotificationCardController {
     private AdminInt adminInt;
     private User currentUser = null;
     ClientImpl c;
-    Registry registry = null;
 
     private HomeScreenController homeScreenController;
 
@@ -126,16 +125,6 @@ public class NotificationCardController {
     @FXML
     public void initialize() {
 
-      
-        try {
-            registry = LocateRegistry.getRegistry("localhost", 8554);
-            userInt = (UserInt) registry.lookup("UserServices");
-            if (userInt == null) {
-                System.out.println("null");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
    

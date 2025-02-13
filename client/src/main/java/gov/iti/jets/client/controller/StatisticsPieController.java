@@ -23,7 +23,6 @@ public class StatisticsPieController implements Initializable {
 
     private UserInt userInt;
     private AdminInt adminInt;
-     Registry registry;
     ClientImpl c;
 
     public void setUserInt(UserInt userInt) {
@@ -53,15 +52,6 @@ public class StatisticsPieController implements Initializable {
 //    }
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-
-    try {
-            registry = LocateRegistry.getRegistry("localhost" , 8554);
-            adminInt = (AdminInt) registry.lookup("AdminServices");
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        } catch (NotBoundException e) {
-            e.printStackTrace();
-        }
 
     try
     {  /* 

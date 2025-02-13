@@ -23,8 +23,6 @@ import java.sql.Timestamp;
 public class AnnouncementController  {
     private UserInt userInt;
     private AdminInt adminInt;
-    private Registry registry;
-
     private static int announcementId=1;
     ClientImpl c;
 
@@ -56,16 +54,12 @@ public class AnnouncementController  {
     void sendmethod(ActionEvent event) {
     
         try {
-            System.out.println(txtarea.getText());
-            registry = LocateRegistry.getRegistry("localhost" , 8554);
-            adminInt = (AdminInt) registry.lookup("AdminServices");
-
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-      
-
             ServerAnnouncement serverAnnouncement=new  ServerAnnouncement(announcementId,txtarea.getText(),timestamp);
-          adminInt.sendAnnouncement(serverAnnouncement);
-         
+            adminInt.sendAnnouncement(serverAnnouncement);
+            userInt.reloadContactListwithAnnouncement();
+
+
         } catch (Exception e) {
             e.printStackTrace();
         }

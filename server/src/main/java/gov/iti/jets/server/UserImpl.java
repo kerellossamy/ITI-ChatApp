@@ -835,6 +835,14 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
 
     @Override
     public void reloadContactListwithAnnouncement() throws RemoteException {
+//        for (ClientInt client : OnlineClintsList) {
+//            try {
+//                //System.out.println("UserImpl , reloadContactList");
+//                //client.refreshContactListWithAnnoncement();
+//            } catch (RemoteException e) {
+//                e.printStackTrace();
+//            }
+//        }
 
     }
 

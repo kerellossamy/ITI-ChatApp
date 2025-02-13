@@ -16,6 +16,6 @@ public interface ClientInt extends Remote {
     void refreshInvitationList()throws RemoteException;
     void refreshNotificationList()throws RemoteException;
     void refreshContactList(Card c) throws RemoteException ;
-    //void refreshContactListWithAnnoncement() throws RemoteException ;
+    void refreshContactListWithAnnoncement() throws RemoteException ;
 
 }

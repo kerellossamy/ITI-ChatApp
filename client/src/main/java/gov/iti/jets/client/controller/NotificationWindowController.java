@@ -36,7 +36,6 @@ public class NotificationWindowController {
     private AdminInt adminInt;
     private User currentUser = null;
     ClientImpl c;
-    Registry registry = null;
     List<Invitation> invitationsList = null;
 
     private HomeScreenController homeScreenController;
@@ -64,9 +63,6 @@ public class NotificationWindowController {
     @FXML
     private VBox vBox;
 
-    
-
-   
 
     @FXML
     public void initialize() {
@@ -81,11 +77,6 @@ public class NotificationWindowController {
         
 
             try {
-                registry = LocateRegistry.getRegistry("localhost", 8554);
-                userInt = (UserInt) registry.lookup("UserServices");
-                if (userInt == null) {
-                    System.out.println("null");
-                }
                 try {
 
                     invitationsList = userInt.getAllAcceptedInvitationsBySenderId(currentUser.getUserId());
