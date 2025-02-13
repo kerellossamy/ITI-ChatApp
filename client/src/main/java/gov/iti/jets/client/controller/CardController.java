@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/javafx/FXMLController.java to edit this template
  */
 package gov.iti.jets.client.controller;
+
 import java.io.File;
 import java.net.URL;
 import java.nio.file.Paths;
@@ -70,7 +71,7 @@ public class CardController implements Initializable {
         this.userInt = userInt;
     }
 
-    public  void setAdminInt(AdminInt adminInt) {
+    public void setAdminInt(AdminInt adminInt) {
         this.adminInt = adminInt;
     }
 
@@ -109,57 +110,50 @@ public class CardController implements Initializable {
     }
 
     private String extractPlainText(String html) {
+        if (html == null) {
+            return ""; // or handle the null case appropriately
+        }
         Document doc = Jsoup.parse(html);
         return doc.text();
     }
 
 
-    public void setCard(Card item)
-    {
-
-        /*Group group1 = (Group) item.getChildren().get(0);
-        ImageView image = (ImageView)group1.getChildren().get(0);
-        Circle status = (Circle)group1.getChildren().get(1);
-        //new Image(getClass().getResourceAsStream("/images/user.png"))
-
-        VBox vbox1 =  (VBox) item.getChildren().get(1);
-        Text name = (Text)vbox1.getChildren().get(0);
-        Text message = (Text)vbox1.getChildren().get(1);
-
-
-        VBox vbox2 =  (VBox) item.getChildren().get(2);
-        Text time = (Text)vbox2.getChildren().get(0);
-
-
-        //System.out.println("name =" + nametext.toString());
-        //System.out.println("message =" + messagetext.toString());
-         */
+    public void setCard(Card item) {
         ImageView imageView = SetImage(item.getImagePath());
-      //  frinedImage.setImage(imageView.getImage());
         imageCircle.setFill(new ImagePattern(imageView.getImage()));
 
+        if (item.getStatus() != null) {
+            switch (item.getStatus().toString()) {
+                case "AVAILABLE":
+                    friendStatusCircle.setFill(Color.valueOf(colorEnum.GREEN.getColor()));
+                    break;
+                case "BUSY":
+                    friendStatusCircle.setFill(Color.valueOf(colorEnum.RED.getColor()));
+                    break;
+                case "AWAY":
+                    friendStatusCircle.setFill(Color.valueOf(colorEnum.YELLOW.getColor()));
+                    break;
+                default:
+                    friendStatusCircle.setFill(Color.valueOf(colorEnum.GRAY.getColor()));
+                    break;
+            }
+        }
 
-        if (item.getStatus().toString().equals("AVAILABLE"))
-            friendStatusCircle.setFill(Color.valueOf(colorEnum.GREEN.getColor()));
-        else if (item.getStatus().toString().equals("BUSY"))
-            friendStatusCircle.setFill(Color.valueOf(colorEnum.RED.getColor()));
-        else if (item.getStatus().toString().equals("AWAY"))
-            friendStatusCircle.setFill(Color.valueOf(colorEnum.YELLOW.getColor()));
-        else
-            friendStatusCircle.setFill(Color.valueOf(colorEnum.GRAY.getColor()));
-
-        friendNameText.setText(item.getSenderName());
+        friendNameText.setText(item.getSenderName() != null ? item.getSenderName() : "Unknown");
         friendMessageText.setText(extractPlainText(item.getMessageContent()));
 
-        String messageTime = item.getTimestamp().toString().substring(11, 16);
-        friendMessageTimeText.setText(messageTime);
-
+        if (item.getTimestamp() != null) {
+            String messageTime = item.getTimestamp().toString().substring(11, 16);
+            friendMessageTimeText.setText(messageTime);
+        } else {
+            friendMessageTimeText.setText("N/A"); // Handle missing timestamp gracefully
+        }
     }
 
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        c= ClientImpl.getInstance();
+        c = ClientImpl.getInstance();
         c.setCardController(this);
     }
 

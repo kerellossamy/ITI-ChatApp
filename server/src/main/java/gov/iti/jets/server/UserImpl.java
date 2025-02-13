@@ -114,7 +114,7 @@ public class UserImpl extends UnicastRemoteObject implements UserInt {
         OnlineClintsList.remove(client);
         System.out.println("After: " + OnlineClintsList.size());
         //deletes the session token
-        sessionTokens.remove(client.getPhoneNumber());
+//        sessionTokens.remove(client.getPhoneNumber());
 
 
     }
