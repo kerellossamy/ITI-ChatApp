@@ -52,8 +52,6 @@ public class ServerStatusController implements Initializable {
         onbutton.setStyle("");
 
         try {
-            // Look up the remote object
-
             adminInt.turnOffServer();
 
         } catch (Exception e) {
@@ -68,36 +66,26 @@ public class ServerStatusController implements Initializable {
         offbutton.setStyle("");
 
         try {
-          
+
             adminInt.turnOnServer();
 
         } catch (Exception e) {
             e.printStackTrace();
-        } 
+        }
         // App.isOnPressed=true;
         // App.isOffPressed=false;
     }
 
-    // @FXML
-    // void initialize() {
-    // assert childBorderpanethree != null : "fx:id=\"childBorderpanethree\" was not
-    // injected: check your FXML file 'hello-view -serverstatus.fxml'.";
-    // assert offbutton != null : "fx:id=\"offbutton\" was not injected: check your
-    // FXML file 'hello-view -serverstatus.fxml'.";
-    // assert onbutton != null : "fx:id=\"onbutton\" was not injected: check your
-    // FXML file 'hello-view -serverstatus.fxml'.";
-    //
-    // }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-        boolean isServerOn=true;
+        boolean isServerOn = true;
         try {
 
             reg = LocateRegistry.getRegistry("localhost", 8554);
             adminInt = (AdminInt) reg.lookup("AdminServices");
-            
+
             isServerOn = adminInt.getServerStatus();
 
         } catch (Exception e) {
@@ -106,8 +94,7 @@ public class ServerStatusController implements Initializable {
 
         c = ClientImpl.getInstance();
         c.setServerStatusController(this);
-           
-       
+
 
         if (isServerOn) {
             onbutton.setStyle("-fx-background-color: #00FF00; -fx-text-fill: black;");

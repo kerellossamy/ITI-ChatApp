@@ -1,4 +1,5 @@
 package gov.iti.jets.client.controller;
+
 import gov.iti.jets.client.model.ClientImpl;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
@@ -29,9 +30,10 @@ public class GenderPieController implements Initializable {
         this.userInt = userInt;
     }
 
-    public  void setAdminInt(AdminInt adminInt) {
+    public void setAdminInt(AdminInt adminInt) {
         this.adminInt = adminInt;
     }
+
     @FXML
     private ResourceBundle resources;
 
@@ -44,20 +46,12 @@ public class GenderPieController implements Initializable {
     @FXML
     private PieChart genderpie;
 
-//    @FXML
-//    void initialize() {
-//
-//
-//        assert grandchildborderpanethree != null : "fx:id=\"grandchildborderpanethree\" was not injected: check your FXML file 'hello-view -gender.fxml'.";
-//        assert genderpie != null : "fx:id=\"genderpie\" was not injected: check your FXML file 'hello-view -gender.fxml'.";
-//
-//    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
         try {
-            registry = LocateRegistry.getRegistry("localhost" , 8554);
+            registry = LocateRegistry.getRegistry("localhost", 8554);
             adminInt = (AdminInt) registry.lookup("AdminServices");
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -72,25 +66,21 @@ public class GenderPieController implements Initializable {
 
             ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
 
-            if(femaleCount > 0)
-            {
-                pieChartData.add(new PieChart.Data("Female" , femaleCount));
+            if (femaleCount > 0) {
+                pieChartData.add(new PieChart.Data("Female", femaleCount));
             }
-            if(maleCount > 0)
-            {
-                pieChartData.add(new PieChart.Data("male" , maleCount));
+            if (maleCount > 0) {
+                pieChartData.add(new PieChart.Data("male", maleCount));
             }
 
             pieChartData.forEach(data -> data.nameProperty().bind(Bindings.concat(data.getName(), " number ", data.pieValueProperty())));
             genderpie.getData().addAll(pieChartData);
-        }
-        catch (RemoteException e)
-        {
+        } catch (RemoteException e) {
             e.printStackTrace();
         }
 
-            c= ClientImpl.getInstance();
-            c.setGenderPieController(this);
+        c = ClientImpl.getInstance();
+        c.setGenderPieController(this);
 
 
     }

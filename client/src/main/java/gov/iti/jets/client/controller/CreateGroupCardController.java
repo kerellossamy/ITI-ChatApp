@@ -1,4 +1,5 @@
 package gov.iti.jets.client.controller;
+
 import java.io.File;
 import java.nio.file.Paths;
 import java.rmi.RemoteException;
@@ -18,43 +19,39 @@ public class CreateGroupCardController {
     @FXML
     private Text friendNameText;
 
-    @FXML 
+    @FXML
     private Circle personalImg;
 
-        public void setContactData(String name,String imgPath ) {
+    public void setContactData(String name, String imgPath) {
 
 
-           friendNameText.setText(name);
+        friendNameText.setText(name);
 
-             if (imgPath!= null && !imgPath.isEmpty()) {
-                try {
-                    Image profileImage;
+        if (imgPath != null && !imgPath.isEmpty()) {
+            try {
+                Image profileImage;
 
-                    if (Paths.get(imgPath).isAbsolute()) {
-                        File file = new File(imgPath);
-                        if (file.exists() && file.canRead()) {
-                            profileImage = new Image(file.toURI().toString());
-                        } else {
-                            System.out.println("Error: File does not exist or cannot be read.");
-                            return;
-                        }
+                if (Paths.get(imgPath).isAbsolute()) {
+                    File file = new File(imgPath);
+                    if (file.exists() && file.canRead()) {
+                        profileImage = new Image(file.toURI().toString());
                     } else {
-                        profileImage = new Image(getClass().getResource(imgPath).toExternalForm());
+                        System.out.println("Error: File does not exist or cannot be read.");
+                        return;
                     }
-
-                    personalImg.setFill(new ImagePattern(profileImage) );
-
-                 
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    System.out.println("Error loading profile image: " + e.getMessage());
+                } else {
+                    profileImage = new Image(getClass().getResource(imgPath).toExternalForm());
                 }
-            }
 
-      
-       
+                personalImg.setFill(new ImagePattern(profileImage));
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("Error loading profile image: " + e.getMessage());
+            }
+        }
     }
-       
+
 
 }

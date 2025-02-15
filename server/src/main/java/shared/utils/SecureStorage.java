@@ -2,13 +2,14 @@ package shared.utils;
 
 
 //Preferences class-> provides a way to store and retrieve user and system preference and configuration data
+
 import java.util.prefs.Preferences;
 
 public class SecureStorage {
 
     private static final Preferences pref = Preferences.userRoot().node("MyApp");
 
-   // retrieves the root preference node for the current user. This node is used to store user-specific preferences.
+    // retrieves the root preference node for the current user. This node is used to store user-specific preferences.
     //This node will be used to store preferences specific to the application->node("MyApp")
 
     public static void saveCredentials(String phoneNumber, String token) {

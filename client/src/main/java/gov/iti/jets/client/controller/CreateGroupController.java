@@ -53,12 +53,7 @@ public class CreateGroupController {
     }
 
 
-   
-
-
     public void setCurrentUser(User currentUser) {
-        // System.out.println("setting the current user in the createGroup page");
-        // System.out.println(currentUser);
         this.currentUser = currentUser;
     }
 
@@ -162,10 +157,6 @@ public class CreateGroupController {
 
     }
 
-    // Event handler for changing photo
-   
-
-    // Event handler for the create button
     @FXML
     private void handleCreateButton() {
         //set timestamp of card
@@ -179,69 +170,65 @@ public class CreateGroupController {
 
         try {
             if (adminInt.getServerStatus() == true) {
-        if (validContacts()) {
+                if (validContacts()) {
 
-            if (validGroupName()) {
-                System.out.println("Create button clicked");
-                System.out.println("Creating group with selected contacts: " + selectedContacts);
+                    if (validGroupName()) {
+                        System.out.println("Create button clicked");
+                        System.out.println("Creating group with selected contacts: " + selectedContacts);
 
-                System.out.println("group name: " + nameTextField.getText().trim());
-                try {
-                    // get id of the current user
-                    int groupId = userInt.createGroup(nameTextField.getText().trim(), currentUser.getUserId());
-                    userInt.addUserToGroup(currentUser.getUserId(), groupId);
-                    System.out.println("group id" + groupId);
-                    // add contactId to the group
-                    for (Integer i : selectedContacts) {
-                        userInt.addUserToGroup(i, groupId);
+                        System.out.println("group name: " + nameTextField.getText().trim());
+                        try {
+                            // get id of the current user
+                            int groupId = userInt.createGroup(nameTextField.getText().trim(), currentUser.getUserId());
+                            userInt.addUserToGroup(currentUser.getUserId(), groupId);
+                            System.out.println("group id" + groupId);
+                            // add contactId to the group
+                            for (Integer i : selectedContacts) {
+                                userInt.addUserToGroup(i, groupId);
+                            }
+
+                            Card card = new Card(groupId, "group", nameTextField.getText().trim(), "", Timestamp.valueOf(formattedNow), User.Status.AVAILABLE, "/img/people.png");
+                            homeScreenController.addCardtoListView(card, currentUser.getPhoneNumber());
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        Stage stage = (Stage) createButton.getScene().getWindow();
+                        stage.close();
                     }
 
-                    Card card = new Card(groupId ,"group",  nameTextField.getText().trim() , "" ,  Timestamp.valueOf(formattedNow), User.Status.AVAILABLE , "/img/people.png" );
-                    homeScreenController.addCardtoListView(card , currentUser.getPhoneNumber());
-
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
-                Stage stage = (Stage) createButton.getScene().getWindow();
-                stage.close();
-            }
-           
-        }
 
-                  }
-            else 
-            {
+            } else {
                 System.out.println("server is off");
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ServerUnavailable.fxml"));
-        
+
                 Parent root = loader.load();
                 ServerUnavailableController serverUnavailableController = loader.getController();
                 serverUnavailableController.setAdminInt(ClientMain.adminInt);
                 serverUnavailableController.setUserInt(ClientMain.userInt);
                 serverUnavailableController.setCurrentUser(currentUser);
-    
+
                 Stage stage = homeScreenController.getStage();
-                Stage createGroupWindowStage = (Stage)  createButton.getScene().getWindow();
+                Stage createGroupWindowStage = (Stage) createButton.getScene().getWindow();
 
 
                 createGroupWindowStage.close();
-            
-    
+
+
                 // Set the scene with the admin login page
                 Scene scene = new Scene(root);
                 stage.setScene(scene);
-             
+
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-      
-
     }
 
     private boolean validGroupName() {
-        if (nameTextField.getText().trim().length() == 0 || nameTextField.getText().trim().length() >15) {
+        if (nameTextField.getText().trim().length() == 0 || nameTextField.getText().trim().length() > 15) {
             showErrorAlert("Invalid Group Name", "Please enter a valid group name");
             return false;
         }
@@ -264,10 +251,5 @@ public class CreateGroupController {
         alert.showAndWait();
     }
 
-    // @Override
-    // public void initialize(URL url, ResourceBundle resourceBundle) {
-    // c= ClientImpl.getInstance();
-    // c.setCreateGroupController(this);
-    // }
 
 }

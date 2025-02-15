@@ -162,20 +162,20 @@ public class InvitationListCardController {
                     if (invitation != null) {
                         // delete this invitation
                         userInt.updateInvitationStatusById(invitation.getInvitationId(), Invitation.Status.accepted);
-                       /// userInt.deleteInvitation(invitation.getInvitationId());
+                        /// userInt.deleteInvitation(invitation.getInvitationId());
 
                     }
                     userInt.addUserConnection(userConnection1);
                     userInt.addUserConnection(userConnection2);
 
                     //1
-                    Card card = new Card(cardUser.getUserId()  ,"user", cardUser.getDisplayName(), "" ,  Timestamp.valueOf(formattedNow), cardUser.getStatus() , cardUser.getProfilePicturePath());
-                    System.out.println(cardUser.getUserId() +"      " + currentUser.getUserId());
-                    homeScreenController.addCardtoListView(card , cardUser.getPhoneNumber());
+                    Card card = new Card(cardUser.getUserId(), "user", cardUser.getDisplayName(), "", Timestamp.valueOf(formattedNow), cardUser.getStatus(), cardUser.getProfilePicturePath());
+                    System.out.println(cardUser.getUserId() + "      " + currentUser.getUserId());
+                    homeScreenController.addCardtoListView(card, cardUser.getPhoneNumber());
 
                     //5
-                    Card card1 = new Card(currentUser.getUserId() , "user" , currentUser.getDisplayName() , "" , Timestamp.valueOf(formattedNow) ,currentUser.getStatus() , currentUser.getProfilePicturePath() );
-                    homeScreenController.addCardtoListView(card1 , cardUser.getPhoneNumber());
+                    Card card1 = new Card(currentUser.getUserId(), "user", currentUser.getDisplayName(), "", Timestamp.valueOf(formattedNow), currentUser.getStatus(), currentUser.getProfilePicturePath());
+                    homeScreenController.addCardtoListView(card1, cardUser.getPhoneNumber());
 
                 } catch (Exception e) {
                     e.printStackTrace();

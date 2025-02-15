@@ -23,16 +23,17 @@ public class StatisticsPieController implements Initializable {
 
     private UserInt userInt;
     private AdminInt adminInt;
-     Registry registry;
+    Registry registry;
     ClientImpl c;
 
     public void setUserInt(UserInt userInt) {
         this.userInt = userInt;
     }
 
-    public  void setAdminInt(AdminInt adminInt) {
+    public void setAdminInt(AdminInt adminInt) {
         this.adminInt = adminInt;
     }
+
     @FXML
     private ResourceBundle resources;
 
@@ -45,7 +46,7 @@ public class StatisticsPieController implements Initializable {
     @FXML
     private PieChart statisticspie;
 
-//    @FXML
+    //    @FXML
 //    void initialize() {
 //        assert grandchildborderpaneone != null : "fx:id=\"grandchildborderpaneone\" was not injected: check your FXML file 'hello-view - statistics.fxml'.";
 //        assert statisticspie != null : "fx:id=\"statisticspie\" was not injected: check your FXML file 'hello-view - statistics.fxml'.";
@@ -54,8 +55,8 @@ public class StatisticsPieController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
-    try {
-            registry = LocateRegistry.getRegistry("localhost" , 8554);
+        try {
+            registry = LocateRegistry.getRegistry("localhost", 8554);
             adminInt = (AdminInt) registry.lookup("AdminServices");
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -63,47 +64,27 @@ public class StatisticsPieController implements Initializable {
             e.printStackTrace();
         }
 
-    try
-    {  /* 
-        if(adminInt==null)
-        {
-            System.out.println("nullllllll");
-        }
-        int onlineUsers = adminInt.getNumberOfUsersBasedOnStat("online");
-        System.out.println(onlineUsers);
-       // int offlineUsers = adminInt.getNumberOfUsersBasedOnStat("offline");
-        ObservableList<PieChart.Data> pieChartData= FXCollections.observableArrayList(
-                new PieChart.Data("Online users",0),
-                new PieChart.Data("Offline users",10)
-
-        );
-        pieChartData.forEach(data->data.nameProperty().bind(Bindings.concat(data.getName()," number ",data.pieValueProperty())));
-        statisticspie.getData().addAll(pieChartData);
-*/
-        //---------------------
-        int onlineUsersCount = adminInt.getNumberOfUsersBasedOnStat("online");
-        int offlineUsersCount = adminInt.getNumberOfUsersBasedOnStat("offline");
+        try {
+            int onlineUsersCount = adminInt.getNumberOfUsersBasedOnStat("online");
+            int offlineUsersCount = adminInt.getNumberOfUsersBasedOnStat("offline");
 
 
-        ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
+            ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
 
-       
-            pieChartData.add(new PieChart.Data("online" , onlineUsersCount));
-       
-       
-            pieChartData.add(new PieChart.Data("offline" , offlineUsersCount));
-     
 
-        pieChartData.forEach(data -> data.nameProperty().bind(Bindings.concat(data.getName(), " number ", data.pieValueProperty())));
-        statisticspie.getData().addAll(pieChartData);
-    }
+            pieChartData.add(new PieChart.Data("online", onlineUsersCount));
 
-        catch (Exception e)
-        {
+
+            pieChartData.add(new PieChart.Data("offline", offlineUsersCount));
+
+
+            pieChartData.forEach(data -> data.nameProperty().bind(Bindings.concat(data.getName(), " number ", data.pieValueProperty())));
+            statisticspie.getData().addAll(pieChartData);
+        } catch (Exception e) {
             e.printStackTrace();
         }
-            c= ClientImpl.getInstance();
-            c.setStatisticsPieController(this);
+        c = ClientImpl.getInstance();
+        c.setStatisticsPieController(this);
 
     }
 }

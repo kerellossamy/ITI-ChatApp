@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 
-
 public class Card implements Serializable {
 
     private int id;
@@ -14,10 +13,12 @@ public class Card implements Serializable {
     private Timestamp timestamp;
     private User.Status status;
     private String imagePath;
-    public enum Type{
-        user , group , announcement
+
+    public enum Type {
+        user, group, announcement
 
     }
+
     public Card(int id, String type, String senderName, String messageContent, Timestamp timestamp, User.Status status, String imagePath) {
         this.id = id;
         this.type = type;
@@ -28,8 +29,7 @@ public class Card implements Serializable {
         this.imagePath = imagePath;
     }
 
-    public Card()
-    {
+    public Card() {
 
     }
 
@@ -82,7 +82,7 @@ public class Card implements Serializable {
         return status;
     }
 
-    public String  getImagePath() {
+    public String getImagePath() {
         return imagePath;
     }
 

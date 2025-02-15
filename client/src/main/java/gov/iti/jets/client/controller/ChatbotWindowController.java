@@ -35,6 +35,7 @@ public class ChatbotWindowController {
     public void setHomeScreenController(HomeScreenController homeScreenController) {
         this.homeScreenController = homeScreenController;
     }
+
     public void setCurrentUser(User currentUser) {
         // System.out.println("setting the current user in the createGroup page");
         // System.out.println(currentUser);
@@ -77,56 +78,45 @@ public class ChatbotWindowController {
         try {
             if (adminInt.getServerStatus() == true) {
 
-        try {
-            if (chatbotEnableButton.isSelected()) {
-                userInt.enableChatBot(HomeScreenController.currentUser.getUserId());
-                chatbotEnableButton.setStyle("-fx-background-color: #00FF00; -fx-text-fill: black;");
+                try {
+                    if (chatbotEnableButton.isSelected()) {
+                        userInt.enableChatBot(HomeScreenController.currentUser.getUserId());
+                        chatbotEnableButton.setStyle("-fx-background-color: #00FF00; -fx-text-fill: black;");
+                    } else {
+                        userInt.disableChatBot(HomeScreenController.currentUser.getUserId());
+                        chatbotEnableButton.setStyle("-fx-background-color: red; -fx-text-fill: black;");
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
             } else {
-                userInt.disableChatBot(HomeScreenController.currentUser.getUserId());
-                chatbotEnableButton.setStyle("-fx-background-color: red; -fx-text-fill: black;");
-            }
-        } catch (RemoteException e) {
-            e.printStackTrace();
-    }
-                      }
-            else 
-            {
                 System.out.println("server is off");
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ServerUnavailable.fxml"));
-        
+
                 Parent root = loader.load();
                 ServerUnavailableController serverUnavailableController = loader.getController();
                 serverUnavailableController.setAdminInt(ClientMain.adminInt);
                 serverUnavailableController.setUserInt(ClientMain.userInt);
                 serverUnavailableController.setCurrentUser(currentUser);
-    
+
                 Stage stage = homeScreenController.getStage();
-                Stage createGroupWindowStage = (Stage)  chatbotEnableButton.getScene().getWindow();
+                Stage createGroupWindowStage = (Stage) chatbotEnableButton.getScene().getWindow();
 
 
                 createGroupWindowStage.close();
-            
-    
+
+
                 // Set the scene with the admin login page
                 Scene scene = new Scene(root);
                 stage.setScene(scene);
-             
+
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-    
-        }
 
+    }
 
-    //    @FXML
-//    void initialize() {
-//        assert pane != null : "fx:id=\"pane\" was not injected: check your FXML file 'ChatbotWindow.fxml'.";
-//        assert vBox != null : "fx:id=\"vBox\" was not injected: check your FXML file 'ChatbotWindow.fxml'.";
-//        assert hBox != null : "fx:id=\"hBox\" was not injected: check your FXML file 'ChatbotWindow.fxml'.";
-//        assert chatbotEnableButton != null : "fx:id=\"chatbotEnableButton\" was not injected: check your FXML file 'ChatbotWindow.fxml'.";
-//
-//    }
 
     @FXML
     private void initialize() {
@@ -136,11 +126,10 @@ public class ChatbotWindowController {
                 if (userInt.isChatbotEnabled(HomeScreenController.currentUser.getUserId())) {
                     chatbotEnableButton.setSelected(true);
                     chatbotEnableButton.setStyle("-fx-background-color: #00FF00; -fx-text-fill: black;");
-                }
-                else{
+                } else {
                     chatbotEnableButton.setSelected(false);
                     chatbotEnableButton.setStyle("-fx-background-color: red; -fx-text-fill: black;");
-    
+
 
                 }
             } catch (RemoteException e) {
@@ -148,11 +137,7 @@ public class ChatbotWindowController {
             }
         });
 
-
     }
-
-
-
 
 
 }

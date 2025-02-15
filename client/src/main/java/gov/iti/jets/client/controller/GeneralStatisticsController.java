@@ -113,13 +113,6 @@ public class GeneralStatisticsController implements Initializable {
 
     }
 
-//    @FXML
-//    void initialize() {
-//        assert statepiebutton != null : "fx:id=\"statepiebutton\" was not injected: check your FXML file 'hello-view - stone.fxml'.";
-//        assert Genderpiebutton != null : "fx:id=\"Genderpiebutton\" was not injected: check your FXML file 'hello-view - stone.fxml'.";
-//        assert countrypiebutton != null : "fx:id=\"countrypiebutton\" was not injected: check your FXML file 'hello-view - stone.fxml'.";
-//
-//    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {

@@ -34,19 +34,17 @@ public class GroupProfileController implements Initializable {
         this.userInt = userInt;
     }
 
-    public  void setAdminInt(AdminInt adminInt) {
+    public void setAdminInt(AdminInt adminInt) {
         this.adminInt = adminInt;
     }
 
 
-    public void setInfo(Image image , String name , String createdGroup , List<String> members)
-    {
+    public void setInfo(Image image, String name, String createdGroup, List<String> members) {
         groupProfileImage.setImage(image);
         groupProfileName.setText(name);
         createdGroupName.setText("Created by: " + createdGroup);
-        Text text ;
-        for(String m : members)
-        {
+        Text text;
+        for (String m : members) {
             text = new Text(m);
             text.setStyle("-fx-font-size: 16px;");
             MembersName.getChildren().add(text);
@@ -55,11 +53,10 @@ public class GroupProfileController implements Initializable {
     }
 
 
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        c= ClientImpl.getInstance();
+        c = ClientImpl.getInstance();
         c.setGroupProfileController(this);
     }
 }

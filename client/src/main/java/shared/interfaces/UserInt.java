@@ -52,7 +52,6 @@ public interface UserInt extends Remote {
 
     UserBlockedConnection getBlockedConnection(int blockerUserId, int blockedUserId) throws RemoteException;
 
-
     int createGroup(String groupName, int createdBy) throws RemoteException;
 
     void addUserToGroup(int userId, int groupId) throws RemoteException;
@@ -86,13 +85,15 @@ public interface UserInt extends Remote {
     public Chatbot getChatbotById(int userID) throws RemoteException;
 
     void pushSound(String phoneNumber) throws RemoteException;
-    void reload(String phoneNumber,BaseMessage message,String type,int ID) throws RemoteException;
+
+    void reload(String phoneNumber, BaseMessage message, String type, int ID) throws RemoteException;
+
     List<Integer> getUsersByGroupId(int groupId) throws RemoteException;
 
-
-    //to be implemented
     void reloadInvitationList(String phoneNumber) throws RemoteException;
-    void reloadContactList(String phoneNumber ,Card c) throws RemoteException ;
+
+    void reloadContactList(String phoneNumber, Card c) throws RemoteException;
+
     void reloadNotificationList(String phoneNumber) throws RemoteException;
 
     public String getSessionToken(String phoneNumber) throws RemoteException;
@@ -107,6 +108,6 @@ public interface UserInt extends Remote {
 
     List<ServerAnnouncement> getAllServerAnnouncementsBasedOnCreatedTime(int userID) throws RemoteException;
 
-    void reloadContactListwithAnnouncement() throws RemoteException ;
+    void reloadContactListwithAnnouncement() throws RemoteException;
 
 }

@@ -4,6 +4,7 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+
 import javafx.scene.paint.Color;
 import gov.iti.jets.client.ClientMain;
 import gov.iti.jets.client.model.ClientImpl;
@@ -40,10 +41,9 @@ public class NotificationCardController {
         this.homeScreenController = homeScreenController;
     }
 
-   
 
     public void setCurrentUser(User currentUser) {
-   
+
         this.currentUser = currentUser;
     }
 
@@ -82,20 +82,18 @@ public class NotificationCardController {
         // Create bold text
         Text boldText = new Text(name);
 
-        boldText.setFill(Color.web("#3C8FC7F5")); 
+        boldText.setFill(Color.web("#3C8FC7F5"));
         boldText.setFont(Font.font("Arial", FontWeight.BOLD, 12));
 
 
         // Create regular text
         Text regularText = new Text(" accepted your invitation ");
-        regularText.setFill(Color.web("#3C8FC7F5")); 
+        regularText.setFill(Color.web("#3C8FC7F5"));
 
- 
 
         // Add the text nodes to the TextFlow
-        friendNameText.getChildren().addAll(boldText,regularText);
+        friendNameText.getChildren().addAll(boldText, regularText);
 
-       
 
         if (imgPath != null && !imgPath.isEmpty()) {
             try {
@@ -126,7 +124,7 @@ public class NotificationCardController {
     @FXML
     public void initialize() {
 
-      
+
         try {
             registry = LocateRegistry.getRegistry("localhost", 8554);
             userInt = (UserInt) registry.lookup("UserServices");
@@ -137,8 +135,5 @@ public class NotificationCardController {
             e.printStackTrace();
         }
     }
-
-   
-  
 
 }

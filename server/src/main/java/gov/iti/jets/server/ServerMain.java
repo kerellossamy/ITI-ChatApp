@@ -9,21 +9,17 @@ import java.rmi.registry.Registry;
 public class ServerMain {
 
     public ServerMain() {
-        try{
-//            System.setProperty("java.rmi.server.hostname", "10.145.19.35");
-//            System.setProperty("java.rmi.server.useCompression", "true");
-//            System.setProperty("sun.rmi.transport.tcp.maxConnectionThreads", "50");
+        try {
             System.setProperty("java.rmi.server.hostname", "127.0.0.1");
 
-            UserInt userInt=new UserImpl();
-            AdminInt adminInt=new AdminImpl();
-            Registry registry= LocateRegistry.createRegistry(8554,null,null);
-            registry.rebind("UserServices",userInt);
-            registry.rebind("AdminServices",adminInt);
+            UserInt userInt = new UserImpl();
+            AdminInt adminInt = new AdminImpl();
+            Registry registry = LocateRegistry.createRegistry(8554, null, null);
+            registry.rebind("UserServices", userInt);
+            registry.rebind("AdminServices", adminInt);
             System.out.println("server is running .....");
-            while(true);
-        }
-        catch (Exception e){
+            while (true) ;
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -31,6 +27,5 @@ public class ServerMain {
 
     public static void main(String[] args) {
         new ServerMain();
-
     }
 }

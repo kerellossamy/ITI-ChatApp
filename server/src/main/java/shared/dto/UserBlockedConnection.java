@@ -6,7 +6,8 @@ public class UserBlockedConnection implements Serializable {
     private Integer blockerUserId;
     private Integer blockedUserId;
 
-    public UserBlockedConnection() {}
+    public UserBlockedConnection() {
+    }
 
     public UserBlockedConnection(Integer blockerUserId, Integer blockedUserId) {
         this.blockerUserId = blockerUserId;
@@ -28,7 +29,6 @@ public class UserBlockedConnection implements Serializable {
     public void setBlockedUserId(Integer blockedUserId) {
         this.blockedUserId = blockedUserId;
     }
-
 
 
     @Override

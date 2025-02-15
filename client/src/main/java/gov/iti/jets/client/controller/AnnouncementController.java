@@ -20,19 +20,19 @@ import java.time.LocalDateTime;
 import java.util.ResourceBundle;
 import java.sql.Timestamp;
 
-public class AnnouncementController  {
+public class AnnouncementController {
     private UserInt userInt;
     private AdminInt adminInt;
     private Registry registry;
 
-    private static int announcementId=1;
+    private static int announcementId = 1;
     ClientImpl c;
 
     public void setUserInt(UserInt userInt) {
         this.userInt = userInt;
     }
 
-    public  void setAdminInt(AdminInt adminInt) {
+    public void setAdminInt(AdminInt adminInt) {
         this.adminInt = adminInt;
     }
 
@@ -54,42 +54,37 @@ public class AnnouncementController  {
 
     @FXML
     void sendmethod(ActionEvent event) {
-    
+
         try {
             System.out.println(txtarea.getText());
-            registry = LocateRegistry.getRegistry("localhost" , 8554);
+            registry = LocateRegistry.getRegistry("localhost", 8554);
             adminInt = (AdminInt) registry.lookup("AdminServices");
 
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-      
 
-            ServerAnnouncement serverAnnouncement=new  ServerAnnouncement(announcementId,txtarea.getText(),timestamp);
-          adminInt.sendAnnouncement(serverAnnouncement);
-         
+
+            ServerAnnouncement serverAnnouncement = new ServerAnnouncement(announcementId, txtarea.getText(), timestamp);
+            adminInt.sendAnnouncement(serverAnnouncement);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
-          
-            txtarea.clear();
+
+        txtarea.clear();
     }
 
     @FXML
     void initialize() {
 
-        
 
-        c= ClientImpl.getInstance();
+        c = ClientImpl.getInstance();
         c.setAnnouncementController(this);
         assert childBorderpanetwo != null : "fx:id=\"childBorderpane\" was not injected: check your FXML file 'hello-view -Announcement.fxml'.";
         assert txtarea != null : "fx:id=\"txtarea\" was not injected: check your FXML file 'hello-view -Announcement.fxml'.";
         assert sendBut != null : "fx:id=\"sendBut\" was not injected: check your FXML file 'hello-view -Announcement.fxml'.";
 
     }
-//    @Override
-//    public void initialize(URL url, ResourceBundle resourceBundle) {
-//        c= ClientImpl.getInstance();
-//        c.setAnnouncementController(this);
-//    }
+
 
 }
 

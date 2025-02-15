@@ -86,12 +86,6 @@ public class EditWindowController {
     @FXML
     public void initialize() {
         Platform.runLater(() -> {
-            //
-
-            // String profilePicturePath = currentUser.getProfilePicturePath();
-            // File file = Paths.get(profilePicturePath).toAbsolutePath().toFile();
-            // Image defaultPhoto = new Image(file.toURI().toString());
-            // photoCircle.setFill(new ImagePattern(defaultPhoto));
             if (currentUser != null) {
                 loadUserDetails();
             }
@@ -100,30 +94,10 @@ public class EditWindowController {
         c = ClientImpl.getInstance();
         c.setEditWindowController(this);
 
-        // statusComboBox.getItems().addAll(
-        // "OFFLINE",
-        // "BUSY",
-        // "AVAILABLE",
-        // "AWAY");
+
         statusComboBox.getItems().addAll(
                 User.Status.values());
 
-        // statusComboBox.setCellFactory(lv ->
-        // {
-        // return new ListCell<String>() {
-        // @Override
-        // protected void updateItem(String item, boolean empty) {
-        // super.updateItem(item, empty);
-        // if (empty || item == null) {
-        // setText(null);
-        // setStyle(""); // Clear style for empty cells
-        // } else {
-        // setText(item);
-        // setStyle("-fx-background-color: #4399FF;"); // Center-align the text
-        // }
-        // }
-        // };
-        // });
 
         statusComboBox.setCellFactory(lv -> {
             return new ListCell<User.Status>() {
@@ -151,18 +125,6 @@ public class EditWindowController {
         bioTextField.setText(currentUser.getBio());
         statusComboBox.setValue(currentUser.getStatus());
 
-        // working for only relative path
-        // String profilePicturePath = currentUser.getProfilePicturePath();
-        // if (profilePicturePath != null && !profilePicturePath.isEmpty()) {
-        // try {
-        // Image profileImage = new
-        // Image(getClass().getResource(profilePicturePath).toExternalForm());
-        // photoCircle.setFill(new ImagePattern(profileImage));
-        // } catch (Exception e) {
-        // e.printStackTrace();
-        // System.out.println("Error loading profile image: " + e.getMessage());
-        // }
-        // }
 
         String profilePicturePath = currentUser.getProfilePicturePath();
         if (profilePicturePath != null && !profilePicturePath.isEmpty()) {
@@ -230,55 +192,53 @@ public class EditWindowController {
     public void handleApplyButton() {
         try {
             if (adminInt.getServerStatus() == true) {
-                
-                    String newPicPath = currentUser.getProfilePicturePath();
-                    String newDisplayName = nameTextField.getText();
-                    String newBio = bioTextField.getText();
-                    User.Status newStatus = statusComboBox.getValue();
 
-                    boolean isUpdated = userInt.editUserShownInfo(currentUser.getUserId(), newDisplayName, newStatus,
-                            newPicPath, newBio);
+                String newPicPath = currentUser.getProfilePicturePath();
+                String newDisplayName = nameTextField.getText();
+                String newBio = bioTextField.getText();
+                User.Status newStatus = statusComboBox.getValue();
 
-                    if (!isUpdated) {
-                        System.out.println("Failed to update user information.");
-                        return;
-                    }
+                boolean isUpdated = userInt.editUserShownInfo(currentUser.getUserId(), newDisplayName, newStatus,
+                        newPicPath, newBio);
 
-                    currentUser.setDisplayName(newDisplayName);
-                    currentUser.setStatus(newStatus);
-                    currentUser.setBio(newBio);
+                if (!isUpdated) {
+                    System.out.println("Failed to update user information.");
+                    return;
+                }
 
-                    if (homeScreenController != null) {
-                        homeScreenController.setCurrentUser(currentUser);
-                        homeScreenController.updateUI();
-                    }
+                currentUser.setDisplayName(newDisplayName);
+                currentUser.setStatus(newStatus);
+                currentUser.setBio(newBio);
 
-                    Stage stage = (Stage) applyButton.getScene().getWindow();
-                    stage.close();
-             
-            }
-            else 
-            {
+                if (homeScreenController != null) {
+                    homeScreenController.setCurrentUser(currentUser);
+                    homeScreenController.updateUI();
+                }
+
+                Stage stage = (Stage) applyButton.getScene().getWindow();
+                stage.close();
+
+            } else {
                 System.out.println("server is off");
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ServerUnavailable.fxml"));
-        
+
                 Parent root = loader.load();
                 ServerUnavailableController serverUnavailableController = loader.getController();
                 serverUnavailableController.setAdminInt(ClientMain.adminInt);
                 serverUnavailableController.setUserInt(ClientMain.userInt);
                 serverUnavailableController.setCurrentUser(currentUser);
-    
+
                 Stage stage = homeScreenController.getStage();
-                Stage editWindowStage = (Stage)  applyButton.getScene().getWindow();
+                Stage editWindowStage = (Stage) applyButton.getScene().getWindow();
 
 
-                  editWindowStage.close();
-            
-    
+                editWindowStage.close();
+
+
                 // Set the scene with the admin login page
                 Scene scene = new Scene(root);
                 stage.setScene(scene);
-             
+
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -286,5 +246,4 @@ public class EditWindowController {
     }
 
 
-    
 }

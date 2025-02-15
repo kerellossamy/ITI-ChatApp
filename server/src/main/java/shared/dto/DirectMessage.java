@@ -3,38 +3,39 @@ package shared.dto;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class DirectMessage  extends BaseMessage implements Serializable {
-        private Integer messageId;
-        private Integer senderId;
-        private Integer receiverId;
-        private String messageContent;
-        private String fontStyle;
-        private String fontColor;
-        private String textBackground;
-        private Integer fontSize;
-        private Boolean isBold;
-        private Boolean isItalic;
-        private Boolean isUnderlined;
-        private Timestamp timestamp;
+public class DirectMessage extends BaseMessage implements Serializable {
+    private Integer messageId;
+    private Integer senderId;
+    private Integer receiverId;
+    private String messageContent;
+    private String fontStyle;
+    private String fontColor;
+    private String textBackground;
+    private Integer fontSize;
+    private Boolean isBold;
+    private Boolean isItalic;
+    private Boolean isUnderlined;
+    private Timestamp timestamp;
 
-        public DirectMessage() {}
+    public DirectMessage() {
+    }
 
-        public DirectMessage(Integer messageId, Integer senderId, Integer receiverId, String messageContent,
-                             String fontStyle, String fontColor, String textBackground, Integer fontSize,
-                             Boolean isBold, Boolean isItalic, Boolean isUnderlined, Timestamp timestamp) {
-            this.messageId = messageId;
-            this.senderId = senderId;
-            this.receiverId = receiverId;
-            this.messageContent = messageContent;
-            this.fontStyle = fontStyle;
-            this.fontColor = fontColor;
-            this.textBackground = textBackground;
-            this.fontSize = fontSize;
-            this.isBold = isBold;
-            this.isItalic = isItalic;
-            this.isUnderlined = isUnderlined;
-            this.timestamp = timestamp;
-        }
+    public DirectMessage(Integer messageId, Integer senderId, Integer receiverId, String messageContent,
+                         String fontStyle, String fontColor, String textBackground, Integer fontSize,
+                         Boolean isBold, Boolean isItalic, Boolean isUnderlined, Timestamp timestamp) {
+        this.messageId = messageId;
+        this.senderId = senderId;
+        this.receiverId = receiverId;
+        this.messageContent = messageContent;
+        this.fontStyle = fontStyle;
+        this.fontColor = fontColor;
+        this.textBackground = textBackground;
+        this.fontSize = fontSize;
+        this.isBold = isBold;
+        this.isItalic = isItalic;
+        this.isUnderlined = isUnderlined;
+        this.timestamp = timestamp;
+    }
 
     public Integer getMessageId() {
         return messageId;
@@ -133,28 +134,28 @@ public class DirectMessage  extends BaseMessage implements Serializable {
     }
 
     @Override
-        public String toString() {
-            return "DirectMessage{" +
-                    "messageId=" + messageId +
-                    ", senderId=" + senderId +
-                    ", receiverId=" + receiverId +
-                    ", messageContent='" + messageContent + '\'' +
-                    ", fontStyle='" + fontStyle + '\'' +
-                    ", fontColor='" + fontColor + '\'' +
-                    ", textBackground='" + textBackground + '\'' +
-                    ", fontSize=" + fontSize +
-                    ", isBold=" + isBold +
-                    ", isItalic=" + isItalic +
-                    ", isUnderlined=" + isUnderlined +
-                    ", timestamp=" + timestamp +
-                    '}';
-        }
+    public String toString() {
+        return "DirectMessage{" +
+                "messageId=" + messageId +
+                ", senderId=" + senderId +
+                ", receiverId=" + receiverId +
+                ", messageContent='" + messageContent + '\'' +
+                ", fontStyle='" + fontStyle + '\'' +
+                ", fontColor='" + fontColor + '\'' +
+                ", textBackground='" + textBackground + '\'' +
+                ", fontSize=" + fontSize +
+                ", isBold=" + isBold +
+                ", isItalic=" + isItalic +
+                ", isUnderlined=" + isUnderlined +
+                ", timestamp=" + timestamp +
+                '}';
+    }
 
 
     @Override
     public String getSenderName2() {
 
-        return"DM";
+        return "DM";
     }
 
     @Override
@@ -173,11 +174,5 @@ public class DirectMessage  extends BaseMessage implements Serializable {
     }
 
 
-
-
-
-
-
-
-    }
+}
 

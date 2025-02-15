@@ -28,11 +28,6 @@ import shared.dto.Card;
 import shared.interfaces.AdminInt;
 import shared.interfaces.UserInt;
 
-/**
- * FXML Controller class
- *
- * @author Nadam_2kg0od8
- */
 public class CardController implements Initializable {
     private UserInt userInt;
     private AdminInt adminInt;
@@ -75,9 +70,6 @@ public class CardController implements Initializable {
         this.adminInt = adminInt;
     }
 
-    /**
-     * Initializes the controller class.
-     */
 
     private ImageView SetImage(String imagePath) {
         ImageView imageView = new ImageView();
@@ -96,7 +88,6 @@ public class CardController implements Initializable {
                         System.out.println("Error: File does not exist or cannot be read.");
                     }
                 } else {
-                    //System.out.println(profilePicturePath);
                     profileImage = new Image(getClass().getResource(profilePicturePath).toExternalForm());
                     imageView.setImage(profileImage);
                 }
@@ -111,7 +102,7 @@ public class CardController implements Initializable {
 
     private String extractPlainText(String html) {
         if (html == null) {
-            return ""; // or handle the null case appropriately
+            return "";
         }
         Document doc = Jsoup.parse(html);
         return doc.text();

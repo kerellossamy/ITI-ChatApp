@@ -22,22 +22,20 @@ public class FriendProfileController implements Initializable {
     @FXML
     private Text friendProfileBio;
 
-    @FXML 
+    @FXML
     public void initialize() {
 
         friendProfileImage.setFill(new ImagePattern(new Image(getClass().getResourceAsStream("/img/accept.png"))));
     }
 
 
-    public void setInfo(Image image , String name , String phone , String bio)
-    {  
-        
-        friendProfileImage.setFill(new ImagePattern(image) );
+    public void setInfo(Image image, String name, String phone, String bio) {
+
+        friendProfileImage.setFill(new ImagePattern(image));
         friendProfileName.setText(name);
         friendProfilePhone.setText(phone);
         friendProfileBio.setText(bio);
     }
-
 
 
     @Override

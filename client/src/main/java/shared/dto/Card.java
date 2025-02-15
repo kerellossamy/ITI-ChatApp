@@ -12,8 +12,9 @@ public class Card implements Serializable {
     private Timestamp timestamp;
     private User.Status status;
     private String imagePath;
-    public enum Type{
-        user , group , announcement
+
+    public enum Type {
+        user, group, announcement
 
     }
 
@@ -27,8 +28,7 @@ public class Card implements Serializable {
         this.imagePath = imagePath;
     }
 
-    public Card()
-    {
+    public Card() {
 
     }
 
@@ -68,7 +68,7 @@ public class Card implements Serializable {
         return status;
     }
 
-    public String  getImagePath() {
+    public String getImagePath() {
         return imagePath;
     }
 

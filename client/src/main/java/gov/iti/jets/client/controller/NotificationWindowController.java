@@ -26,9 +26,6 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.*;
 
-//io
-
-//stage
 
 public class NotificationWindowController {
 
@@ -46,7 +43,7 @@ public class NotificationWindowController {
     }
 
     public void setCurrentUser(User currentUser) {
-      
+
         this.currentUser = currentUser;
     }
 
@@ -64,9 +61,6 @@ public class NotificationWindowController {
     @FXML
     private VBox vBox;
 
-    
-
-   
 
     @FXML
     public void initialize() {
@@ -78,7 +72,7 @@ public class NotificationWindowController {
             pane.getStylesheets().add(getClass().getResource("/cssStyles/InvitationList.css").toExternalForm());
 
             vBox.setSpacing(2);
-        
+
 
             try {
                 registry = LocateRegistry.getRegistry("localhost", 8554);
@@ -97,11 +91,11 @@ public class NotificationWindowController {
                 e.printStackTrace();
             }
             Collections.reverse(invitationsList);
-           
+
 
             for (Invitation invitation : invitationsList) {
                 try {
-                     User user=userInt.getUserById(invitation.getSenderId());
+                    User user = userInt.getUserById(invitation.getSenderId());
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/NotificationCard.fxml"));
                     Parent card = loader.load();
 
@@ -110,7 +104,7 @@ public class NotificationWindowController {
                     notificationCardController.setUserInt(ClientMain.userInt);
                     notificationCardController.setCurrentUser(currentUser);
                     notificationCardController.setNotificationData(invitation);
-                   // notificationCardController.setNotificationController(this);
+                    // notificationCardController.setNotificationController(this);
                     notificationCardController.setHomeScreenController(homeScreenController);
                     System.out.println("hello");
                     vBox.getChildren().add(card);
@@ -119,30 +113,20 @@ public class NotificationWindowController {
                     e.printStackTrace();
                 }
             }
-            
+
 
         });
-      //  c = ClientImpl.getInstance();
-       // c.NotificationWindowController(this);
 
     }
-
 
 
     public void updateUI(HBox clearedHbox) {
         Platform.runLater(() -> {
-            vBox.getChildren().remove(clearedHbox); 
-        
+            vBox.getChildren().remove(clearedHbox);
+
         });
-      
 
 
     }
-
-    // @Override
-    // public void initialize(URL url, ResourceBundle resourceBundle) {
-    // c= ClientImpl.getInstance();
-    // c.setInvitationListWindowController(this);
-    // }
 
 }

@@ -21,11 +21,9 @@ public class ClientMain extends Application {
 
     static {
         try {
-//            Registry registry = LocateRegistry.getRegistry("10.145.19.35", 8554);
-//            System.setProperty("java.rmi.server.useCompression", "true");
 
-          Registry registry = LocateRegistry.getRegistry("127.0.0.1", 8554);
-//            Registry registry = LocateRegistry.getRegistry(8554);
+
+            Registry registry = LocateRegistry.getRegistry("127.0.0.1", 8554);
             userInt = (UserInt) registry.lookup("UserServices");
             adminInt = (AdminInt) registry.lookup("AdminServices");
             System.out.println("Connected to RMI Server!");
@@ -33,31 +31,30 @@ public class ClientMain extends Application {
             e.printStackTrace();
         }
     }
+
     @Override
     public void start(Stage stage) {
-
-
 
 
         Parent root = null;
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/UserLoginPage.fxml"));
 
-           // FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ServerUnavailable.fxml"));
-        
-              
+            // FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ServerUnavailable.fxml"));
+
+
             root = loader.load();
-             UserLoginController userLoginController = loader.getController();
+            UserLoginController userLoginController = loader.getController();
 
             if (userLoginController == null) {
                 System.out.println("Controller is NULL! Check FXML setup.");
             } else {
                 userLoginController.setUserInt(userInt);
                 userLoginController.setAdminInt(adminInt);
-                
+
             }
-                
-                
+
+
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Could not load the UserLoginPage.fxml file.");
@@ -77,11 +74,8 @@ public class ClientMain extends Application {
         launch(args);
     }
 
-  
-    
+
 }
-
-
 
 
 //package gov.iti.jets.client.controller;

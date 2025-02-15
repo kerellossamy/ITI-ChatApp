@@ -138,7 +138,7 @@ public class GroupMessage extends BaseMessage implements Serializable {
 
     @Override
     public String getSenderName2() {
-        return"GM";
+        return "GM";
     }
 
     @Override

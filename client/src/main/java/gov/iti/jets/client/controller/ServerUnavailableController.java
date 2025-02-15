@@ -29,9 +29,11 @@ import java.util.ResourceBundle;
 
 public class ServerUnavailableController {
 
-   public static void main(String[] args) {
-    
-   } enum Window {
+    public static void main(String[] args) {
+
+    }
+
+    enum Window {
         HOME_PAGE,
         LOGIN_PAGE,
         SIGNUP_PAGE
@@ -59,9 +61,8 @@ public class ServerUnavailableController {
         this.adminInt = adminInt;
     }
 
-    public void setNavigatedWindow(Window window)
-    {
-        navigatedWindow=window;
+    public void setNavigatedWindow(Window window) {
+        navigatedWindow = window;
     }
 
     @FXML
@@ -103,15 +104,14 @@ public class ServerUnavailableController {
                     stage.setScene(scene);
                     stage.setWidth(width);
                     stage.setHeight(height);
-                }
-               else if (navigatedWindow == Window.SIGNUP_PAGE) {
+                } else if (navigatedWindow == Window.SIGNUP_PAGE) {
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/UserSignupPage.fxml"));
                     Parent homeRoot = loader.load();
                     UserSignupController userSignupController = loader.getController();
                     userSignupController.setUserInt(ClientMain.userInt);
                     userSignupController.setAdminInt(ClientMain.adminInt);
-                  
-                 
+
+
                     // Get the current stage
                     Stage stage = (Stage) reconnetcButton.getScene().getWindow();
                     double width = stage.getWidth();
@@ -123,23 +123,19 @@ public class ServerUnavailableController {
                     stage.setScene(scene);
                     stage.setWidth(width);
                     stage.setHeight(height);
-                }
-
-                else if (navigatedWindow == Window.LOGIN_PAGE) {
+                } else if (navigatedWindow == Window.LOGIN_PAGE) {
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/UserLoginPage.fxml"));
                     Parent homeRoot = loader.load();
                     UserLoginController userLoginController = loader.getController();
                     userLoginController.setUserInt(ClientMain.userInt);
-                    userLoginController .setAdminInt(ClientMain.adminInt);
+                    userLoginController.setAdminInt(ClientMain.adminInt);
 
 
-                  
-    
                     // Get the current stage
                     Stage stage = (Stage) reconnetcButton.getScene().getWindow();
                     double width = stage.getWidth();
                     double height = stage.getHeight();
-    
+
                     // Set the scene with the admin login page
                     Scene scene = new Scene(homeRoot);
                     scene.getStylesheets().add(getClass().getResource("/cssStyles/message.css").toExternalForm());
@@ -147,14 +143,10 @@ public class ServerUnavailableController {
                     stage.setWidth(width);
                     stage.setHeight(height);
                 }
-    
 
-                // Set the scene with the signup page
             }
-      
-            // Set the scene with the signup page
-        }
-         catch (Exception e) {
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

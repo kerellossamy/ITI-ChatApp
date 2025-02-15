@@ -77,7 +77,6 @@ public class HomeScreenController implements Initializable {
     List<Card> listOfContactCards;
     private ObservableList<Card> cardObservableList = javafx.collections.FXCollections.observableArrayList();
     static User currentUser = null;
-    //***************chat
     String Target_Type;
     int Target_ID;
 
@@ -284,11 +283,7 @@ public class HomeScreenController implements Initializable {
                                         @Override
                                         public void run() {
 
-//                                try {
-//                                  Thread.sleep(60000);
-//                                } catch (InterruptedException e) {
-//                                    e.printStackTrace();
-//                                }
+
                                             String messageContent = htmlString.replaceAll("\\<.*?\\>", "").trim();
                                             String response = ChatbotService.getChatbotResponse(messageContent);
                                             String htmlResponse = "<html dir=\"ltr\"><head></head><body contenteditable=\"true\"><p><span style=\"font-family: &quot;&quot;;\">" + response + "</span></p></body></html>";
@@ -456,7 +451,6 @@ public class HomeScreenController implements Initializable {
 
 
         userNameText.setText(currentUser.getDisplayName());
-//            userProfileImage.setImage(new Image(getClass().getResource(currentUser.getProfilePicturePath()).toExternalForm()));
 
         String profilePicturePath = imagePath;
         if (profilePicturePath != null && !profilePicturePath.isEmpty()) {
@@ -473,7 +467,6 @@ public class HomeScreenController implements Initializable {
                         System.out.println("Error: File does not exist or cannot be read.");
                     }
                 } else {
-                    // System.out.println(profilePicturePath);
                     profileImage = new Image(getClass().getResource(profilePicturePath).toExternalForm());
                     imageView.setImage(profileImage);
                 }
@@ -489,10 +482,6 @@ public class HomeScreenController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-//        System.out.println("currentUser is: " + currentUser);
-
-
-
 
         Image defaultImage = new Image(getClass().getResourceAsStream("/img/tawasolLogoBlue.png"));
         defaultPhoto.setImage(defaultImage);
@@ -531,10 +520,8 @@ public class HomeScreenController implements Initializable {
                 }
             });
 
-            //register the client in the online list
 
             c = ClientImpl.getInstance();
-            // c.setHomeScreenController(this);
             c.homeScreenController = this;
             c.setPhoneNumber(currentUser.getPhoneNumber());
             try {
@@ -574,12 +561,9 @@ public class HomeScreenController implements Initializable {
 
 
             userNameText.setText(currentUser.getDisplayName());
-//            userProfileImage.setImage(new Image(getClass().getResource(currentUser.getProfilePicturePath()).toExternalForm()));
 
             ImageView imageView = SetImage(currentUser.getProfilePicturePath());
             userProfileImage.setFill(new ImagePattern(imageView.getImage()));
-            //(imageView.getImage());
-//            userProfileImage = SetImage(currentUser.getProfilePicturePath().toString());
 
         });
         Platform.runLater(new Runnable() {
@@ -610,29 +594,6 @@ public class HomeScreenController implements Initializable {
             }
         });
 
-
-//        try {
-//            List<Card> cards= userInt.getCards(HomeScreenController.currentUser);
-//            //populateChatListView("group", 1);
-//            //userInt.getUserConncectionById(1);
-//
-//
-//            //fullListView(ContactList);
-//            ///populateCard(cardObservableList);
-//            cardObservableList.setAll(cards);
-//            ContactList.setItems(cardObservableList);
-//
-//        } catch (RemoteException e) {
-//            //throw new RuntimeException(e);
-//            e.printStackTrace();
-//        }
-        //ContactList.getSelectionModel().selectFirst();
-        //ContactList.getSelectionModel().
-        //System.out.println(ContactList.isMouseTransparent());
-
-//        c = ClientImpl.getInstance();
-//        c.setHomeScreenController(this);
-
         //*******************************************Cardlistview************************************************
 
         ContactList.setCellFactory((param) -> {
@@ -648,8 +609,6 @@ public class HomeScreenController implements Initializable {
                                 Node n = Cardloader.load(); // must load before getController
                                 CardController card = Cardloader.getController();
                                 card.setCard(item);
-                                //System.out.println("name :" + card.getName());
-                                //System.out.println("Message :" + card.getMessage());
                                 setGraphic(n);
 
                             } catch (IOException ex) {
@@ -657,7 +616,6 @@ public class HomeScreenController implements Initializable {
                             }
                         }
                     } else {
-                        // System.out.println("empty");
                         setGraphic(null);
                     }
                 }
@@ -716,13 +674,6 @@ public class HomeScreenController implements Initializable {
                     }
 
 
-                    // If sender is not 1, prepend (senderName): to message content
-                    //String displayMessage = (msg.getSenderID2() != currentUser.getUserId() ? senderName+" : " : "") + msg.getMessageContent2();
-                    //Text messageText = new Text(displayMessage);
-
-                    // Extract plain text from HTML for storage
-                    //String plainText = extractPlainText(msg.getMessageContent2());
-
                     Text username = new Text();
                     if (msg.getSenderID2() != currentUser.getUserId()) {
                         try {
@@ -742,9 +693,6 @@ public class HomeScreenController implements Initializable {
                     if (!Target_Type.equals("announcement")) {
                         //File Transfer handling
                         if (msg instanceof FileTransfer) {
-
-//                            System.out.println("FileTransfer message detected. File name: " + fileMsg.getFileName());
-
                             FileTransfer cellFileMsg = (FileTransfer) msg;
 
                             // Create a horizontal box for the file message
@@ -757,7 +705,6 @@ public class HomeScreenController implements Initializable {
 
                             // Display the file name
                             Label fileNameLabel = new Label(cellFileMsg.getFileName());
-                            //fileNameLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: blue;");
 
                             // Create a download button
                             Button viewButton = new Button("View");
@@ -833,95 +780,6 @@ public class HomeScreenController implements Initializable {
         return doc.text();
     }
 
-//    private TextFlow createStyledTextFlow(String html) {
-//        Document doc = Jsoup.parse(html);
-//        TextFlow textFlow = new TextFlow();
-//
-//        for (Element element : doc.select("body *")) { // Select all elements inside <body>
-//            String textContent = element.ownText();
-//            if (!textContent.isEmpty()) {
-//                Text textNode = new Text(textContent);
-//
-//                // Extract styles from the 'style' attribute
-//                String style = element.attr("style");
-//
-//                if (style.contains("font-weight: bold")) {
-//                    textNode.setStyle("-fx-font-weight: bold;");
-//                }
-//                if (style.contains("font-style: italic")) {
-//                    textNode.setStyle(textNode.getStyle() + "-fx-font-style: italic;");
-//                }
-//                if (style.contains("text-decoration: underline")) {
-//                    textNode.setStyle(textNode.getStyle() + "-fx-underline: true;");
-//                }
-//
-//                // Extract background color
-//                if (style.contains("background-color:")) {
-//                    String bgColor = extractStyleValue(style, "background-color");
-//                    textNode.setStyle(textNode.getStyle() + "-fx-background-color: " + bgColor + ";");
-//                }
-//
-//                // Extract font family
-//                if (style.contains("font-family:")) {
-//                    String fontFamily = extractStyleValue(style, "font-family");
-//                    textNode.setStyle(textNode.getStyle() + "-fx-font-family: " + fontFamily + ";");
-//                }
-//
-//                textFlow.getChildren().add(textNode);
-//            }
-//        }
-//        return textFlow;
-//    }
-//
-//    private String extractStyleValue(String style, String property) {
-//        int startIndex = style.indexOf(property);
-//        if (startIndex == -1) return "";
-//        startIndex += property.length() + 2; // Skip property name and colon
-//        int endIndex = style.indexOf(";", startIndex);
-//        return (endIndex == -1) ? style.substring(startIndex) : style.substring(startIndex, endIndex);
-//    }
-
-
-    //using wrapper
-//    private TextFlow createStyledTextFlow(String html) {
-//        Document doc = Jsoup.parse(html);
-//        TextFlow textFlow = new TextFlow();
-//
-//        for (Element element : doc.select("body *")) {
-//            String textContent = element.ownText();
-//            if (!textContent.isEmpty()) {
-//                Text textNode = new Text(textContent);
-//                Label wrapper = new Label(); // Wrapper for background color
-//
-//                // Extract styles from the 'style' attribute
-//                String style = element.attr("style");
-//                StringBuilder fxStyle = new StringBuilder();
-//
-//                // Apply text styles
-//                if (style.contains("font-weight: bold")) fxStyle.append("-fx-font-weight: bold;");
-//                if (style.contains("font-style: italic")) fxStyle.append("-fx-font-style: italic;");
-//                if (style.contains("text-decoration: underline")) textNode.setUnderline(true);
-//                if (style.contains("font-size:")) fxStyle.append("-fx-font-size: ").append(extractStyleValue(style, "font-size")).append(";");
-//                if (style.contains("color:")) fxStyle.append("-fx-fill: ").append(extractStyleValue(style, "color")).append(";");
-//
-//                // Apply styles to text
-//                textNode.setStyle(fxStyle.toString());
-//
-//                // Handle background color dynamically
-//                if (style.contains("background-color:")) {
-//                    String bgColor = extractStyleValue(style, "background-color");
-//                    wrapper.setStyle("-fx-background-color: " + bgColor + "; -fx-padding: 2px; -fx-border-radius: 3px;");
-//                }
-//
-//                wrapper.setGraphic(textNode); // Place Text inside Label
-//                textFlow.getChildren().add(wrapper); // Add wrapped text to TextFlow
-//            }
-//        }
-//        return textFlow;
-//    }
-//
-
-    //*********************** the best version *******************************
     private TextFlow createStyledTextFlow(String html) {
         Document doc = Jsoup.parse(html);
         TextFlow textFlow = new TextFlow();
@@ -990,9 +848,7 @@ public class HomeScreenController implements Initializable {
         return textFlow;
     }
 
-    /**
-     * Extracts a specific style property from an inline CSS string.
-     */
+
     private String extractStyleValue(String style, String property) {
         int startIndex = style.indexOf(property);
         if (startIndex == -1) return "";
@@ -1000,98 +856,6 @@ public class HomeScreenController implements Initializable {
         int endIndex = style.indexOf(";", startIndex);
         return (endIndex == -1) ? style.substring(startIndex).trim() : style.substring(startIndex, endIndex).trim();
     }
-
-
-    //dynamic and seperate the two words
-//    private TextFlow createStyledTextFlow(String html) {
-//        Document doc = Jsoup.parse(html);
-//        TextFlow textFlow = new TextFlow();
-//        // Ensure the container is transparent so any parent's background shows through.
-//        textFlow.setStyle("-fx-background-color: transparent;");
-//
-//        // Iterate over all elements inside the <body>
-//        for (Element element : doc.select("body *")) {
-//            String textContent = element.ownText();
-//            if (!textContent.isEmpty()) {
-//                String style = element.attr("style");
-//                boolean hasBg = style.contains("background-color:");
-//                // Default text color is black
-//                String fontColor = "black";
-//                if (style.contains("color:")) {
-//                    fontColor = extractStyleValue(style, "color");
-//                }
-//
-//                // Build a style string for font-related properties
-//                StringBuilder inlineStyle = new StringBuilder();
-//                if (style.contains("font-weight: bold")) {
-//                    inlineStyle.append("-fx-font-weight: bold;");
-//                }
-//                if (style.contains("font-style: italic")) {
-//                    inlineStyle.append("-fx-font-style: italic;");
-//                }
-//                if (style.contains("font-size:")) {
-//                    String fontSize = extractStyleValue(style, "font-size");
-//                    // (Assume the value is something like "36pt" or "24pt". If in pt, you may want to convert it.)
-//                    inlineStyle.append("-fx-font-size: ").append(fontSize).append(";");
-//                }
-//                if (style.contains("font-family:")) {
-//                    String fontFamily = extractStyleValue(style, "font-family");
-//                    inlineStyle.append("-fx-font-family: ").append(fontFamily).append(";");
-//                }
-//                // Note: Underline and strikethrough we apply via the Text node properties.
-//                boolean underline = false;
-//                boolean strikethrough = false;
-//                if (style.contains("text-decoration:")) {
-//                    String textDecoration = extractStyleValue(style, "text-decoration");
-//                    if (textDecoration.contains("underline")) {
-//                        underline = true;
-//                    }
-//                    if (textDecoration.contains("line-through")) {
-//                        strikethrough = true;
-//                    }
-//                }
-//
-//                // If no font color was specified, default to black.
-//                inlineStyle.append("-fx-fill: ").append(fontColor).append(";");
-//
-//                if (hasBg) {
-//                    // If a background color exists, extract it:
-//                    String bgColor = extractStyleValue(style, "background-color");
-//                    // Create a Label so that background color works properly.
-//                    Label labelWrapper = new Label(textContent);
-//                    // Set the Label's text-fill to the chosen font color
-//                    labelWrapper.setTextFill(Color.web(fontColor));
-//                    // Apply the font styles that we built (note that Label does not support underline or strikethrough)
-//                    labelWrapper.setStyle(
-//                            inlineStyle.toString() +
-//                                    " -fx-background-color: " + bgColor + ";" +
-//                                    " -fx-padding: 2px 5px;"  // some padding for legibility
-//                    );
-//                    // Optionally, you can force the label to size to its content:
-//                    labelWrapper.setMinWidth(Region.USE_PREF_SIZE);
-//                    labelWrapper.setMaxWidth(Region.USE_PREF_SIZE);
-//                    // Add the label to the TextFlow
-//                    textFlow.getChildren().add(labelWrapper);
-//                } else {
-//                    // No background color—use a Text node so we can show underline and strikethrough
-//                    Text textNode = new Text(textContent);
-//                    textNode.setStyle(inlineStyle.toString());
-//                    textNode.setUnderline(underline);
-//                    textNode.setStrikethrough(strikethrough);
-//                    textFlow.getChildren().add(textNode);
-//                }
-//            }
-//        }
-//        return textFlow;
-//    }
-
-//    private String extractStyleValue(String style, String property) {
-//        int startIndex = style.indexOf(property);
-//        if (startIndex == -1) return "";
-//        startIndex += property.length() + 2; // Skip property name and colon (and space)
-//        int endIndex = style.indexOf(";", startIndex);
-//        return (endIndex == -1) ? style.substring(startIndex).trim() : style.substring(startIndex, endIndex).trim();
-//    }
 
 
     public void updateUI() {
@@ -1107,46 +871,6 @@ public class HomeScreenController implements Initializable {
         }
     }
 
-    /*void populateCard(ObservableList<HBox> cardObservableList) {
-        for (Card c : listOfContactCards) {
-            HBox card = new HBox();
-            Group g1 = new Group();
-            VBox v1 = new VBox();
-            VBox v2 = new VBox();
-
-            //ImageView imageView = new ImageView(new Image(getClass().getResourceAsStream("/img/girl.png")));
-            // File file = new File(c.getImagePath());
-
-            ImageView imageView = SetImage(c.getImagePath());
-
-            Circle status = new Circle();
-            //System.out.println("status : " + c.getStatus().toString().equals("AVAILABLE"));
-            if (c.getStatus().toString().equals("AVAILABLE"))
-                status.setFill(Color.valueOf(colorEnum.GREEN.getColor()));
-            else if (c.getStatus().toString().equals("BUSY"))
-                status.setFill(Color.valueOf(colorEnum.RED.getColor()));
-            else if (c.getStatus().toString().equals("AWAY"))
-                status.setFill(Color.valueOf(colorEnum.YELLOW.getColor()));
-            else
-                status.setFill(Color.valueOf(colorEnum.GRAY.getColor()));
-
-            g1.getChildren().addAll(imageView, status);
-
-            Text name = new Text(c.getSenderName());
-            Text message = new Text(extractPlainText(c.getMessageContent()));
-            v1.getChildren().addAll(name, message);
-            //System.out.println("time : " + c.getTimestamp().toString().substring(11 , 16));
-
-            String messageTime = c.getTimestamp().toString().substring(11, 16);
-            Text time = new Text(messageTime);
-            v2.getChildren().addAll(time);
-
-            card.getChildren().addAll(g1, v1, v2);
-
-            cardObservableList.add(card); // Add card to chatList
-        }
-    }
-    */
 
     void addCardtoListView(Card card, String phoneName) {
         try {
@@ -1179,46 +903,11 @@ public class HomeScreenController implements Initializable {
     }
 
 
-    /* public void fullListView(ListView<HBox> friendListView) {
-         friendListView.setCellFactory((param) -> {
-
-             ListCell<HBox> cell = new ListCell<>() {
-                 @Override
-                 protected void updateItem(HBox item, boolean empty) {
-                     super.updateItem(item, empty);
-                     if (!empty) {
-                         if (item != null) {
-                             try {
-                                 FXMLLoader Cardloader = new FXMLLoader(getClass().getResource("/fxml/Card.fxml"));
-                                 Node n = Cardloader.load(); // must load before getController
-                                 CardController card = Cardloader.getController();
-                                 card.setCard(item);
-                                 //System.out.println("name :" + card.getName());
-                                 //System.out.println("Message :" + card.getMessage());
-                                 setGraphic(n);
-
-                             } catch (IOException ex) {
-                                 Logger.getLogger(HomeScreenController.class.getName()).log(Level.SEVERE, null, ex);
-                             }
-                         }
-                     }
-                     else
-                     {
-                        // System.out.println("empty");
-                         return;
-                     }
-                 }
-             };
-             return cell;
-         });
-     }
- */
     public String GetCard(HBox item) {
 
         Group group1 = (Group) item.getChildren().get(0);
         ImageView image = (ImageView) group1.getChildren().get(0);
         Circle status = (Circle) group1.getChildren().get(1);
-        //new Image(getClass().getResourceAsStream("/images/user.png"))
 
         VBox vbox1 = (VBox) item.getChildren().get(1);
         Text name = (Text) vbox1.getChildren().get(0);
@@ -1240,7 +929,6 @@ public class HomeScreenController implements Initializable {
             System.out.println("I'm a null card");
         } else {
             System.out.println(" Name " + card.getSenderName() + " Type " + card.getType() + " id " + card.getId());
-            //System.out.println("image " + c.getImagePath());
             ImageView imageView = SetImage(card.getImagePath());
             friImage = imageView.getImage();
             friendImage.setFill(new ImagePattern(imageView.getImage()));
@@ -1395,7 +1083,6 @@ public class HomeScreenController implements Initializable {
             throw new RuntimeException(e);
         }
 
-        // Add your logic here
 
         try {
             // Load the UserLoginPage.fxml
@@ -1428,7 +1115,7 @@ public class HomeScreenController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/InvitationWindow.fxml"));
             Parent root = loader.load();
             if (ClientMain.userInt == null) {
-                System.out.println("nullllllllllllllllllllllllllllllllllllll");
+                System.out.println("null");
             }
             InvitationListWindowController invitationListWindowController = loader.getController();
             invitationListWindowController.setAdminInt(ClientMain.adminInt);
@@ -1497,7 +1184,7 @@ public class HomeScreenController implements Initializable {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/NotificationWindow.fxml"));
             Parent root = loader.load();
             if (ClientMain.userInt == null) {
-                System.out.println("nullllllllllllllllllllllllllllllllllllll");
+                System.out.println("null");
             }
             NotificationWindowController notificationWindowController = loader.getController();
             notificationWindowController.setAdminInt(ClientMain.adminInt);
@@ -1537,7 +1224,7 @@ public class HomeScreenController implements Initializable {
             chatbotWindowController.setCurrentUser(currentUser);
             chatbotWindowController.setHomeScreenController(this);
             if (root == null) {
-                System.out.println("nullllllllllllllllllllllllllllllllllllll");
+                System.out.println("null");
             }
 
             Stage chatBotStage = new Stage();
@@ -1649,23 +1336,7 @@ public class HomeScreenController implements Initializable {
                 }
             });
         }
-        
-        /* 
-        Platform.runLater(() -> {
-            if (Objects.equals(Target_Type, Type) && Target_ID == ID) {
-//            if (Target_Type.equals(Type) && Target_ID == ID) {
-                try {
-                    observableMessages.add(message);
-                    chatListView.refresh();
-                    chatListView.scrollTo(observableMessages.size());
-                    ContactList.refresh();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
 
-            }
-        });
-        */
     }
 
     public void refreshContactList(Card c) {
@@ -1682,219 +1353,11 @@ public class HomeScreenController implements Initializable {
         });
     }
 
-//    public void refreshContactListWithAnnouncement() {
-//        Platform.runLater(() -> {
-//            try {
-//                listOfContactCards.clear();
-//                listOfContactCards = userInt.getCards(HomeScreenController.currentUser);
-//                cardObservableList.clear();
-//                cardObservableList.addAll(listOfContactCards);
-//                ContactList.refresh();
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//
-//        });
-//    }
 
-
-//********************************************************************************************************************
-
-   /* public void fullListView(ListView<Friend> contListView , ScrollPane scrollPane)
-    {
-            /*   ChatListId.setCellFactory(param -> new ListCell<unitMessage>(){
-              @Override
-              protected void updateItem(unitMessage item, boolean empty) {
-                  super.updateItem(item, empty); 
-                  if(item != null && !empty)
-                  {
-                      ImageView imagee = new ImageView();
-                      Text text = new Text();
-                      text.setText(item.getText());
-                      imagee.setImage(item.getImage());
-                      imagee.setFitHeight(30);
-                      imagee.setFitWidth(33);
-                      setGraphic(new HBox(imagee ,text));
-                  }
-                  else
-                  {
-                      setGraphic(null);
-                  }
-              }
-
-          });
-        //ContactList
-       /* contListView.setCellFactory(param -> new ListCell<Friend>()
-        {
-            @Override
-                    protected void updateItem(Friend item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if(!empty && item != null)
-                    {
-                        Image image = new Image("@girl.png"); 
-                        FXMLLoader CardLoad = new FXMLLoader(getClass().getResource("Card.fxml"));
-                        CardController cardController = new CardController("nada" , "SA"  , 3 , "12:34PM" , image , Color.GREEN);
-                        CardLoad.setController(cardController);
-                        setGraphic(this);
-                    }
-                    else
-                    {
-                        setGraphic(null);
-                    }
-                }
-                
-                
-            };
-        }
-                    
-    }*/
-
-    // Method to get the Stage
     public Stage getStage() {
         return (Stage) groupbtn.getScene().getWindow();
     }
 
-
-//    @FXML
-//    private void handleAttachmentButton(ActionEvent event) {
-//        FileChooser fileChooser = new FileChooser();
-//        fileChooser.setTitle("Select File to Attach");
-//        fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-//
-//        fileChooser.getExtensionFilters().setAll(
-//                new FileChooser.ExtensionFilter("All Files", "*.*"),
-//                new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg", "*.gif"),
-//                new FileChooser.ExtensionFilter("Documents", "*.pdf", "*.doc", "*.docx", "*.txt"),
-//                new FileChooser.ExtensionFilter("Videos", "*.mp4", "*.avi", "*.mov", "*.mkv"),
-//                new FileChooser.ExtensionFilter("Audios", "*.mp3", "*.wav", "*.aac"));
-//
-//        File selectedFile = fileChooser.showOpenDialog(attachmentButton.getScene().getWindow());
-//        if (selectedFile != null) {
-//            new Thread(() -> {
-//                try {
-//                    // Retrieve file properties
-//                    String fileName = selectedFile.getName();
-//                    String fileType = Files.probeContentType(selectedFile.toPath());
-//
-//                    // Read the entire file into a byte array
-//                    byte[] fileData = Files.readAllBytes(selectedFile.toPath());
-//
-//                    // Call the RMI service to upload the file
-//                    UUID fileId;
-//                    if(Target_Type.equals("user")){
-//                        fileId = userInt.uploadFile(
-//                                currentUser.getUserId(),
-//                                Target_ID,
-//                                null,
-//                                fileName,
-//                                fileType,
-//                                fileData
-//                        );
-//                    }else if(Target_Type.equals("group")){
-//                        fileId = userInt.uploadFile(
-//                                currentUser.getUserId(),
-//                                null,
-//                                Target_ID,
-//                                fileName,
-//                                fileType,
-//                                fileData
-//                        );
-//                    } else {
-//                        fileId = null;
-//                    }
-//
-//
-//                    // Update the UI on the JavaFX Application Thread
-//                    Platform.runLater(() -> {
-//                        addFileMessageToUI(fileId, fileName);
-//                        showSuccessAlert("File uploaded successfully!");
-//                    });
-//                } catch (IOException e) {
-//                    Platform.runLater(() ->
-//                            showErrorAlert("Error reading file: " + e.getMessage()));
-//                }
-//            }).start();
-//        }
-//    }
-//
-//
-//    private void addFileMessageToUI(UUID fileId, String originalFileName) {
-//        VBox chatContainer = new VBox();
-//
-//        HBox fileMessage = new HBox(10);
-//        fileMessage.setStyle("-fx-background-color: #f0f0f0; -fx-padding: 10;");
-//        fileMessage.setAlignment(Pos.CENTER_LEFT);
-//
-//        ImageView icon = new ImageView(getFileIcon(originalFileName));
-//        icon.setFitWidth(32);
-//        icon.setFitHeight(32);
-//
-//        Label fileNameLabel = new Label(originalFileName);
-//        Button downloadButton = new Button("Download");
-//        downloadButton.setOnAction(e -> handleFileDownload(fileId));
-//
-//        fileMessage.getChildren().addAll(icon, fileNameLabel, downloadButton);
-//        chatContainer.getChildren().add(fileMessage);
-//    }
-//
-//
-//    private Image getFileIcon(String fileName) {
-//        String imagePath = "/icons/file.png"; // default icon
-//        if (fileName.toLowerCase().endsWith(".pdf")) {
-//            imagePath = "/icons/pdf.png";
-//        } else if (fileName.toLowerCase().matches(".*\\.(png|jpg|jpeg|gif)$")) {
-//            imagePath = "/icons/image.png";
-//        } else if (fileName.toLowerCase().matches(".*\\.(mp4|avi|mov|mkv)$")) {
-//            imagePath = "/icons/video.png";
-//        } else if (fileName.toLowerCase().matches(".*\\.(mp3|wav|aac)$")) {
-//            imagePath = "/icons/audio.png";
-//        }
-//        return new Image(getClass().getResourceAsStream(imagePath));
-//    }
-//
-//
-//    private void handleFileDownload(UUID fileId) {
-//        new Thread(() -> {
-//            try {
-//                // Call the RMI service to download the file (returns file bytes)
-//                byte[] fileData = userInt.downloadFile(fileId, currentUser.getUserId());
-//
-//                // Assume the server has a method to return the original file name.
-//                String originalFileName = userInt.getFileName(fileId);
-//
-//                // Create a Downloads directory in the user's home directory
-//                Path downloadDir = Paths.get(System.getProperty("user.home"), "Downloads");
-//                Files.createDirectories(downloadDir);
-//
-//                // Save the downloaded file using the original file name
-//                Path outputPath = downloadDir.resolve(originalFileName);
-//                Files.write(outputPath, fileData);
-//
-//                Platform.runLater(() -> {
-//                    showSuccessAlert("File saved to: " + outputPath);
-//                    try {
-//                        Desktop.getDesktop().open(outputPath.toFile());
-//                    } catch (IOException e) {
-//                        showErrorAlert("Couldn't open file automatically");
-//                    }
-//                });
-//            } catch (RemoteException e) {
-//                Platform.runLater(() -> showErrorAlert("Download failed: " + e.getMessage()));
-//            } catch (IOException e) {
-//                Platform.runLater(() -> showErrorAlert("File handling error: " + e.getMessage()));
-//            }
-//        }).start();
-//    }
-//
-//    // Dummy implementations of alert methods; replace these with your actual alert code.
-//    private void showSuccessAlert(String message) {
-//        System.out.println("SUCCESS: " + message);
-//    }
-//
-//    private void showErrorAlert(String message) {
-//        System.err.println("ERROR: " + message);
-//    }
-//
 
     @FXML
     private void handleAttachmentButton(ActionEvent event) {
@@ -1956,11 +1419,6 @@ public class HomeScreenController implements Initializable {
 
                     showSuccessAlert("File uploaded successfully!");
 
-                    // Update the UI on the JavaFX Application Thread
-//                    Platform.runLater(() -> {
-//                        //addFileMessageToUI(fileId, fileName);
-//                        showSuccessAlert("File uploaded successfully!");
-//                    });
                 } catch (Exception e) {
                     Platform.runLater(() ->
                             showErrorAlert("Error uploading file: " + e.getMessage()));
@@ -1970,25 +1428,6 @@ public class HomeScreenController implements Initializable {
         }
     }
 
-//    private void addFileMessageToUI(UUID fileId, String originalFileName) {
-//        VBox chatContainer = new VBox();
-//        HBox fileMessage = new HBox(10);
-//        fileMessage.setStyle("-fx-background-color: #f0f0f0; -fx-padding: 10;");
-//        fileMessage.setAlignment(Pos.CENTER_LEFT);
-//
-//        ImageView icon = new ImageView(getFileIcon(originalFileName));
-//        icon.setFitWidth(32);
-//        icon.setFitHeight(32);
-//
-//        Label fileNameLabel = new Label(originalFileName);
-//        Button downloadButton = new Button("Download");
-//        downloadButton.setOnAction(e -> handleFileDownload(fileId));
-//
-//        fileMessage.getChildren().addAll(icon, fileNameLabel, downloadButton);
-//        chatContainer.getChildren().add(fileMessage);
-//        Scene s = new Scene(chatContainer);
-//        getStage().setScene(s);
-//    }
 
     private Image getFileIcon(String fileName) {
         String imagePath = "/img/pdf.png"; // default icon

@@ -278,9 +278,7 @@ public class AdminSignupController {
 
         country.setItems(countries);
 
-        //---------------------------------------------------------------
 
-// Make the country ComboBox searchable
         FilteredList<String> filteredCountries = new FilteredList<>(countries, p -> true);
         country.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
 
@@ -345,7 +343,6 @@ public class AdminSignupController {
         String selectedCountry = country.getValue();
 
 
-        // Add your signup logic here
         LocalDate localDate = dateOfBirth.getValue();
         Date sqlDate = Date.valueOf(localDate);
         Admin newAdmin = null;
@@ -501,9 +498,4 @@ public class AdminSignupController {
         alert.setContentText(message);
         alert.showAndWait();
     }
-//    @Override
-//    public void initialize(URL url, ResourceBundle resourceBundle) {
-//        c= ClientImpl.getInstance();
-//        c.setAdminSignupController(this);
-//    }
 }

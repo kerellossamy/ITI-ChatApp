@@ -7,7 +7,8 @@ public class UserConnection implements Serializable {
     private Integer connectedUserId;
     private String relationship;
 
-    public UserConnection() {}
+    public UserConnection() {
+    }
 
     public UserConnection(Integer userId, Integer connectedUserId, String relationship) {
         this.userId = userId;

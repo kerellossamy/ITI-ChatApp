@@ -20,7 +20,7 @@ public class BlockContactsController implements Initializable {
         this.userInt = userInt;
     }
 
-    public  void setAdminInt(AdminInt adminInt) {
+    public void setAdminInt(AdminInt adminInt) {
         this.adminInt = adminInt;
     }
 
@@ -30,7 +30,7 @@ public class BlockContactsController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        c= ClientImpl.getInstance();
+        c = ClientImpl.getInstance();
         c.setBlockContactsController(this);
     }
 

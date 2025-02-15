@@ -26,9 +26,6 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.*;
 
-//io
-
-//stage
 
 public class InvitationListWindowController {
 
@@ -46,7 +43,7 @@ public class InvitationListWindowController {
     }
 
     public void setCurrentUser(User currentUser) {
-      
+
         this.currentUser = currentUser;
     }
 
@@ -64,9 +61,6 @@ public class InvitationListWindowController {
     @FXML
     private VBox vBox;
 
-    
-
-   
 
     @FXML
     public void initialize() {
@@ -95,11 +89,11 @@ public class InvitationListWindowController {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-           
+
 
             for (Invitation invitation : invitationsList) {
                 try {
-                    User user=userInt.getUserById(invitation.getSenderId());
+                    User user = userInt.getUserById(invitation.getSenderId());
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/InvitationListCard.fxml"));
                     Parent card = loader.load();
 
@@ -126,21 +120,14 @@ public class InvitationListWindowController {
     }
 
 
-
     public void updateUI(HBox clearedHbox) {
         Platform.runLater(() -> {
-            vBox.getChildren().remove(clearedHbox); 
-        
+            vBox.getChildren().remove(clearedHbox);
+
         });
-      
 
 
     }
 
-    // @Override
-    // public void initialize(URL url, ResourceBundle resourceBundle) {
-    // c= ClientImpl.getInstance();
-    // c.setInvitationListWindowController(this);
-    // }
 
 }

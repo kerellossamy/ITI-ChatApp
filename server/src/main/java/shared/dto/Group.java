@@ -9,9 +9,10 @@ public class Group implements Serializable {
     private int createdBy;
     private Timestamp createdWhen;
 
-    public Group() {}
+    public Group() {
+    }
 
-    public Group(int groupId, String groupName, int createdBy  ,Timestamp createdWhen) {
+    public Group(int groupId, String groupName, int createdBy, Timestamp createdWhen) {
         this.groupId = groupId;
         this.groupName = groupName;
         this.createdBy = createdBy;

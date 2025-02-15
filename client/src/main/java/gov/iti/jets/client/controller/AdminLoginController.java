@@ -24,8 +24,8 @@ import java.util.ResourceBundle;
 
 public class AdminLoginController {
 
-    private  UserInt userInt;
-    private  AdminInt adminInt;
+    private UserInt userInt;
+    private AdminInt adminInt;
     private Registry reg;
     ClientImpl c;
 
@@ -33,7 +33,7 @@ public class AdminLoginController {
         this.userInt = userInt;
     }
 
-    public  void setAdminInt(AdminInt adminInt) {
+    public void setAdminInt(AdminInt adminInt) {
         this.adminInt = adminInt;
     }
 
@@ -54,17 +54,16 @@ public class AdminLoginController {
 
         try {
 
-            reg = LocateRegistry.getRegistry("localhost" , 8554);
+            reg = LocateRegistry.getRegistry("localhost", 8554);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
 
         loginAsUserButton.setOnAction(event -> navigateToUserLogin());
         loginButton.setOnAction(event -> navigateToServerPage());
-        c= ClientImpl.getInstance();
+        c = ClientImpl.getInstance();
         c.setAdminLoginController(this);
     }
-
 
 
     private void navigateToUserLogin() {
@@ -80,24 +79,23 @@ public class AdminLoginController {
             // Get the current stage
             Stage stage = (Stage) loginAsUserButton.getScene().getWindow();
 
-           double width=stage.getWidth();
-           double height=stage.getHeight();
+            double width = stage.getWidth();
+            double height = stage.getHeight();
             // Set the scene with the user login page
             Scene scene = new Scene(userLoginRoot);
 
             stage.setScene(scene);
             stage.setWidth(width);
             stage.setHeight(height);
-          
-    
-            
+
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     private void navigateToServerPage() {
-        if(handleLogin()) {
+        if (handleLogin()) {
             try {
 
 
@@ -123,12 +121,10 @@ public class AdminLoginController {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
-        else 
-        {
-           
-                showErrorAlert("Login Error", "Incorrect username or password.");
-               
+        } else {
+
+            showErrorAlert("Login Error", "Incorrect username or password.");
+
         }
 
     }
@@ -139,13 +135,10 @@ public class AdminLoginController {
             //Look up the remote object
             adminInt = (AdminInt) reg.lookup("AdminServices");
 
-            if(adminInt.Login(username.getText().trim() , password.getText()))
-            {
-                
+            if (adminInt.Login(username.getText().trim(), password.getText())) {
+
                 return true;
-            }
-            else
-            {
+            } else {
                 System.out.println("user or password are not correct");
                 return false;
             }
@@ -157,7 +150,7 @@ public class AdminLoginController {
         return false;
     }
 
-        // Helper method to show an error alert
+    // Helper method to show an error alert
     private void showErrorAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
@@ -166,10 +159,4 @@ public class AdminLoginController {
         alert.showAndWait();
     }
 
-
-//    @Override
-//    public void initialize(URL url, ResourceBundle resourceBundle) {
-//        c= ClientImpl.getInstance();
-//        c.setAdminLoginController(this);
-//    }
 }

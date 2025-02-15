@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -29,7 +30,7 @@ public class ServerHomePageController implements Initializable {
         this.userInt = userInt;
     }
 
-    public  void setAdminInt(AdminInt adminInt) {
+    public void setAdminInt(AdminInt adminInt) {
         this.adminInt = adminInt;
     }
 
@@ -55,7 +56,7 @@ public class ServerHomePageController implements Initializable {
     private Button outbut;
 
     @FXML
-    private Button  registerAdminButton;
+    private Button registerAdminButton;
 
     @FXML
     void announcemethod(ActionEvent event) {
@@ -65,10 +66,10 @@ public class ServerHomePageController implements Initializable {
         serverstatbut.setStyle("-fx-background-color: #67BCFEF5;");
         outbut.setStyle("-fx-background-color: #67BCFEF5;");
         registerAdminButton.setStyle("-fx-background-color: #67BCFEF5;");
-        BorderPane borderPane=null;
+        BorderPane borderPane = null;
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/hello-view -Announcement.fxml"));
-             borderPane = loader.load();
+            borderPane = loader.load();
             AnnouncementController announcementController = loader.getController();
             announcementController.setAdminInt(ClientMain.adminInt);
             announcementController.setUserInt(ClientMain.userInt);
@@ -88,8 +89,7 @@ public class ServerHomePageController implements Initializable {
         outbut.setStyle("-fx-background-color: #479AC9;");
         registerAdminButton.setStyle("-fx-background-color: #67BCFEF5;");
 
-        try
-        {
+        try {
             // Load the UserSignupPage.fxml
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AdminLoginPage.fxml"));
             Parent logRoot = loader.load();
@@ -98,20 +98,15 @@ public class ServerHomePageController implements Initializable {
             // Get the current stage
             Stage stage = (Stage) outbut.getScene().getWindow();
 
-           double width=stage.getWidth();
-           double height=stage.getHeight();
+            double width = stage.getWidth();
+            double height = stage.getHeight();
 
             // Set the scene with the signup page
             Scene scene = new Scene(logRoot);
             stage.setScene(scene);
             stage.setWidth(width);
             stage.setHeight(height);
-
-            
-
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -125,9 +120,9 @@ public class ServerHomePageController implements Initializable {
         serverstatbut.setStyle("-fx-background-color: #479AC9;");
         outbut.setStyle("-fx-background-color: #67BCFEF5;");
         registerAdminButton.setStyle("-fx-background-color: #67BCFEF5;");
-        BorderPane borderPane=null;
+        BorderPane borderPane = null;
         try {
-            borderPane=FXMLLoader.load(getClass().getResource("/fxml/hello-view -serverstatus.fxml"));
+            borderPane = FXMLLoader.load(getClass().getResource("/fxml/hello-view -serverstatus.fxml"));
         } catch (IOException e) {
             System.out.println("failed to load it");
         }
@@ -137,15 +132,15 @@ public class ServerHomePageController implements Initializable {
     }
 
     @FXML
-    void statmethods(ActionEvent event)  {
+    void statmethods(ActionEvent event) {
         statbut.setStyle("-fx-background-color: #479AC9;");
         announcebut.setStyle("-fx-background-color: #67BCFEF5;");
         serverstatbut.setStyle("-fx-background-color: #67BCFEF5;");
         outbut.setStyle("-fx-background-color: #67BCFEF5;");
         registerAdminButton.setStyle("-fx-background-color: #67BCFEF5;");
-        BorderPane borderPane=null;
+        BorderPane borderPane = null;
         try {
-            borderPane=FXMLLoader.load(getClass().getResource("/fxml/hello-view - generalStatistics.fxml"));
+            borderPane = FXMLLoader.load(getClass().getResource("/fxml/hello-view - generalStatistics.fxml"));
         } catch (IOException e) {
             System.out.println("failed to load it");
         }
@@ -154,17 +149,17 @@ public class ServerHomePageController implements Initializable {
     }
 
     @FXML
-    void registerAdminMethod(ActionEvent event)  {
+    void registerAdminMethod(ActionEvent event) {
         statbut.setStyle("-fx-background-color: #67BCFEF5;");
         announcebut.setStyle("-fx-background-color: #67BCFEF5;");
         serverstatbut.setStyle("-fx-background-color: #67BCFEF5;");
         outbut.setStyle("-fx-background-color: #67BCFEF5;");
         registerAdminButton.setStyle("-fx-background-color: #479AC9;");
 
-        BorderPane borderPane=null;
+        BorderPane borderPane = null;
         try {
 
-            borderPane=FXMLLoader.load(getClass().getResource("/fxml/AdminSignupPage.fxml"));
+            borderPane = FXMLLoader.load(getClass().getResource("/fxml/AdminSignupPage.fxml"));
             AdminSignupController adminSignupController = new AdminSignupController();
             adminSignupController.setAdminInt(ClientMain.adminInt);
             adminSignupController.setUserInt(ClientMain.userInt);
@@ -175,18 +170,9 @@ public class ServerHomePageController implements Initializable {
         mainBorderpane.setCenter(borderPane);
     }
 
-//    @FXML
-//    void initialize() {
-//        assert statbut != null : "fx:id=\"statbut\" was not injected: check your FXML file 'hello-view.fxml'.";
-//        assert serverstatbut != null : "fx:id=\"serverstatbut\" was not injected: check your FXML file 'hello-view.fxml'.";
-//        assert announcebut != null : "fx:id=\"announcebut\" was not injected: check your FXML file 'hello-view.fxml'.";
-//        assert outbut != null : "fx:id=\"outbut\" was not injected: check your FXML file 'hello-view.fxml'.";
-//
-//    }
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        c= ClientImpl.getInstance();
+        c = ClientImpl.getInstance();
         c.setServerHomePageController(this);
     }
 }

@@ -8,14 +8,15 @@ public class Invitation implements Serializable {
     private Integer invitationId;
     private Integer senderId;
     private Integer receiverId;
-    private  Status status;
+    private Status status;
 
     public enum Status {
-       // PENDING, ACCEPTED, REJECTED, BLOCKED
-       pending, accepted, rejected,blocked
+        // PENDING, ACCEPTED, REJECTED, BLOCKED
+        pending, accepted, rejected, blocked
     }
 
-    public Invitation() {}
+    public Invitation() {
+    }
 
     public Invitation(Integer invitationId, Integer senderId, Integer receiverId, Status status) {
         this.invitationId = invitationId;

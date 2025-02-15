@@ -301,156 +301,139 @@ public class UserSignupController {
 
         try {
             if (adminInt.getServerStatus() == true) {
-        // Validate that all fields are filled
-        boolean isValid = validateFields();
+                // Validate that all fields are filled
+                boolean isValid = validateFields();
 
-        if (!isValid) {
-            showErrorAlert("Empty Fields", "All fields are required. Please fill out all fields.");
-            return;
-        }
+                if (!isValid) {
+                    showErrorAlert("Empty Fields", "All fields are required. Please fill out all fields.");
+                    return;
+                }
 
-        // Validate phone number (must contain only numbers)
-        if (!isValidPhoneNumber(phoneNumber.getText())) {
-            showErrorAlert("Invalid Phone Number", "Please enter a valid 11-digit phone number");
-            phoneNumber.setStyle("-fx-border-color: #dc3545; -fx-border-width: 2px;");
-            return;
-        } else {
-            phoneNumber.setStyle("");
-        }
+                // Validate phone number (must contain only numbers)
+                if (!isValidPhoneNumber(phoneNumber.getText())) {
+                    showErrorAlert("Invalid Phone Number", "Please enter a valid 11-digit phone number");
+                    phoneNumber.setStyle("-fx-border-color: #dc3545; -fx-border-width: 2px;");
+                    return;
+                } else {
+                    phoneNumber.setStyle("");
+                }
 
-        try {
-            if (isUsedPhoneNumber(phoneNumber.getText())) {
-                showErrorAlert("Phone Number", "The phone number already exists.");
-                phoneNumber.setStyle("-fx-border-color: #dc3545; -fx-border-width: 2px;");
-                return;
+                try {
+                    if (isUsedPhoneNumber(phoneNumber.getText())) {
+                        showErrorAlert("Phone Number", "The phone number already exists.");
+                        phoneNumber.setStyle("-fx-border-color: #dc3545; -fx-border-width: 2px;");
+                        return;
+                    } else {
+                        phoneNumber.setStyle("");
+                    }
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
+                }
+
+
+                // Validate email (must be in a valid format)
+                if (!isValidEmail(email.getText())) {
+                    showErrorAlert("Invalid Email", "Please enter a valid email address.");
+                    email.setStyle("-fx-border-color: #dc3545; -fx-border-width: 2px;");
+                    return;
+                } else {
+                    email.setStyle("");
+                }
+
+                try {
+                    if (isUsedEmail(email.getText())) {
+                        showErrorAlert("Email", "Email is already exists.");
+                        email.setStyle("-fx-border-color: #dc3545; -fx-border-width: 2px;");
+                        return;
+                    } else {
+                        phoneNumber.setStyle("");
+                    }
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
+                }
+
+
+                // Validate password and confirm password
+                if (!password.getText().equals(confirmPassword.getText())) {
+                    showErrorAlert("Password Mismatch", "The password and confirm password fields do not match.");
+                    return;
+                }
+
+                // If all fields are filled and passwords match, proceed with signup logic
+                String selectedGender = gender.getValue();
+                String selectedCountry = country.getValue();
+
+
+                User newUser = new User();
+                newUser.setLastSeen(Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES)));
+                newUser.setEmail(email.getText());
+                newUser.setBio("I am a new user");
+                newUser.setCountry(selectedCountry);
+                newUser.setDisplayName(firstName.getText() + " " + lastName.getText());
+                newUser.setGender(User.Gender.valueOf(selectedGender.toLowerCase()));
+                newUser.setPasswordHash(Hashing_UtilityClass.hashString(password.getText()));
+                newUser.setPhoneNumber(phoneNumber.getText());
+                newUser.setDateOfBirth(Date.valueOf(dateOfBirth.getValue()));
+                newUser.setStatus(User.Status.AVAILABLE);
+                newUser.setProfilePicturePath("/img/man.png");
+
+                try {
+                    userInt.addUsertoDB(newUser);
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
+                }
+                System.out.println("new User is created successfully!!!");
+                try {
+                    currentUser = userInt.isValidUser(phoneNumber.getText(), password.getText());
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
+                }
+
+                try {
+
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/homeScreen.fxml"));
+
+                    Parent signupRoot = loader.load();
+                    HomeScreenController homeScreenController = loader.getController();
+                    homeScreenController.setUserInt(ClientMain.userInt);
+                    homeScreenController.setAdminInt(ClientMain.adminInt);
+                    homeScreenController.setCurrentUser(currentUser);
+
+
+                    Stage stage = (Stage) button.getScene().getWindow();
+                    double width = stage.getWidth();
+                    double height = stage.getHeight();
+
+                    Scene scene = new Scene(signupRoot);
+                    stage.setScene(scene);
+                    stage.setWidth(width);
+                    stage.setHeight(height);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
             } else {
-                phoneNumber.setStyle("");
+                System.out.println("server is off");
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ServerUnavailable.fxml"));
+
+                Parent root = loader.load();
+                ServerUnavailableController serverUnavailableController = loader.getController();
+                serverUnavailableController.setAdminInt(ClientMain.adminInt);
+                serverUnavailableController.setUserInt(ClientMain.userInt);
+                serverUnavailableController.setCurrentUser(currentUser);
+                serverUnavailableController.setNavigatedWindow(gov.iti.jets.client.controller.ServerUnavailableController.Window.SIGNUP_PAGE);
+
+                Stage stage = this.getStage();
+
+                // Set the scene with the admin login page
+                Scene scene = new Scene(root);
+                stage.setScene(scene);
+
             }
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        }
-
-
-        // Validate email (must be in a valid format)
-        if (!isValidEmail(email.getText())) {
-            showErrorAlert("Invalid Email", "Please enter a valid email address.");
-            email.setStyle("-fx-border-color: #dc3545; -fx-border-width: 2px;");
-            return;
-        } else {
-            email.setStyle("");
-        }
-
-        try {
-            if (isUsedEmail(email.getText())) {
-                showErrorAlert("Email", "Email is already exists.");
-                email.setStyle("-fx-border-color: #dc3545; -fx-border-width: 2px;");
-                return;
-            } else {
-                phoneNumber.setStyle("");
-            }
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        }
-
-
-        // Validate password and confirm password
-        if (!password.getText().equals(confirmPassword.getText())) {
-            showErrorAlert("Password Mismatch", "The password and confirm password fields do not match.");
-            return;
-        }
-
-        // If all fields are filled and passwords match, proceed with signup logic
-        String selectedGender = gender.getValue();
-        String selectedCountry = country.getValue();
-
-
-//        // Print or process the selected values
-//        System.out.println("First Name: " + firstName.getText());
-//        System.out.println("Last Name: " + lastName.getText());
-//        System.out.println("Phone Number: " + phoneNumber.getText());
-//        System.out.println("Email: " + email.getText());
-//        System.out.println("Date of Birth: " + dateOfBirth.getValue());
-//        System.out.println("Selected Gender: " + selectedGender);
-//        System.out.println("Selected Country: " + selectedCountry);
-//        System.out.println("Password: " + password.getText());
-
-
-        User newUser = new User();
-        newUser.setLastSeen(Timestamp.valueOf(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES)));
-        newUser.setEmail(email.getText());
-        newUser.setBio("I am a new user");
-        newUser.setCountry(selectedCountry);
-        newUser.setDisplayName(firstName.getText() + " " + lastName.getText());
-        newUser.setGender(User.Gender.valueOf(selectedGender.toLowerCase()));
-        newUser.setPasswordHash(Hashing_UtilityClass.hashString(password.getText()));
-        newUser.setPhoneNumber(phoneNumber.getText());
-        newUser.setDateOfBirth(Date.valueOf(dateOfBirth.getValue()));
-        newUser.setStatus(User.Status.AVAILABLE);
-        newUser.setProfilePicturePath("/img/man.png");
-
-        try {
-            userInt.addUsertoDB(newUser);
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        }
-        System.out.println("new User is created successfully!!!");
-        try {
-            currentUser = userInt.isValidUser(phoneNumber.getText(), password.getText());
-        } catch (RemoteException e) {
-            throw new RuntimeException(e);
-        }
-
-        try {
-
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/homeScreen.fxml"));
-            //to inject the current user to the home screen controller.
-            //loader.setControllerFactory(param -> new HomeScreenController(newUser));
-
-            Parent signupRoot = loader.load();
-            HomeScreenController homeScreenController = loader.getController();
-            homeScreenController.setUserInt(ClientMain.userInt);
-            homeScreenController.setAdminInt(ClientMain.adminInt);
-            homeScreenController.setCurrentUser(currentUser);
-
-
-
-            Stage stage = (Stage) button.getScene().getWindow();
-            double width = stage.getWidth();
-            double height = stage.getHeight();
-
-            Scene scene = new Scene(signupRoot);
-            //scene.getStylesheets().add(getClass().getResource("/cssStyles/message.css").toExternalForm());
-            stage.setScene(scene);
-            stage.setWidth(width);
-            stage.setHeight(height);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-    }
-    else 
-    {
-        System.out.println("server is off");
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ServerUnavailable.fxml"));
-
-        Parent root = loader.load();
-        ServerUnavailableController serverUnavailableController = loader.getController();
-        serverUnavailableController.setAdminInt(ClientMain.adminInt);
-        serverUnavailableController.setUserInt(ClientMain.userInt);
-        serverUnavailableController.setCurrentUser(currentUser);
-        serverUnavailableController.setNavigatedWindow(gov.iti.jets.client.controller.ServerUnavailableController.Window.SIGNUP_PAGE);
-
-        Stage stage =this.getStage();
-        
-        // Set the scene with the admin login page
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
-     
-    }
-} catch (Exception e) {
-    e.printStackTrace();
-}
     }
 
     // Helper method to validate all fields
@@ -534,7 +517,7 @@ public class UserSignupController {
 
     private boolean isValidPhoneNumber(String phoneNumber) {
         // Regex to match exactly 11 digits
-        String regex ="^(010|011|012|015)[0-9]{8}$";
+        String regex = "^(010|011|012|015)[0-9]{8}$";
         return phoneNumber.matches(regex);
     }
 
@@ -561,13 +544,7 @@ public class UserSignupController {
     }
 
     public Stage getStage() {
-        return (Stage)  button.getScene().getWindow();
+        return (Stage) button.getScene().getWindow();
     }
 
-//
-//    @Override
-//    public void initialize(URL url, ResourceBundle resourceBundle) {
-//        c= ClientImpl.getInstance();
-//        c.setUserSignupController(this);
-//    }
 }

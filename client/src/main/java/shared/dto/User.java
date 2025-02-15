@@ -29,7 +29,8 @@ public class User implements Serializable {
     }
 
     // Default constructor
-    public User() {}
+    public User() {
+    }
 
     // Overloaded constructor
     public User(int userId, String phoneNumber, String displayName, String email, String passwordHash,
@@ -114,7 +115,7 @@ public class User implements Serializable {
         this.country = country;
     }
 
-    public  Date getDateOfBirth() {
+    public Date getDateOfBirth() {
         return dateOfBirth;
     }
 

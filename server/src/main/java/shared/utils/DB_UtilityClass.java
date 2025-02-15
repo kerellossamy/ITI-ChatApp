@@ -12,9 +12,9 @@ public class DB_UtilityClass {
 
     public static Connection getConnection() {
 
-        Connection connection=null;
+        Connection connection = null;
         try {
-            connection= DriverManager.getConnection(URL, USER, PASSWORD);
+            connection = DriverManager.getConnection(URL, USER, PASSWORD);
         } catch (SQLException e) {
             System.err.println("Error opening the connection");
             e.printStackTrace();

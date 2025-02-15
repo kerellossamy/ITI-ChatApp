@@ -110,6 +110,6 @@ public interface UserInt extends Remote {
 
     List<ServerAnnouncement> getAllServerAnnouncementsBasedOnCreatedTime(int userID) throws RemoteException;
 
-    void reloadContactListwithAnnouncement() throws RemoteException ;
+    void reloadContactListwithAnnouncement() throws RemoteException;
 
 }

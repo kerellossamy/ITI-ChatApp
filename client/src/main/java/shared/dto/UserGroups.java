@@ -6,7 +6,8 @@ public class UserGroups implements Serializable {
     private int userId;
     private int groupId;
 
-    public UserGroups() {}
+    public UserGroups() {
+    }
 
     public UserGroups(int userId, int groupId) {
         this.userId = userId;

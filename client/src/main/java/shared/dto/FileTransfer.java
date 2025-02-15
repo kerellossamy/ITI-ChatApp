@@ -15,7 +15,8 @@ public class FileTransfer extends BaseMessage implements Serializable {
     private String filePath;
     private Timestamp timestamp;
 
-    public FileTransfer() {}
+    public FileTransfer() {
+    }
 
     public FileTransfer(UUID fileId, int senderId, Integer receiverId, Integer groupId, String fileName, String fileType, String filePath, Timestamp timestamp) {
         this.fileId = fileId;
